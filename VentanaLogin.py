@@ -7,6 +7,9 @@ from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 import bcrypt
 import customtkinter as ct
 from PIL import Image
+import tkinter as tk
+from tkcalendar import DateEntry
+from datetime import date
 
 engine = create_engine("sqlite:///join_up.db", echo=True)
 
@@ -233,21 +236,23 @@ class VentanaRegistro(ct.CTk):
         self.container2 = ct.CTkFrame(self, fg_color="transparent")
         self.container3 = ct.CTkFrame(self, fg_color="transparent")
         self.container4 = ct.CTkFrame(self, fg_color="transparent")
-        self.container5 = ct.CTkFrame(self, fg_color="transparent")
+        self.container5 = ct.CTkFrame(self.container4, fg_color="transparent")
         self.container6 = ct.CTkFrame(self.container4, fg_color="transparent")
-        self.container7 = ct.CTkFrame(self.container4, fg_color="transparent")
+        self.container7 = ct.CTkFrame(self.container5, fg_color="transparent")
         self.container8 = ct.CTkFrame(self.container5, fg_color="transparent")
-        self.container9 = ct.CTkFrame(self.container5, fg_color="transparent")
+        self.container9 = ct.CTkFrame(self.container6, fg_color="transparent")
+        self.container10 = tk.Frame(self.container6, bg="")
 
         self.container1.pack(padx=10, pady=10, fill="both")
         self.container2.pack(padx=10, pady=10, fill="both")
         self.container3.pack(padx=10, pady=10, fill="both")
-        self.container4.pack(padx=10, pady=10, fill="both", side="left")
-        self.container5.pack(padx=10, pady=10, fill="both", side="right")
-        self.container6.pack(padx=10, pady=10, fill="both")
+        self.container4.pack(padx=10, pady=10, fill="both")
+        self.container5.pack(padx=10, pady=10, fill="both", side="left", expand=True)
+        self.container6.pack(padx=10, pady=10, fill="both", side="right", expand=True)
         self.container7.pack(padx=10, pady=10, fill="both")
         self.container8.pack(padx=10, pady=10, fill="both")
         self.container9.pack(padx=10, pady=10, fill="both")
+        self.container10.pack(padx=10, pady=10, fill="both")
 
         self.lbTitulo = ct.CTkLabel(self.container1, text=textlb, text_color="red", font=("Arial", 40))
         self.lbTitulo.pack(expand=True, anchor="center")
@@ -270,23 +275,24 @@ class VentanaRegistro(ct.CTk):
         self.label3 = ct.CTkLabel(self.container3, text="Apellido Materno", text_color="white", font=("Arial", 20))
         self.label3.pack(expand=True, anchor="w", side="left")
 
-        self.label4 = ct.CTkLabel(self.container6, text="Género", text_color="white", font=("Arial", 20))
+        self.label4 = ct.CTkLabel(self.container7, text="Género", text_color="white", font=("Arial", 20))
         self.label4.pack(expand=True, anchor="center", side="left")
 
-        self.radio_hombre = ct.CTkRadioButton(self.container7, text="Hombre", text_color="white", variable=self.seleccion, value=1)
-        self.radio_hombre.pack(side="left", anchor="center")
+        self.radio_hombre = ct.CTkRadioButton(self.container8, text="Hombre", text_color="white", variable=self.seleccion, value=1)
+        self.radio_hombre.pack(side="left")
 
-        self.radio_mujer = ct.CTkRadioButton(self.container7, text="Mujer", text_color="white", variable=self.seleccion, value=2)
-        self.radio_mujer.pack(side="left", anchor="center")
+        self.radio_mujer = ct.CTkRadioButton(self.container8, text="Mujer", text_color="white", variable=self.seleccion, value=2)
+        self.radio_mujer.pack(side="left")
 
-        self.radio_otro = ct.CTkRadioButton(self.container7, text="Otro", text_color="white", variable=self.seleccion, value=3)
-        self.radio_otro.pack(side="left", anchor="center")
+        self.radio_otro = ct.CTkRadioButton(self.container8, text="Otro", text_color="white", variable=self.seleccion, value=3)
+        self.radio_otro.pack(side="left")
 
-        self.label5 = ct.CTkLabel(self.container8, text="Fecha de nacimiento", text_color="white", font=("Arial", 20))
-        self.label5.pack(expand=True, anchor="center", side="right")
+        self.label5 = ct.CTkLabel(self.container9, text="Fecha de nacimiento", text_color="white", font=("Arial", 20))
+        self.label5.pack(expand=True, anchor="center")
 
-        self.entrada5 = ct.CTkEntry(self.container9, text_color="white", font=("Arial", 20))
-        self.entrada5.pack(expand=True, side="right", anchor="center")
+        self.date_entry = DateEntry(self.container10, width=16, background='darkblue',
+                       foreground='white', borderwidth=2, date_pattern='y-mm-dd', mindate=date(1900, 1, 1), maxdate=date.today())
+        self.date_entry.pack(anchor="center")
 
         #self.label6 = ct.CTkLabel(self.container7, text=textE6, font=("Arial", 20))
         #self.label6.pack(expand=True, anchor="w", side="left")
