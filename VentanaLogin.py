@@ -241,7 +241,7 @@ class VentanaRegistro(ct.CTk):
         self.container7 = ct.CTkFrame(self.container5, fg_color="transparent")
         self.container8 = ct.CTkFrame(self.container5, fg_color="transparent")
         self.container9 = ct.CTkFrame(self.container6, fg_color="transparent")
-        self.container10 = tk.Frame(self.container6, bg="")
+        self.container10 = tk.Frame(self.container6, bg="black")
 
         self.container1.pack(padx=10, pady=10, fill="both")
         self.container2.pack(padx=10, pady=10, fill="both")
