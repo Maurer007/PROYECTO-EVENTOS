@@ -47,14 +47,14 @@ class Main(ctk.CTk):
         self.rowconfigure(0, weight=0)
         self.rowconfigure(1, weight=1)
 
-        self.icon_user = ctk.CTkImage(Image.open("user.png"), size=(40, 40))
-        self.icon_lupa = ctk.CTkImage(Image.open("lupa.png"), size=(40, 40))
-        self.icon_home = ctk.CTkImage(Image.open("home.png"), size=(40, 40))
-        self.icon_calendario = ctk.CTkImage(Image.open("calendario.png"), size=(40, 40))
-        self.icon_mis_eventos = ctk.CTkImage(Image.open("mis_eventos.png"), size=(40, 40))
-        self.icon_notificaciones = ctk.CTkImage(Image.open("notificaciones.png"), size=(40, 40))
-        self.icon_ajustes = ctk.CTkImage(Image.open("ajustes.png"), size=(40, 40))
-        self.icon_logout = ctk.CTkImage(Image.open("logout.png"), size=(40, 40))
+        self.icon_user = ctk.CTkImage(Image.open("assets/iconos/user.png"), size=(40, 40))
+        self.icon_lupa = ctk.CTkImage(Image.open("assets/iconos/lupa.png"), size=(40, 40))
+        self.icon_home = ctk.CTkImage(Image.open("assets/iconos/home.png"), size=(40, 40))
+        self.icon_calendario = ctk.CTkImage(Image.open("assets/iconos/calendario.png"), size=(40, 40))
+        self.icon_mis_eventos = ctk.CTkImage(Image.open("assets/iconos/mis_eventos.png"), size=(40, 40))
+        self.icon_notificaciones = ctk.CTkImage(Image.open("assets/iconos/notificaciones.png"), size=(40, 40))
+        self.icon_ajustes = ctk.CTkImage(Image.open("assets/iconos/ajustes.png"), size=(40, 40))
+        self.icon_logout = ctk.CTkImage(Image.open("assets/iconos/logout.png"), size=(40, 40))
         self.text_color = color_texto
         self.placeholder_color = color_placeholder
         self.color_texto_botones = color_texto_botones
