@@ -233,66 +233,54 @@ class VentanaRegistro(ct.CTk):
         self.seleccion = ct.StringVar(value="")
 
         self.container1 = ct.CTkFrame(self, fg_color="transparent")
-        self.container2 = ct.CTkFrame(self, fg_color="transparent")
-        self.container3 = ct.CTkFrame(self, fg_color="transparent")
-        self.container4 = ct.CTkFrame(self, fg_color="transparent")
-        self.container5 = ct.CTkFrame(self.container4, fg_color="transparent")
-        self.container6 = ct.CTkFrame(self.container4, fg_color="transparent")
-        self.container7 = ct.CTkFrame(self.container5, fg_color="transparent")
-        self.container8 = ct.CTkFrame(self.container5, fg_color="transparent")
-        self.container9 = ct.CTkFrame(self.container6, fg_color="transparent")
-        self.container10 = tk.Frame(self.container6, bg="black")
+        self.container2 = ct.CTkScrollableFrame(self, fg_color="transparent")
 
         self.container1.pack(padx=10, pady=10, fill="both")
-        self.container2.pack(padx=10, pady=10, fill="both")
-        self.container3.pack(padx=10, pady=10, fill="both")
-        self.container4.pack(padx=10, pady=10, fill="both")
-        self.container5.pack(padx=10, pady=10, fill="both", side="left", expand=True)
-        self.container6.pack(padx=10, pady=10, fill="both", side="right", expand=True)
-        self.container7.pack(padx=10, pady=10, fill="both")
-        self.container8.pack(padx=10, pady=10, fill="both")
-        self.container9.pack(padx=10, pady=10, fill="both")
-        self.container10.pack(padx=10, pady=10, fill="both")
+        self.container2.pack(padx=10, pady=10, fill="both", expand=True)
+        self.container2.grid_columnconfigure((0,1,2,3,4,5), weight=1)
 
         self.lbTitulo = ct.CTkLabel(self.container1, text=textlb, text_color="red", font=("Arial", 40))
         self.lbTitulo.pack(expand=True, anchor="center")
 
+        self.lbDatos1 = ct.CTkLabel(self.container2, text="Datos personales", text_color="white", font=("Arial", 30))
+        self.lbDatos1.grid(row=0, column=0, pady=10, padx=10)
+
         self.entrada1 = ct.CTkEntry(self.container2, font=("Arial", 20))
-        self.entrada1.pack(expand=True, anchor="w", side="right", fill="both")
+        self.entrada1.grid(row=1,column=0, columnspan=2, pady=10, padx=10)
 
         self.entrada2 = ct.CTkEntry(self.container2, font=("Arial", 20))
-        self.entrada2.pack(expand=True, anchor="w", side="right", fill="both")
+        self.entrada2.grid(row=1,column=2, columnspan=2, pady=10, padx=10)
 
         self.entrada3 = ct.CTkEntry(self.container2, font=("Arial", 20))
-        self.entrada3.pack(expand=True, anchor="w", side="right", fill="both")
+        self.entrada3.grid(row=1,column=4, columnspan=2, pady=10, padx=10)
 
-        self.label1 = ct.CTkLabel(self.container3, text="Nombre(s)", text_color="white", font=("Arial", 20))
-        self.label1.pack(expand=True, anchor="w", side="left")
+        self.label1 = ct.CTkLabel(self.container2, text="Nombre(s)", text_color="white", font=("Arial", 20))
+        self.label1.grid(row=2,column=0, columnspan=2, pady=10, padx=10)
 
-        self.label2 = ct.CTkLabel(self.container3, text="Apellido Paterno", text_color="white", font=("Arial", 20))
-        self.label2.pack(expand=True, anchor="w", side="left")
+        self.label2 = ct.CTkLabel(self.container2, text="Apellido Paterno", text_color="white", font=("Arial", 20))
+        self.label2.grid(row=2,column=2, columnspan=2, pady=10, padx=10)
 
-        self.label3 = ct.CTkLabel(self.container3, text="Apellido Materno", text_color="white", font=("Arial", 20))
-        self.label3.pack(expand=True, anchor="w", side="left")
+        self.label3 = ct.CTkLabel(self.container2, text="Apellido Materno", text_color="white", font=("Arial", 20))
+        self.label3.grid(row=2,column=4, columnspan=2, pady=10, padx=10)
 
-        self.label4 = ct.CTkLabel(self.container7, text="Género", text_color="white", font=("Arial", 20))
-        self.label4.pack(expand=True, anchor="center", side="left")
+        self.label4 = ct.CTkLabel(self.container2, text="Género", text_color="white", font=("Arial", 20))
+        self.label4.grid(row=3,column=0, columnspan=3, pady=10, padx=10)
 
-        self.radio_hombre = ct.CTkRadioButton(self.container8, text="Hombre", text_color="white", variable=self.seleccion, value=1)
-        self.radio_hombre.pack(side="left")
+        self.radio_hombre = ct.CTkRadioButton(self.container2, text="Hombre", text_color="white", variable=self.seleccion, value=1)
+        self.radio_hombre.grid(row=4,column=0, pady=10, padx=10)
 
-        self.radio_mujer = ct.CTkRadioButton(self.container8, text="Mujer", text_color="white", variable=self.seleccion, value=2)
-        self.radio_mujer.pack(side="left")
+        self.radio_mujer = ct.CTkRadioButton(self.container2, text="Mujer", text_color="white", variable=self.seleccion, value=2)
+        self.radio_mujer.grid(row=4,column=1, pady=10, padx=10)
 
-        self.radio_otro = ct.CTkRadioButton(self.container8, text="Otro", text_color="white", variable=self.seleccion, value=3)
-        self.radio_otro.pack(side="left")
+        self.radio_otro = ct.CTkRadioButton(self.container2, text="Otro", text_color="white", variable=self.seleccion, value=3)
+        self.radio_otro.grid(row=4,column=2, pady=10, padx=10)
 
-        self.label5 = ct.CTkLabel(self.container9, text="Fecha de nacimiento", text_color="white", font=("Arial", 20))
-        self.label5.pack(expand=True, anchor="center")
+        self.label5 = ct.CTkLabel(self.container2, text="Fecha de nacimiento", text_color="white", font=("Arial", 20))
+        self.label5.grid(row=3,column=3, columnspan=3, pady=10, padx=10)
 
-        self.date_entry = DateEntry(self.container10, width=16, background='darkblue',
+        self.date_entry = DateEntry(self.container2, width=16, background='darkblue',
                        foreground='white', borderwidth=2, date_pattern='y-mm-dd', mindate=date(1900, 1, 1), maxdate=date.today())
-        self.date_entry.pack(anchor="center")
+        self.date_entry.grid(row=4,column=3, columnspan=3, pady=10, padx=10)
 
         #self.label6 = ct.CTkLabel(self.container7, text=textE6, font=("Arial", 20))
         #self.label6.pack(expand=True, anchor="w", side="left")
