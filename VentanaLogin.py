@@ -63,8 +63,8 @@ class VentanaUsuario(ct.CTk):
         self.container6.pack(padx=10, pady=10)
         self.container7.pack(padx=10, pady=10)
 
-        self.img = ct.CTkImage(light_image=Image.open('logo.png'),
-                               dark_image=Image.open('logo.png'),
+        self.img = ct.CTkImage(light_image=Image.open('assets/Logo/logo.png'),
+                               dark_image=Image.open('assets/Logo/logo.png'),
                                size=(250, 150))
         self.lbImg = ct.CTkLabel(self.container1, text="", image=self.img)
         self.lbImg.pack(expand=True, anchor="center")
