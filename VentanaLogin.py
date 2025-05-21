@@ -13,24 +13,32 @@ from datetime import date
 
 engine = create_engine("sqlite:///join_up.db", echo=True)
 
-class VentanaUsuario(ct.CTk):
-    def __init__(self, textBImg="Seleccionar Imagen", textE1 = "Username", textE2 = "Password", textB1 = "Login",textCB = "Renember me", textB3 = "Register me", colorFondo="black"):
-        super().__init__()
-        self.title("Log In")
+class VentanaUsuario(ct.CTkToplevel):
+    def __init__(self, menu, colorFondo="black"):
+        super().__init__(menu)
+        self.title("Iniciar sesión")
+        self.menu=menu
+
+        self.transient(menu)
+        self.deiconify()
+        self.lift()
+        self.focus_force()
+        self.update()
 
         ancho_v = 500
         alto_v = 500
-        ancho_p = self.winfo_screenwidth()
-        alto_p = self.winfo_screenheight()
-        x = (ancho_p-ancho_v)//2
-        y = (alto_p-alto_v)//2
+        x = (self.winfo_screenwidth() - ancho_v) // 2
+        y = (self.winfo_screenheight() - alto_v) // 2
         self.geometry(f"{ancho_v}x{alto_v}+{x}+{y}")
 
-        self.resizable(False, False)
+        self.grab_set()
+
+        print("VentanaUsuario creada Vol.4")
+        
         self.overrideredirect(True)
         frame_top = ct.CTkFrame(self, height=30, corner_radius=0, fg_color=colorFondo)
         frame_top.pack(fill="x")
-        self.close_button = ct.CTkButton(frame_top, text="X", width=30, font=("Arial", 30), command=self.destroy,
+        self.close_button = ct.CTkButton(frame_top, text="X", width=30, font=("Arial", 30), command=self.cerrar,
                                     fg_color="black", hover_color="black", text_color_disabled="gray")
         self.close_button.pack(side="right", padx=5, pady=2)
         self.close_button.bind("<Enter>", self.on_enter)
@@ -45,7 +53,6 @@ class VentanaUsuario(ct.CTk):
         self.CREDENTIALS_BD = "credentials.db"
         self.usuario = ""
         self.contrasenia = ""
-        self.profile_image_path = ""
 
         self.container1 = ct.CTkFrame(self, fg_color=colorFondo)
         self.container2 = ct.CTkFrame(self, fg_color=colorFondo)
@@ -63,38 +70,48 @@ class VentanaUsuario(ct.CTk):
         self.container6.pack(padx=10, pady=10)
         self.container7.pack(padx=10, pady=10)
 
-        self.img = ct.CTkImage(light_image=Image.open('assets/Logo/logo.png'),
-                               dark_image=Image.open('assets/Logo/logo.png'),
-                               size=(250, 150))
-        self.lbImg = ct.CTkLabel(self.container1, text="", image=self.img)
+
+        try:
+            ruta_logo = os.path.join(os.path.dirname(__file__), 'assets', 'Logo', 'logo.png')
+            if os.path.exists(ruta_logo):
+                imagen_logo = Image.open(ruta_logo)
+                self.img = ct.CTkImage(light_image=imagen_logo, dark_image=imagen_logo, size=(250, 150))
+                self.lbImg = ct.CTkLabel(self.container1, text="", image=self.img)
+            else:
+                raise FileNotFoundError("Logo no encontrado")
+        except Exception as e:
+            print("Error cargando imagen del logo:", e)
+            self.lbImg = ct.CTkLabel(self.container1, text="LOGO")
+
         self.lbImg.pack(expand=True, anchor="center")
 
-        self.lbUser = ct.CTkLabel(self.container2, text=textE1, text_color="white", font=("Arial", 20))
+
+        self.lbUser = ct.CTkLabel(self.container2, text="Usuario", text_color="white", font=("Arial", 20))
         self.lbUser.pack(expand=True, side="left")
 
         self.entrada1 = ct.CTkEntry(self.container2, font=("Arial", 20))
         self.entrada1.pack(expand=True, fill="both", side="right", padx=10)
 
-        #self.entrada1.bind("<FocusIn>", lambda event: self.lbUser.configure(text="Usuario"))
-        #self.entrada1.bind("<FocusOut>", lambda event: self.lbUser.configure(text=""))
+        self.entrada1.bind("<FocusIn>", lambda event: self.lbUser.configure(text="Usuario"))
+        self.entrada1.bind("<FocusOut>", lambda event: self.lbUser.configure(text=""))
 
-        self.lbPW = ct.CTkLabel(self.container3, text=textE2, text_color="white", font=("Arial", 20))
+        self.lbPW = ct.CTkLabel(self.container3, text="Contraseña", text_color="white", font=("Arial", 20))
         self.lbPW.pack(expand=True, side="left")
 
         self.entrada2 = ct.CTkEntry(self.container3, font=("Arial", 20), show="*")
         self.entrada2.pack(expand=True, fill="both", side="right", padx=10)
 
-        #self.entrada2.bind("<FocusIn>", lambda event: self.lbPW.configure(text="Contraseña"))
-        #self.entrada2.bind("<FocusOut>", lambda event: self.lbPW.configure(text=""))
+        self.entrada2.bind("<FocusIn>", lambda event: self.lbPW.configure(text="Contraseña"))
+        self.entrada2.bind("<FocusOut>", lambda event: self.lbPW.configure(text=""))
 
         self.opcion = ct.BooleanVar()
-        self.checkbox = ct.CTkCheckBox(self.container4, text=textCB, text_color="white", variable=self.opcion)
+        self.checkbox = ct.CTkCheckBox(self.container4, text="Recordarme", text_color="white", variable=self.opcion)
         self.checkbox.pack(padx=5, pady=5, expand=True, side="left", anchor="w")
 
-        self.boton1 = ct.CTkButton(self.container5, font=("Arial", 20), text=textB1, command=self.login)
+        self.boton1 = ct.CTkButton(self.container5, font=("Arial", 20), text="Iniciar sesión", command=self.login)
         self.boton1.pack(padx=5, pady=5, expand=True)
 
-        self.lbRegistro = ct.CTkLabel(self.container6, text=textB3, text_color="white", font=("Arial", 20, "underline"), cursor="hand2")
+        self.lbRegistro = ct.CTkLabel(self.container6, text="Registro", text_color="white", font=("Arial", 20, "underline"), cursor="hand2")
         self.lbRegistro.pack(padx=5, pady=5, expand=True, side="right", anchor="e")
 
         self.lbRegistro.bind("<Button-1>", lambda event: self.registro())
@@ -106,6 +123,8 @@ class VentanaUsuario(ct.CTk):
 
         self.crearTablaBD()
         self.obtenerCredenciales()
+        
+        print("VentanaUsuario geometry:", self.winfo_geometry())
 
     def on_enter(self, event):
         self.close_button.configure(text_color="red")  # O fg_color si solo cambia el texto
@@ -113,6 +132,7 @@ class VentanaUsuario(ct.CTk):
     def on_leave(self, event):
         self.close_button.configure(text_color="SystemButtonFace")  # O el color que usabas antes
 
+    """
     def select_image(self):
         file_path = filedialog.askopenfilename(filetypes=[("Imágenes", "*.png;*.jpg;*.jpeg;*.gif;*.webp;*.jfif")])
         if file_path:
@@ -123,11 +143,10 @@ class VentanaUsuario(ct.CTk):
                 self.profile_image_path = file_path
             except Exception as e:
                 print(f"Error al cargar la imagen: {e}")
-
+        """
     def registro(self):
         self.destroy()
-        ventana_registro = VentanaRegistro(self)
-        ventana_registro.mainloop()
+        VentanaRegistro(self.menu)
 
     def login(self):
         username = self.entrada1.get()
@@ -197,28 +216,36 @@ class VentanaUsuario(ct.CTk):
         conexion.commit()
         conexion.close()
 
-    def cancel(self):
+    def cerrar(self):
+        self.grab_release()
         self.destroy()
 
-class VentanaRegistro(ct.CTk):
-    def __init__(self, parent, textlb = "Registro de usuarios", textE1 = "Nombre", textE2 = "Apellidos", textE3 = "E-mail", textE4 = "Usuario", textE5 = "Contraseña", textE6 = "Confirmar Contraseña", textB1 = "Registrar", textB2 = "Volver", colorFondo="black"):
-        super().__init__()
-        self.parent = parent
+class VentanaRegistro(ct.CTkToplevel):
+    def __init__(self, menu, textlb = "Registro de usuarios", textE1 = "Nombre", textE2 = "Apellidos", textE3 = "E-mail", textE4 = "Usuario", textE5 = "Contraseña", textE6 = "Confirmar Contraseña", textB1 = "Registrar", textB2 = "Volver", colorFondo="black"):
+        super().__init__(menu)
         self.title("Registro")
+        self.menu=menu
+
+        self.transient(menu)
+        self.deiconify()
+        self.lift()
+        self.focus_force()
+        self.update()
 
         ancho_v = 800
-        alto_v = 650
-        ancho_p = self.winfo_screenwidth()
-        alto_p = self.winfo_screenheight()
-        x = (ancho_p - ancho_v) // 2
-        y = (alto_p - alto_v) // 2
+        alto_v = 500
+        x = (self.winfo_screenwidth() - ancho_v) // 2
+        y = (self.winfo_screenheight() - alto_v) // 2
         self.geometry(f"{ancho_v}x{alto_v}+{x}+{y}")
 
-        self.resizable(False, False)
+        self.grab_set()
+
+        print("VentanaUsuario creada Vol.5")
+        #self.resizable(False, False)
         self.overrideredirect(True)
         frame_top = ct.CTkFrame(self, height=30, corner_radius=0, fg_color=colorFondo)
         frame_top.pack(fill="x")
-        self.close_button = ct.CTkButton(frame_top, text="X", width=30, font=("Arial", 30), command=self.destroy,
+        self.close_button = ct.CTkButton(frame_top, text="X", width=30, font=("Arial", 30), command=self.cerrar,
                                          fg_color="black", hover_color="black", text_color_disabled="gray")
         self.close_button.pack(side="right", padx=5, pady=2)
         self.close_button.bind("<Enter>", self.on_enter)
@@ -340,7 +367,7 @@ class VentanaRegistro(ct.CTk):
         self.boton1 = ct.CTkButton(self.container6, font=("Arial", 20), text="Registrar")
         self.boton1.grid(row=5, column=0, pady=10, padx=10)
 
-        self.boton2 = ct.CTkButton(self.container6, font=("Arial", 20), text="Volver")
+        self.boton2 = ct.CTkButton(self.container6, font=("Arial", 20), text="Volver", command=self.volver)
         self.boton2.grid(row=5, column=2, pady=10, padx=10)
 
         #self.labelError = ct.CTkLabel(self.container9, text="", font=("Arial", 15), text_color="red")
@@ -413,7 +440,12 @@ class VentanaRegistro(ct.CTk):
         return resultado
 
     def volver(self):
-        self.destroy()
+        self.cerrar()
+        VentanaUsuario(self.menu)
+
+    def cerrar(self):
+        self.grab_release()
+        self.destroy()    
 
 class VentanaDatos(ct.CTk):
     def __init__(self, parent, usuario):
@@ -485,6 +517,8 @@ class VentanaDatos(ct.CTk):
         self.parent.deiconify()
 
 
-if __name__ == "__main__":
-    app = VentanaUsuario()
-    app.mainloop()
+#if __name__ == "__main__":
+#    root = ct.CTk()
+#    root.withdraw()  # Oculta la ventana principal
+#    app = VentanaUsuario(root)
+#    app.mainloop()

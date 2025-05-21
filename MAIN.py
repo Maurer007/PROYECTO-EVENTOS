@@ -2,14 +2,15 @@ import random
 from PIL import Image
 import customtkinter as ctk
 from database import DatabaseManager
+from VentanaLogin import VentanaUsuario
 
-class SplashScreen(ctk.CTkToplevel):  # Ventana emergente temporal
+class SplashScreen(ctk.CTkToplevel):
     def __init__(self, parent):
         super().__init__(parent)
 
         self.geometry("300x200+800+400")
         self.title("Cargando...")
-        self.overrideredirect(True)  # Oculta barra de título
+        self.overrideredirect(True)
 
         label = ctk.CTkLabel(self, text="Cargando...", font=("Arial", 18))
         label.pack(expand=True)
@@ -181,7 +182,7 @@ class Main(ctk.CTk):
         lupa = ctk.CTkButton(frame_superior, text="", image=self.icon_lupa, fg_color="purple", corner_radius=8, width=60, height=60)
         barra = ctk.CTkLabel(frame_superior, text="Barra de búsqueda", fg_color="lightgreen", corner_radius=8, text_color=self.text_color, height=60)
 
-        user = ctk.CTkButton(frame_lupa, text="", image=self.icon_user, fg_color="lightblue", corner_radius=8, width=60, height=60)
+        user = ctk.CTkButton(frame_lupa, text="", image=self.icon_user, fg_color="lightblue", corner_radius=8, width=60, height=60, command=self.abrir_login)
 
         home = ctk.CTkButton(subframe_barra_2, text="", image=self.icon_home, fg_color="lightcoral", corner_radius=8, width=60, height=60)
         calendario = ctk.CTkButton(subframe_barra_2, text="", image=self.icon_calendario, fg_color="red", corner_radius=8, width=60, height=60)
@@ -285,6 +286,17 @@ class Main(ctk.CTk):
             principal_fila6,
         ]
 
+    def abrir_login(self):
+        print("Creando VentanaUsuario...")
+        if hasattr(self, "ventana_usuario") and self.ventana_usuario.winfo_exists():
+            print("Ya hay una ventana de usuario abierta.")
+            return
+        try:
+            VentanaUsuario(self)
+        except Exception as e:
+            print("ERROR al crear VentanaUsuario:", e)
+
+
     def minimizar(self):
         if self.horarios.winfo_ismapped():
             # Hide the horarios widget
@@ -314,6 +326,6 @@ class Main(ctk.CTk):
 
 if __name__ == "__main__":
     app = Main()
-    app.withdraw()
+    app.withdraw()  # Ocultar la principal mientras se carga splash
     splash = SplashScreen(app)
-    app.mainloop() 
+    app.mainloop()
