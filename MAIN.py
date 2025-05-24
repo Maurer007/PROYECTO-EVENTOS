@@ -5,6 +5,7 @@ from database import DatabaseManager
 from carrusel_deslizante import CarruselDeslizante
 from invitaciones import Ventana
 from MisEventos import MisEventos
+from utils.orm_utils import crear_base_de_datos
 
 class SplashScreen(ctk.CTkToplevel):
     def __init__(self, parent):
@@ -35,6 +36,7 @@ class Main(ctk.CTk):
         ctk.set_default_color_theme("green")
         self.configure(fg_color=color_fondo)
 
+        crear_base_de_datos()
         # Inicializar la base de datos
         self.db_manager = DatabaseManager()
         self.db_manager.insertar_eventos_ejemplo()  # Insertar datos de ejemplo si la tabla está vacía

@@ -15,7 +15,7 @@ from models.usuario import Usuario
 class UsuarioManager:
 
     @staticmethod
-    def registrar_usuario(nombre, apellido_paterno, apellido_materno, genero, ciudad, estado, fecha_nacimiento, nom_usuario, contrasena, telefono, correo):
+    def registrar_usuario(nombre, apellido_paterno, apellido_materno, género, ciudad, estado, fecha_nacimiento, nom_usuario, contraseña, teléfono, correo):
         session = Session()
         try:
             nuevo_usuario = Usuario(
@@ -24,11 +24,11 @@ class UsuarioManager:
                 apellido_materno=apellido_materno,
                 ciudad=ciudad,
                 estado=estado,
-                genero=genero,
+                género=género,
                 fecha_nacimiento=fecha_nacimiento,
                 nom_usuario=nom_usuario,
-                contraseña=contrasena,
-                telefono=telefono,
+                contraseña=contraseña,
+                teléfono=teléfono,
                 correo=correo
             )
 
@@ -88,7 +88,6 @@ class VentanaRegistro(ct.CTkToplevel):
         self.contrasena=""
         self.telefono=""
         self.correo=""
-
         self.frame_principal = self.crear_scrollable_frame()
 
         self.frame_titulo = self.crear_frame_titulo(self.frame_principal)
@@ -142,7 +141,7 @@ class VentanaRegistro(ct.CTkToplevel):
         self.nombre=self.crear_entry_arriba(frame_datos, 0, "Nombre")
         self.apellido_paterno=self.crear_entry_arriba(frame_datos, 2, "Apellido Paterno")
         self.apellido_materno=self.crear_entry_arriba(frame_datos, 4, "Apellido Materno")
-        self.seleccion=self.crear_frame_radios(frame_datos)
+        self.crear_frame_radios(frame_datos)
         self.crear_frame_fecha(frame_datos)
         self.crear_frame_municipio(frame_datos)
 
@@ -154,7 +153,12 @@ class VentanaRegistro(ct.CTkToplevel):
         label.grid(row=1, column=columna, columnspan=4, pady=10, padx=10, sticky="w")
 
         return entrada
-
+    def crear_radios(self, frame_radios, columna, texto, valor):
+        print("DEBUG seleccion:", self.seleccion)
+        radio = ct.CTkRadioButton(frame_radios, text=texto, text_color="black", variable=self.seleccion, value=valor)
+        radio.grid(row=1, column=columna, pady=10, padx=10)
+        return radio
+    
     def crear_frame_radios(self, frame_datos):
         frameRadios = ct.CTkFrame(frame_datos, fg_color="white")
         frameRadios.grid(row=2, column=0, columnspan=4, pady=10, padx=10)
@@ -162,14 +166,10 @@ class VentanaRegistro(ct.CTkToplevel):
         label = ct.CTkLabel(frameRadios, text="Género", text_color="black", font=("Arial", 20))
         label.grid(row=0, column=0, columnspan=3, pady=10, padx=10)
 
-        radio_hombre = self.crear_radios(frameRadios, 0, "Hombre")
-        radio_mujer = self.crear_radios(frameRadios, 1, "Mujer")
-        radio_otro = self.crear_radios(frameRadios, 2, "Otro")
-        
-    def crear_radios(self, frame_radios, columna, texto):
-        radio = ct.CTkRadioButton(frame_radios, text=texto, text_color="black", variable=self.seleccion, value=1)
-        radio.grid(row=1, column=columna, pady=10, padx=10)
-        return radio
+        radio_hombre = self.crear_radios(frameRadios, 0, "Hombre", "Hombre")
+        radio_mujer = self.crear_radios(frameRadios, 1, "Mujer", "Mujer")
+        radio_otro = self.crear_radios(frameRadios, 2, "Otro", "Otro")
+    
 
     def crear_frame_fecha(self, frame_datos):
         frameFecha = ct.CTkFrame(frame_datos, fg_color="white")
@@ -226,8 +226,8 @@ class VentanaRegistro(ct.CTkToplevel):
         return frame
         
     def crear_boton(self, frame_botones, texto, lado, comando):
-        boton = ct.CTkButton(frame_botones, font=("Arial", 20), text=texto, command=comando)
-        boton.pack(pady=10, side=lado, expand=True)
+        self.boton = ct.CTkButton(frame_botones, font=("Arial", 20), text=texto, command=comando)
+        self.boton.pack(pady=10, side=lado, expand=True)
 
 
     def on_enter(self, event):
@@ -237,23 +237,31 @@ class VentanaRegistro(ct.CTkToplevel):
         self.close_button.configure(text_color="SystemButtonFace")  # O el color que usabas antes
 
     def on_registrar(self):
+
+        print("on_registrar seleccion:", self.seleccion)
+        if self.seleccion is None:
+            print("ERROR: self.seleccion es None antes de get()")
+        else:
+            genero = self.seleccion.get()
+            print("Genero seleccionado:", genero)
+
         nombre = self.nombre.get()
         apellido_paterno = self.apellido_paterno.get()
         apellido_materno = self.apellido_materno.get()
-        genero = self.seleccion.get()
+        género = self.seleccion.get()
         ciudad = self.municipio.get()
         estado = self.estado.get()
         fecha_nacimiento = self.date_entry.get_date()
         nom_usuario = self.nom_usuario.get()
-        contrasena = self.contrasena.get()
-        telefono = self.telefono.get()
+        contraseña = self.contrasena.get()
+        teléfono = self.telefono.get()
         correo = self.correo.get()
         
 
         exito = UsuarioManager.registrar_usuario(
             nombre, apellido_paterno, apellido_materno,
-            genero, ciudad, estado, fecha_nacimiento,
-            nom_usuario, contrasena, telefono, correo)
+            género, ciudad, estado, fecha_nacimiento,
+            nom_usuario, contraseña, teléfono, correo)
         """
         if exito:
             self.label_estado.configure(text="¡Usuario registrado con éxito!", text_color="green")
