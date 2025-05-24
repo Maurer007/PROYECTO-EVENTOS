@@ -4,6 +4,7 @@ import customtkinter as ctk
 from database import DatabaseManager
 from carrusel_deslizante import CarruselDeslizante
 from invitaciones import Ventana
+from MisEventos import MisEventos
 
 class SplashScreen(ctk.CTkToplevel):
     def __init__(self, parent):
@@ -110,7 +111,7 @@ class Main(ctk.CTk):
         # Lista para agregar botones dinámicamente
         botones_config = [
             {"icon": self.iconos["home"],   "color": "lightcoral", "command": self.abrir_main},
-            {"icon": self.iconos["calendario"],   "color": "red", "command": None},
+            {"icon": self.iconos["calendario"],   "color": "red", "command": self.abrir_mis_eventos},
             {"icon": self.iconos["mis_eventos"],   "color": "cyan", "command": self.abrir_invitacion},
             {"icon": self.iconos["notificaciones"],   "color": "green", "command": None},
             {"icon": self.iconos["ajustes"],   "color": "yellow", "command": None},
@@ -385,6 +386,18 @@ class Main(ctk.CTk):
         self.create_principal()
         self.cargar_imagenes_en_filas()
 
+    def abrir_mis_eventos(self):
+        # Limpia el frame_principal
+        for widget in self.frame_principal.winfo_children():
+            widget.destroy()
+        # Inserta la Ventana de mis eventos dentro de frame_principal
+        try:
+            mis_eventos = MisEventos(self.frame_principal)
+            mis_eventos.pack(fill="both", expand=True)
+        except Exception as e:
+            print("ERROR al crear Ventana de Mis Eventos:", e)
+
+    
     def abrir_invitacion(self):
         # Limpia el frame_principal
         for widget in self.frame_principal.winfo_children():
