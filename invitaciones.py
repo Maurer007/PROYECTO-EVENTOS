@@ -4,18 +4,19 @@ import tkinter.filedialog as filedialog
 from PIL import Image, ImageTk
 import tkinter.filedialog as filedialog
 from tkinter import colorchooser
-import webcolors
-import random
-import string
+import webcolors, random, string
 
 class Ventana(CTk.CTkFrame):
 
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, master=None):
+        super().__init__(master)
 
         # Configuración inicial del tema
         CTk.set_appearance_mode("System")
         CTk.set_default_color_theme("blue")
+
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
 
         #self.title("Invitaciones")
         #self.geometry("900x700+150+150")
@@ -492,7 +493,7 @@ class Ventana(CTk.CTkFrame):
     def crear_interfaz(self):
         # Frame principal
         self.frame0 = CTk.CTkFrame(self, fg_color="#303AC9")
-        self.frame0.grid(row=0, column=0, sticky="nsew", pady=0, padx=0)  # <-- usa grid
+        self.frame0.grid(row=0, column=0, sticky="nsew")
 
         for i in range(5):
             self.frame0.columnconfigure(i, weight=1)
@@ -709,10 +710,8 @@ class Ventana(CTk.CTkFrame):
         self.boton_guardar_inv=CTk.CTkButton(self.frame2,fg_color="#220c56",text="Guardar invitacion")
         self.boton_guardar_inv.grid(pady=10,padx=25,row=1,column=1,sticky="nsew")
 
-        
-        
-# Ejecución
-if __name__ == "__main__":
-    app = Ventana()
-    app.mainloop()
 
+# Ejecución
+"""if __name__ == "__main__":
+    app = Ventana()
+    app.mainloop()"""
