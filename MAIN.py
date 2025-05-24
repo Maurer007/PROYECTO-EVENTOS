@@ -1,4 +1,4 @@
-import random, threading
+import random, threading, concurrent.futures
 from PIL import Image
 import customtkinter as ctk
 from database import DatabaseManager
@@ -158,6 +158,11 @@ class Main(ctk.CTk):
     def create_principal(self):
         evento_height = 300
 
+        """self.frame_contenedor = ctk.CTkFrame(self)
+        self.frame_contenedor.grid(row=1, column=1, sticky="nsew")
+        self.frame_contenedor.grid_columnconfigure(0, weight=1)
+        self.frame_contenedor.grid_rowconfigure(0, weight=1)"""
+
         self.frame_principal = ctk.CTkScrollableFrame(self)
         self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 10), pady=(0, 4))
         self.frame_principal._scrollbar.grid_forget()
@@ -290,7 +295,8 @@ class Main(ctk.CTk):
             if self.carga_event:
                 self.carga_event.set()
 
-        threading.Thread(target=cargar, daemon=True).start()
+        executor = concurrent.futures.ThreadPoolExecutor(max_workers=30)
+        executor.submit(cargar)
 
     def cargar_imagenes_en_filas(self):
         evento_height = 300
@@ -379,9 +385,20 @@ class Main(ctk.CTk):
             print("ERROR al crear VentanaUsuario:", e)
 
     def abrir_main(self):
-        # Limpia el frame_principal
-        for widget in self.frame_principal.winfo_children():
-            widget.destroy()
+        # Destruir frame_principal actual
+        self.frame_principal.destroy()
+        
+        # Recrear frame_principal como scrolleable
+        self.frame_principal = ctk.CTkScrollableFrame(self)
+        self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 10), pady=(0, 4))
+        self.frame_principal._scrollbar.grid_forget()
+        
+        # Configurar grid
+        for i in range(6):
+            self.frame_principal.rowconfigure(i, weight=1)
+        for i in range(3):
+            self.frame_principal.columnconfigure(i, weight=1)
+        
         # Vuelve a crear el contenido principal
         self.create_principal()
         self.cargar_imagenes_en_filas()
@@ -397,19 +414,21 @@ class Main(ctk.CTk):
         except Exception as e:
             print("ERROR al crear Ventana de Mis Eventos:", e)
 
-    
     def abrir_invitacion(self):
-        # Limpia el frame_principal
-        for widget in self.frame_principal.winfo_children():
-            widget.destroy()
-        self.frame_principal.rowconfigure(0, weight=1)
-        self.frame_principal.columnconfigure(0, weight=1)
-        # Inserta la Ventana de invitaciones dentro de frame_principal
-        try:
-            invitacion = Ventana(self.frame_principal)
-            invitacion.grid(row=0, column=0, sticky="nsew")
-        except Exception as e:
-            print("ERROR al crear Ventana de Invitación:", e)
+        # Destruir frame_principal actual (scrolleable)
+        self.frame_principal.destroy()
+        
+        # Crear nuevo frame_principal (normal)
+        self.frame_principal = ctk.CTkFrame(self)
+        self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 10), pady=(0, 4))
+        
+        # Configurar grid del nuevo frame
+        self.frame_principal.grid_columnconfigure(0, weight=1)
+        self.frame_principal.grid_rowconfigure(0, weight=1)
+        
+        # Crear la invitación en el nuevo frame
+        invitacion = Ventana(master=self.frame_principal)
+        invitacion.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
 
     def minimizar(self):
         if not self.frame_superpuesto_minimizado:

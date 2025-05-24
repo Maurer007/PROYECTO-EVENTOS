@@ -4,25 +4,24 @@ import tkinter.filedialog as filedialog
 from PIL import Image, ImageTk
 import tkinter.filedialog as filedialog
 from tkinter import colorchooser
-import webcolors
-import random
-import string
+import webcolors, random, string
 
-class Invitacion(CTk.CTk):
+class Ventana(CTk.CTkFrame):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, master=None):
+        super().__init__(master)
 
         # Configuración inicial del tema
         CTk.set_appearance_mode("System")
         CTk.set_default_color_theme("blue")
 
-        self.title("Invitaciones")
-        self.geometry("900x700+150+150")
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+
+        #self.title("Invitaciones")
+        #self.geometry("900x700+150+150")
 
         self.crear_interfaz()
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
 
         #Valores para los botones de aumento y disminuyo
         self.valor_edad = 1  # Edad mínima
@@ -40,6 +39,22 @@ class Invitacion(CTk.CTk):
         "XVs": self.crear_xv,
         "Boda": self.crear_boda
         }
+    
+    def manejar_clasificacion(self, seleccion):
+        self.seleccion_actual = seleccion
+
+    # Destruir frames anteriores si existen
+        if hasattr(self, 'paquete_actual'):
+            for frame in self.paquete_actual:
+                try:
+                    frame.destroy()
+                except:
+                    pass
+        self.paquete_actual = []
+
+    # Llamar a la función correspondiente usando el diccionario
+        if seleccion in self.paquetes_frames:
+            self.paquetes_frames[seleccion]()
 
     def alternar_widget(self, widget, mostrar=True, metodo="grid"):
         if mostrar:
@@ -472,24 +487,13 @@ class Invitacion(CTk.CTk):
         self.entry_boda_misa.grid(row=2, column=0, columnspan=2, pady=5, padx=2, sticky="nsew")
         self.entry_boda_misa.grid_remove()
 
-        self.frame_boda_menores=CTk.CTkFrame(self.frame_form, fg_color="#6ea7f1")
-        self.frame_boda_menores.grid(pady=4, padx=4, row=10, column=0, sticky="nsew")
-        self.label_boda_menores=CTk.CTkLabel(self.frame_boda_menores,text="Menores", font=("Verdana", 14, "bold"))
-        self.label_boda_menores.grid(row=0, column=0, pady=5, padx=2, sticky="w")
-        self.frame_boda_menores.columnconfigure(0,weight=1)
-        self.frame_boda_menores.rowconfigure(0,weight=1)
-        self.frame_boda_menores.rowconfigure(1,weight=1)
-        self.checkbox_boda_menores_var = tk.IntVar()
-        self.checkbox_boda_menores = CTk.CTkCheckBox(self.frame_boda_menores, fg_color="white", text="No se permiten niños",variable=self.checkbox_boda_menores_var)
-        self.checkbox_boda_menores.grid(row=1, column=0, pady=5, padx=2, sticky="nsew")
-
         #Guardar los frames actuales
         self.paquete_actual = [self.frame_novios,self.frame_boda_padrinos,self.frame_boda_cortesia,self.frame_boda_misa]
 
     def crear_interfaz(self):
         # Frame principal
         self.frame0 = CTk.CTkFrame(self, fg_color="#303AC9")
-        self.frame0.pack(fill="both", expand=True, pady=10, padx=20)
+        self.frame0.grid(row=0, column=0, sticky="nsew")
 
         for i in range(5):
             self.frame0.columnconfigure(i, weight=1)
@@ -591,6 +595,7 @@ class Invitacion(CTk.CTk):
         self.boton_copiar_cod.grid(row=2, column=2, pady=5, padx=2, sticky="nsew")
         self.boton_copiar_cod.grid_remove()
         
+    
     # Cupo invitados
     def crear_frame_cupo_inv_form(self):
         self.frame_cupo_inv = CTk.CTkFrame(self.frame_form, fg_color="#6ea7f1")
@@ -707,7 +712,6 @@ class Invitacion(CTk.CTk):
 
 
 # Ejecución
-if __name__ == "__main__":
-    app = Invitacion()
-    app.mainloop()
-
+"""if __name__ == "__main__":
+    app = Ventana()
+    app.mainloop()"""
