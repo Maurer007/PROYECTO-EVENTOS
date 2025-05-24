@@ -238,12 +238,12 @@ class VentanaRegistro(ct.CTkToplevel):
 
     def on_registrar(self):
 
-        """print("on_registrar seleccion:", self.seleccion)
+        print("on_registrar seleccion:", self.seleccion)
         if self.seleccion is None:
             print("ERROR: self.seleccion es None antes de get()")
         else:
             genero = self.seleccion.get()
-            print("Genero seleccionado:", genero)"""
+            print("Genero seleccionado:", genero)
 
         nombre = self.nombre.get()
         apellido_paterno = self.apellido_paterno.get()
