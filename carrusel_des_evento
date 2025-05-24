@@ -1,0 +1,109 @@
+import customtkinter as ctk
+from PIL import Image, ImageTk
+
+# Configuración inicial
+ctk.set_appearance_mode("light")
+ctk.set_default_color_theme("blue")
+
+app = ctk.CTk()
+app.geometry("500x400")
+app.title("Carrusel deslizante")
+
+# Canvas para animar
+canvas = ctk.CTkCanvas(app, width=400, height=300, highlightthickness=0)
+canvas.pack(pady=40)
+
+# Contenido del carrusel (2 elementos)
+content = [
+    {"type": "image", "path": "assets/cumples/cumple1.png"},
+    {"type": "text", "text": "Este es un mensaje"}
+]
+
+# Cargar imágenes
+for item in content:
+    if item["type"] == "image":
+        img = Image.open(item["path"]).resize((400, 300), Image.LANCZOS)
+        item["image"] = ImageTk.PhotoImage(img)
+
+# Crear widgets reutilizables para contenido
+image_label = ctk.CTkLabel(canvas, text="")
+text_label = ctk.CTkLabel(canvas, text="", font=("Arial", 20), width=400, height=300, fg_color="#518D65")
+
+current_window = None
+next_window = None
+animando = False
+pendiente_animacion = None  # guardará "enter" o "leave" si se solicita durante animación
+
+def animar_transicion(x_salida, x_entrada, velocidad, direccion):
+    global current_window, next_window, animando, pendiente_animacion
+
+    animando = True
+    canvas.coords(current_window, x_salida, 0)
+    canvas.coords(next_window, x_entrada, 0)
+
+    if (direccion == "derecha" and x_entrada <= 0) or (direccion == "izquierda" and x_entrada >= 0):
+        canvas.delete(current_window)
+        current_window = next_window
+        next_window = None
+        animando = False
+
+        # Si durante la animación se pidió otra transición, hacerla ahora
+        if pendiente_animacion == "enter":
+            pendiente_animacion = None
+            mostrar_contenido(1, 400, "derecha")
+        elif pendiente_animacion == "leave":
+            pendiente_animacion = None
+            mostrar_contenido(0, -400, "izquierda")
+
+        return
+
+    paso = velocidad if direccion == "izquierda" else -velocidad
+    app.after(11, lambda: animar_transicion(x_salida + paso, x_entrada + paso, velocidad, direccion))
+
+
+def mostrar_contenido(indice, pos_entrada, direccion):
+    global current_window, next_window, animando, pendiente_animacion
+
+    if animando:
+        # Si ya está animando, guardar la petición para hacerla después
+        if indice == 1:
+            pendiente_animacion = "enter"
+        else:
+            pendiente_animacion = "leave"
+        return
+
+    item = content[indice]
+
+    if item["type"] == "image":
+        image_label.configure(image=item["image"])
+        widget = image_label
+    else:
+        text_label.configure(text=item["text"])
+        widget = text_label
+
+    next_window = canvas.create_window(pos_entrada, 0, anchor="nw", window=widget)
+
+    if current_window is None:
+        canvas.coords(next_window, 0, 0)
+        current_window = next_window
+        next_window = None
+    else:
+        animar_transicion(0, pos_entrada, velocidad=5, direccion=direccion)
+
+
+def on_mouse_enter(event):
+    mostrar_contenido(1, 400, "derecha")
+
+
+def on_mouse_leave(event):
+    mostrar_contenido(0, -400, "izquierda")
+0
+
+# Mostrar el primer contenido al iniciar (sin animación)
+mostrar_contenido(0, 0, "derecha")
+
+# Bind eventos mouse
+canvas.bind("<Enter>", on_mouse_enter)
+canvas.bind("<Leave>", on_mouse_leave)
+
+app.mainloop()
