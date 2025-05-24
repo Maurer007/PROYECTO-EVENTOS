@@ -1,14 +1,45 @@
 import os
 import sqlite3
 from tkinter import filedialog
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
-from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 import bcrypt
 import customtkinter as ct
 from PIL import Image
 import tkinter as tk
 from tkcalendar import DateEntry
 from datetime import date
+
+from sqlalchemy.exc import SQLAlchemyError
+from utils.orm_utils import Session
+from models.usuario import Usuario 
+
+class UsuarioManager:
+
+    @staticmethod
+    def registrar_usuario(nombre, apellido_paterno, apellido_materno, genero, ciudad, estado, fecha_nacimiento, nom_usuario, contrasena, telefono, correo):
+        session = Session()
+        try:
+            nuevo_usuario = Usuario(
+                nombre=nombre,
+                apellido_paterno=apellido_paterno,
+                apellido_materno=apellido_materno,
+                ciudad=ciudad,
+                estado=estado,
+                genero=genero,
+                fecha_nacimiento=fecha_nacimiento,
+                nom_usuario=nom_usuario,
+                contraseña=contrasena,
+                telefono=telefono,
+                correo=correo
+            )
+
+            session.add(nuevo_usuario)
+            session.commit()
+            return True
+        except SQLAlchemyError as e:
+            session.rollback()
+            print(f"Error al registrar usuario: {e}")
+        finally:
+            session.close()
 
 class VentanaRegistro(ct.CTkToplevel):
     def __init__(self, menu, textlb = "Registro de usuarios", textE1 = "Nombre", textE2 = "Apellidos", textE3 = "E-mail", textE4 = "Usuario", textE5 = "Contraseña", textE6 = "Confirmar Contraseña", textB1 = "Registrar", textB2 = "Volver", colorFondo="black"):
@@ -45,8 +76,17 @@ class VentanaRegistro(ct.CTkToplevel):
         self._set_appearance_mode("dark")
         self.rowconfigure(1, weight=1)
 
-        self.REGISTRO_BD = "credentials.db"
+        #self.REGISTRO_BD = "credentials.db"
+        self.nombre=""
+        self.apellido_paterno=""
+        self.apellido_materno=""
+        self.estado=""
+        self.municipio=""
         self.seleccion = ct.StringVar(value="")
+        self.nom_usuario=""
+        self.contrasena=""
+        self.telefono=""
+        self.correo=""
 
         self.frame_principal = self.crear_scrollable_frame()
 
@@ -63,7 +103,7 @@ class VentanaRegistro(ct.CTkToplevel):
         #self.labelError = ct.CTkLabel(self.container9, text="", font=("Arial", 15), text_color="red")
         #self.labelError.pack(expand=True, anchor="center")
 
-        self.crearTablaBD()
+        #self.crearTablaBD()
 
     def crear_scrollable_frame(self):
         container1 = ct.CTkScrollableFrame(self, fg_color="transparent")
@@ -98,10 +138,10 @@ class VentanaRegistro(ct.CTkToplevel):
     
     #Todos los campos de datos personales
     def crear_datos_personales(self, frame_datos):
-        self.crear_entry_arriba(frame_datos, 0, "Nombre")
-        self.crear_entry_arriba(frame_datos, 2, "Apellido Paterno")
-        self.crear_entry_arriba(frame_datos, 4, "Apellido Materno")
-        self.crear_frame_radios(frame_datos)
+        self.nombre=self.crear_entry_arriba(frame_datos, 0, "Nombre")
+        self.apellido_paterno=self.crear_entry_arriba(frame_datos, 2, "Apellido Paterno")
+        self.apellido_materno=self.crear_entry_arriba(frame_datos, 4, "Apellido Materno")
+        self.seleccion=self.crear_frame_radios(frame_datos)
         self.crear_frame_fecha(frame_datos)
         self.crear_frame_municipio(frame_datos)
 
@@ -111,6 +151,8 @@ class VentanaRegistro(ct.CTkToplevel):
 
         label = ct.CTkLabel(frame_datos, text=texto, text_color="black", font=("Arial", 20))
         label.grid(row=1, column=columna, columnspan=4, pady=10, padx=10, sticky="w")
+
+        return entrada
 
     def crear_frame_radios(self, frame_datos):
         frameRadios = ct.CTkFrame(frame_datos, fg_color="white")
@@ -142,8 +184,8 @@ class VentanaRegistro(ct.CTkToplevel):
         frame = ct.CTkFrame(frame_datos, fg_color="transparent")
         frame.grid(row=3, column=0, columnspan=8, pady=10, padx=10)
 
-        self.crear_entry(frame, 0, "Estado")
-        self.crear_entry(frame, 4, "Municipio")
+        self.estado=self.crear_entry(frame, 0, "Estado")
+        self.municipio=self.crear_entry(frame, 4, "Municipio")
 
     def crear_entry(self, frame_municipio, columna, texto):
         label = ct.CTkLabel(frame_municipio, text=texto, text_color="black", font=("Arial", 20))
@@ -152,13 +194,15 @@ class VentanaRegistro(ct.CTkToplevel):
         entrada = ct.CTkEntry(frame_municipio, text_color="black", font=("Arial", 20), fg_color="white")
         entrada.grid(row=0, column=columna+1, columnspan=3, pady=10, padx=10)
 
+        return entrada
+
     # Todos los campos de datos de usuario
     def crear_datos_usuario(self, frame_datos):
-        self.crear_entry_derecha(frame_datos, 0, 1, "Nombre de usuario")
-        self.crear_entry_derecha(frame_datos, 1, 1, "Contraseña")
+        self.nom_usuario=self.crear_entry_derecha(frame_datos, 0, 1, "Nombre de usuario")
+        self.contrasena=self.crear_entry_derecha(frame_datos, 1, 1, "Contraseña")
         self.crear_entry_derecha(frame_datos, 2, 1, "Confirmar contraseña")
-        self.crear_entry_derecha(frame_datos, 3, 1, "Teléfono")
-        self.crear_entry_derecha(frame_datos, 4, 1, "Correo electrónico")
+        self.telefono=self.crear_entry_derecha(frame_datos, 3, 1, "Teléfono")
+        self.correo=self.crear_entry_derecha(frame_datos, 4, 1, "Correo electrónico")
 
     def crear_entry_derecha(self, frame_datos, fila, columna, texto):
         label = ct.CTkLabel(frame_datos, text=texto, text_color="black", font=("Arial", 20))
@@ -167,13 +211,15 @@ class VentanaRegistro(ct.CTkToplevel):
         entrada = ct.CTkEntry(frame_datos, text_color="black", font=("Arial", 20), fg_color="white")
         entrada.grid(row=fila, column=columna+2, columnspan=4, pady=10, padx=10, sticky="nsew")
 
+        return entrada
+
     # Creación de botones
     def crear_frame_botones(self, scrollable_frame):
         frame = ct.CTkFrame(scrollable_frame, fg_color="transparent")
         frame.pack(padx=10, pady=10, fill="both", expand=True)
 
         self.crear_boton(frame, "Volver", "left", self.volver)
-        self.crear_boton(frame, "Registrar", "right", self.registrar)
+        self.crear_boton(frame, "Registrar", "right", self.on_registrar)
 
         return frame
         
@@ -188,30 +234,24 @@ class VentanaRegistro(ct.CTkToplevel):
     def on_leave(self, event):
         self.close_button.configure(text_color="SystemButtonFace")  # O el color que usabas antes
 
-    def registrar(self):
-        nombre = self.entrada1.get()
-        apellido = self.entrada2.get()
-        email = self.entrada3.get()
-        usuario = self.entrada4.get()
-        password = self.entrada5.get()
-        confirm_password = self.entrada6.get()
+    def on_registrar(self):
+        nombre = self.nombre.get()
+        apellido_paterno = self.apellido_paterno.get()
+        apellido_materno = self.apellido_materno.get()
+        estado = self.estado.get()
+        ciudad = self.municipio.get()
+        nom_usuario = self.nom_usuario.get()
+        contrasena = self.contrasena.get()
+        telefono = self.telefono.get()
+        correo = self.correo.get()
 
-        if not nombre or not apellido or not usuario or not email or not password:
-            self.labelError.configure(text="Ingrese todos los datos por favor")
+        exito = UsuarioManager.registrar_usuario(nombre, apellido_paterno, apellido_materno, genero, ciudad, estado, fecha_nacimiento, nom_usuario, contrasena, telefono, correo)
+        """
+        if exito:
+            self.label_estado.configure(text="¡Usuario registrado con éxito!", text_color="green")
         else:
-            if confirm_password == "":
-                self.labelError.configure(text="Confirme su contraseña por favor")
-            elif password != confirm_password:
-                self.labelError.configure(text="Las contraseñas no coinciden")
-            else:
-                usuarios = self.obtenerUsuario()
-                #for item in usuarios:
-                 #   if item[5] == usuario:
-                  #      self.labelError.configure(text="El usuario ingresado ya existe")
-                   # else:
-                self.insertarDatos(nombre, apellido, email, usuario, password)
-                self.labelError.configure(text="Datos guardados correctamente", text_color="green")
-
+            self.label_estado.configure(text="Error al registrar usuario.", text_color="red")
+    
     def crearTablaBD(self):
         sqlinstruction = "CREATE TABLE IF NOT EXISTS " \
                          "registro(id INTEGER PRIMARY KEY AUTOINCREMENT," \
@@ -245,7 +285,7 @@ class VentanaRegistro(ct.CTkToplevel):
         resultado = cursor.execute(instruccion).fetchall()
         conexion.close()
         return resultado
-
+    """
     def volver(self):
         from VentanaLogin import VentanaUsuario
         self.cerrar()
