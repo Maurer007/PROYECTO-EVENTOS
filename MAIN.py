@@ -3,7 +3,6 @@ from PIL import Image
 import customtkinter as ctk
 from database import DatabaseManager
 from carrusel_deslizante import CarruselDeslizante
-from VentanaLogin import VentanaUsuario
 
 class SplashScreen(ctk.CTkToplevel):
     def __init__(self, parent):
@@ -363,6 +362,7 @@ class Main(ctk.CTk):
         self.minimizar() 
 
     def abrir_login(self):
+        from VentanaLogin import VentanaUsuario
         print("Creando VentanaUsuario...")
         if hasattr(self, "ventana_usuario") and self.ventana_usuario.winfo_exists():
             print("Ya hay una ventana de usuario abierta.")
