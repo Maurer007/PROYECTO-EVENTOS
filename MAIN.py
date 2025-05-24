@@ -405,7 +405,7 @@ class Main(ctk.CTk):
         # Inserta la Ventana de invitaciones dentro de frame_principal
         try:
             invitacion = Ventana(self.frame_principal)
-            invitacion.pack(fill="both", expand=True)
+            invitacion.grid(row=0, column=0, sticky="nsew")
         except Exception as e:
             print("ERROR al crear Ventana de Invitación:", e)
 
