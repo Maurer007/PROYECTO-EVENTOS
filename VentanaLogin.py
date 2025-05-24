@@ -14,7 +14,7 @@ from datetime import date
 engine = create_engine("sqlite:///join_up.db", echo=True)
 
 class VentanaUsuario(ct.CTkToplevel):
-    def __init__(self, menu, colorFondo="black"):
+    def __init__(self, menu, colorFondo="#1256E8"):
         super().__init__(menu)
         self.title("Iniciar sesión")
         self.menu=menu
@@ -55,76 +55,59 @@ class VentanaUsuario(ct.CTkToplevel):
         self.contrasenia = ""
 
         self.container1 = ct.CTkFrame(self, fg_color=colorFondo)
-        self.container2 = ct.CTkFrame(self, fg_color=colorFondo)
+        self.container2 = ct.CTkFrame(self, fg_color="#D9D9D9", corner_radius=10)
         self.container3 = ct.CTkFrame(self, fg_color=colorFondo)
         self.container4 = ct.CTkFrame(self, fg_color=colorFondo)
         self.container5 = ct.CTkFrame(self, fg_color=colorFondo)
-        self.container6 = ct.CTkFrame(self, fg_color=colorFondo)
-        self.container7 = ct.CTkFrame(self, fg_color=colorFondo)
 
         self.container1.pack(padx=10, pady=10)
-        self.container2.pack(padx=90, pady=10, expand=True, fill="both")
-        self.container3.pack(padx=90, pady=10, expand=True, fill="both")
+        self.container2.pack(padx=30, pady=10, expand=True, fill="both")
+        self.container3.pack(padx=10, pady=10)
         self.container4.pack(padx=10, pady=10)
         self.container5.pack(padx=10, pady=10)
-        self.container6.pack(padx=10, pady=10)
-        self.container7.pack(padx=10, pady=10)
 
+        self.lbTitulo = ct.CTkLabel(self.container1, text="JOIN UP", text_color="#F27171", font=("Eras Bold ITC", 70))
+        self.lbTitulo.pack(expand=True, anchor="center")
 
-        try:
-            ruta_logo = os.path.join(os.path.dirname(__file__), 'assets', 'Logo', 'logo.png')
-            if os.path.exists(ruta_logo):
-                imagen_logo = Image.open(ruta_logo)
-                self.img = ct.CTkImage(light_image=imagen_logo, dark_image=imagen_logo, size=(250, 150))
-                self.lbImg = ct.CTkLabel(self.container1, text="", image=self.img)
-            else:
-                raise FileNotFoundError("Logo no encontrado")
-        except Exception as e:
-            print("Error cargando imagen del logo:", e)
-            self.lbImg = ct.CTkLabel(self.container1, text="LOGO")
+        self.lbSI = ct.CTkLabel(self.container1, text="Inicio de sesión", text_color="white", font=("Arial", 30))
+        self.lbSI.pack(expand=True, anchor="center")
 
-        self.lbImg.pack(expand=True, anchor="center")
+        self.lbUser = ct.CTkLabel(self.container2, text="Usuario", text_color="black", font=("Arial", 20))
+        self.lbUser.grid(row=0, column=0, padx=10, pady=10)
 
+        self.entrada1 = ct.CTkEntry(self.container2, font=("Arial", 20), fg_color="white", border_color="black", border_width=2)
+        self.entrada1.grid(row=0, column=1, columnspan=3, padx=10, pady=10, sticky="nsew")
 
-        self.lbUser = ct.CTkLabel(self.container2, text="Usuario", text_color="white", font=("Arial", 20))
-        self.lbUser.pack(expand=True, side="left")
+        #self.entrada1.bind("<FocusIn>", lambda event: self.lbUser.configure(text="Usuario"))
+        #self.entrada1.bind("<FocusOut>", lambda event: self.lbUser.configure(text=""))
 
-        self.entrada1 = ct.CTkEntry(self.container2, font=("Arial", 20))
-        self.entrada1.pack(expand=True, fill="both", side="right", padx=10)
+        self.lbPW = ct.CTkLabel(self.container2, text="Contraseña", text_color="black", font=("Arial", 20))
+        self.lbPW.grid(row=1, column=0, padx=10, pady=10)
 
-        self.entrada1.bind("<FocusIn>", lambda event: self.lbUser.configure(text="Usuario"))
-        self.entrada1.bind("<FocusOut>", lambda event: self.lbUser.configure(text=""))
-
-        self.lbPW = ct.CTkLabel(self.container3, text="Contraseña", text_color="white", font=("Arial", 20))
-        self.lbPW.pack(expand=True, side="left")
-
-        self.entrada2 = ct.CTkEntry(self.container3, font=("Arial", 20), show="*")
-        self.entrada2.pack(expand=True, fill="both", side="right", padx=10)
-
-        self.entrada2.bind("<FocusIn>", lambda event: self.lbPW.configure(text="Contraseña"))
-        self.entrada2.bind("<FocusOut>", lambda event: self.lbPW.configure(text=""))
+        self.entrada2 = ct.CTkEntry(self.container2, font=("Arial", 20), show="*", fg_color="white", border_color="black", border_width=2)
+        self.entrada2.grid(row=1, column=1, columnspan=3,  padx=10, pady=10, sticky="nsew")
+        #self.entrada2.bind("<FocusIn>", lambda event: self.lbPW.configure(text="Contraseña"))
+        #self.entrada2.bind("<FocusOut>", lambda event: self.lbPW.configure(text=""))
 
         self.opcion = ct.BooleanVar()
-        self.checkbox = ct.CTkCheckBox(self.container4, text="Recordarme", text_color="white", variable=self.opcion)
-        self.checkbox.pack(padx=5, pady=5, expand=True, side="left", anchor="w")
+        self.checkbox = ct.CTkCheckBox(self.container2, text="Recordar usuario", text_color="black", variable=self.opcion)
+        self.checkbox.grid(row=2, column=0, padx=10, pady=10)
 
-        self.boton1 = ct.CTkButton(self.container5, font=("Arial", 20), text="Iniciar sesión", command=self.login)
+        self.boton1 = ct.CTkButton(self.container3, font=("Arial", 20), text="Iniciar sesión", fg_color="#F27171", hover_color="red", command=self.login)
         self.boton1.pack(padx=5, pady=5, expand=True)
 
-        self.lbRegistro = ct.CTkLabel(self.container6, text="Registro", text_color="white", font=("Arial", 20, "underline"), cursor="hand2")
+        self.lbRegistro = ct.CTkLabel(self.container4, text="Registro", text_color="white", font=("Arial", 20, "underline"), cursor="hand2")
         self.lbRegistro.pack(padx=5, pady=5, expand=True, side="right", anchor="e")
 
         self.lbRegistro.bind("<Button-1>", lambda event: self.registro())
         self.lbRegistro.bind("<Enter>", lambda event: self.lbRegistro.configure(text_color="blue"))
         self.lbRegistro.bind("<Leave>", lambda event: self.lbRegistro.configure(text_color="white"))
 
-        self.label = ct.CTkLabel(self.container7, text="", font=("Arial", 15), text_color="red")
+        self.label = ct.CTkLabel(self.container5, text="", font=("Arial", 15), text_color="red")
         self.label.pack(expand=True, anchor="center")
 
         self.crearTablaBD()
         self.obtenerCredenciales()
-        
-        print("VentanaUsuario geometry:", self.winfo_geometry())
 
     def on_enter(self, event):
         self.close_button.configure(text_color="red")  # O fg_color si solo cambia el texto
@@ -219,7 +202,6 @@ class VentanaUsuario(ct.CTkToplevel):
     def cerrar(self):
         self.grab_release()
         self.destroy()
-
 class VentanaRegistro(ct.CTkToplevel):
     def __init__(self, menu, textlb = "Registro de usuarios", textE1 = "Nombre", textE2 = "Apellidos", textE3 = "E-mail", textE4 = "Usuario", textE5 = "Contraseña", textE6 = "Confirmar Contraseña", textB1 = "Registrar", textB2 = "Volver", colorFondo="black"):
         super().__init__(menu)
@@ -233,14 +215,13 @@ class VentanaRegistro(ct.CTkToplevel):
         self.update()
 
         ancho_v = 800
-        alto_v = 500
+        alto_v = 600
         x = (self.winfo_screenwidth() - ancho_v) // 2
         y = (self.winfo_screenheight() - alto_v) // 2
         self.geometry(f"{ancho_v}x{alto_v}+{x}+{y}")
 
         self.grab_set()
 
-        print("VentanaUsuario creada Vol.5")
         #self.resizable(False, False)
         self.overrideredirect(True)
         frame_top = ct.CTkFrame(self, height=30, corner_radius=0, fg_color=colorFondo)
@@ -259,121 +240,139 @@ class VentanaRegistro(ct.CTkToplevel):
         self.REGISTRO_BD = "credentials.db"
         self.seleccion = ct.StringVar(value="")
 
-        self.container1 = ct.CTkFrame(self, fg_color="transparent")
-        self.container2 = ct.CTkScrollableFrame(self, fg_color="transparent")
+        self.frame_principal = self.crear_scrollable_frame()
 
-        self.container1.pack(padx=10, pady=10, fill="both")
-        self.container2.pack(padx=10, pady=10, fill="both", expand=True)
-        self.container2.grid_columnconfigure((0,1,2,3,4,5,6,7), weight=1)
+        self.frame_titulo = self.crear_frame_titulo(self.frame_principal)
 
-        self.container3 = ct.CTkFrame(self.container2, fg_color="transparent", border_color="white", border_width=3)
-        self.container3.pack(padx=10, pady=(10,0), fill="both", expand=True)
-        self.container4 = ct.CTkFrame(self.container2, fg_color="transparent", border_color="white", border_width=3)
-        self.container4.pack(padx=10, pady=(0,10), fill="both", expand=True)
-        self.container5 = ct.CTkFrame(self.container2, fg_color="transparent", border_color="white", border_width=3)
-        self.container5.pack(padx=10, pady=(10,0), fill="both", expand=True)
-        self.container6 = ct.CTkFrame(self.container2, fg_color="transparent", border_color="white", border_width=3)
-        self.container6.pack(padx=10, fill="both", expand=True)
+        self.datos_personales = self.crear_frame_datos(self.frame_principal, "Datos personales")
+        self.crear_datos_personales(self.datos_personales)
 
-        self.lbTitulo = ct.CTkLabel(self.container1, text=textlb, text_color="green", font=("Arial", 40))
-        self.lbTitulo.pack(expand=True, anchor="center")
+        self.datos_usuario = self.crear_frame_datos(self.frame_principal, "Datos de usuario")
+        self.crear_datos_usuario(self.datos_usuario)
 
-        self.lbDatos1 = ct.CTkLabel(self.container3, text="Datos personales", text_color="white", font=("Arial", 30))
-        self.lbDatos1.grid(pady=10, padx=10, sticky="nsew")
-
-        self.entrada1 = ct.CTkEntry(self.container4, font=("Arial", 20))
-        self.entrada1.grid(row=0, column=0, columnspan=2, pady=10, padx=10)
-
-        self.entrada2 = ct.CTkEntry(self.container4, font=("Arial", 20))
-        self.entrada2.grid(row=0, column=2, columnspan=2, pady=10, padx=10)
-
-        self.entrada3 = ct.CTkEntry(self.container4, font=("Arial", 20))
-        self.entrada3.grid(row=0, column=4, columnspan=2, pady=10, padx=10)
-
-        self.label1 = ct.CTkLabel(self.container4, text="Nombre(s)", text_color="white", font=("Arial", 20))
-        self.label1.grid(row=1, column=0, columnspan=4, pady=10, padx=10, sticky="w")
-
-        self.label2 = ct.CTkLabel(self.container4, text="Apellido Paterno", text_color="white", font=("Arial", 20))
-        self.label2.grid(row=1, column=2, columnspan=2, pady=10, padx=10, sticky="w")
-
-        self.label3 = ct.CTkLabel(self.container4, text="Apellido Materno", text_color="white", font=("Arial", 20))
-        self.label3.grid(row=1, column=4, columnspan=2, pady=10, padx=10, sticky="w")
-
-        self.containerRadio = ct.CTkFrame(self.container4, fg_color="transparent")
-        self.containerRadio.grid(row=2, column=0, columnspan=4, pady=10, padx=10)
-
-        self.label4 = ct.CTkLabel(self.containerRadio, text="Género", text_color="white", font=("Arial", 20))
-        self.label4.grid(row=0, column=0, columnspan=3, pady=10, padx=10)
-
-        self.radio_hombre = ct.CTkRadioButton(self.containerRadio, text="Hombre", text_color="white", variable=self.seleccion, value=1)
-        self.radio_hombre.grid(row=1, column=0, pady=10, padx=10)
-
-        self.radio_mujer = ct.CTkRadioButton(self.containerRadio, text="Mujer", text_color="white", variable=self.seleccion, value=2)
-        self.radio_mujer.grid(row=1, column=1, pady=10, padx=10)
-
-        self.radio_otro = ct.CTkRadioButton(self.containerRadio, text="Otro", text_color="white", variable=self.seleccion, value=3)
-        self.radio_otro.grid(row=1, column=2, pady=10, padx=10)
-
-        self.containerFecha = ct.CTkFrame(self.container4, fg_color="transparent")
-        self.containerFecha.grid(row=2,column=4, columnspan=4, pady=10, padx=10)
-
-        self.label5 = ct.CTkLabel(self.containerFecha, text="Fecha de nacimiento", text_color="white", font=("Arial", 20))
-        self.label5.grid(row=0, column=0, pady=10, padx=10)
-
-        self.date_entry = DateEntry(self.containerFecha, width=16, background='darkblue',
-                       foreground='white', borderwidth=2, date_pattern='y-mm-dd', mindate=date(1900, 1, 1), maxdate=date.today())
-        self.date_entry.grid(row=1, column=0, pady=10, padx=10)
-
-        self.label6 = ct.CTkLabel(self.container4, text="Estado", font=("Arial", 20), text_color="white")
-        self.label6.grid(row=3, column=0, columnspan=2, pady=10, padx=10, sticky="w")
-
-        self.entrada6 = ct.CTkEntry(self.container4, font=("Arial", 20))
-        self.entrada6.grid(row=3, column=2, columnspan=2, pady=10, padx=10, sticky="nsew")
-
-        self.label7 = ct.CTkLabel(self.container4, text="Ciudad", font=("Arial", 20), text_color="white")
-        self.label7.grid(row=3, column=4, columnspan=2, pady=10, padx=10, sticky="w")
-
-        self.entrada7 = ct.CTkEntry(self.container4, font=("Arial", 20))
-        self.entrada7.grid(row=3, column=6, columnspan=2, pady=10, padx=10, sticky="nsew")
-
-        self.lbDatos2 = ct.CTkLabel(self.container5, text="Datos del usuario", text_color="white", fg_color="black", font=("Arial", 30))
-        self.lbDatos2.grid(pady=10, padx=10, sticky="nsew")
-
-        self.label_usuario = ct.CTkLabel(self.container6, text="Nombre de usuario", font=("Arial", 20), text_color="white")
-        self.label_usuario.grid(row=0, column=0, pady=10, padx=10, sticky="w")
-        self.entrada_usuario = ct.CTkEntry(self.container6, font=("Arial", 20))
-        self.entrada_usuario.grid(row=0, column=1, columnspan=2, pady=10, padx=10, sticky="nsew")
-
-        self.label_contraseña = ct.CTkLabel(self.container6, text="Contraseña", font=("Arial", 20), text_color="white")
-        self.label_contraseña.grid(row=1, column=0, pady=10, padx=10, sticky="w")
-        self.entrada_contraseña = ct.CTkEntry(self.container6, font=("Arial", 20))
-        self.entrada_contraseña.grid(row=1, column=1, columnspan=2, pady=10, padx=10, sticky="nsew")
-
-        self.label_conf_contr = ct.CTkLabel(self.container6, text="Confirmar contraseña", font=("Arial", 20), text_color="white")
-        self.label_conf_contr.grid(row=2, column=0, pady=10, padx=10, sticky="w")
-        self.entrada_conf_contr = ct.CTkEntry(self.container6, font=("Arial", 20))
-        self.entrada_conf_contr.grid(row=2, column=1, columnspan=2, pady=10, padx=10, sticky="nsew")
-        
-        self.label_tel = ct.CTkLabel(self.container6, text="Número de teléfono", font=("Arial", 20), text_color="white")
-        self.label_tel.grid(row=3, column=0, pady=10, padx=10, sticky="w")
-        self.entrada_tel = ct.CTkEntry(self.container6, font=("Arial", 20))
-        self.entrada_tel.grid(row=3, column=1, columnspan=2, pady=10, padx=10, sticky="nsew")
-
-        self.label_correo = ct.CTkLabel(self.container6, text="Correo electrónico", font=("Arial", 20), text_color="white")
-        self.label_correo.grid(row=4, column=0, pady=10, padx=10, sticky="w")
-        self.entrada_correo = ct.CTkEntry(self.container6, font=("Arial", 20))
-        self.entrada_correo.grid(row=4, column=1, columnspan=2, pady=10, padx=10, sticky="nsew")
-
-        self.boton1 = ct.CTkButton(self.container6, font=("Arial", 20), text="Registrar")
-        self.boton1.grid(row=5, column=0, pady=10, padx=10)
-
-        self.boton2 = ct.CTkButton(self.container6, font=("Arial", 20), text="Volver", command=self.volver)
-        self.boton2.grid(row=5, column=2, pady=10, padx=10)
+        self.frme_botones = self.crear_frame_botones(self.frame_principal)
 
         #self.labelError = ct.CTkLabel(self.container9, text="", font=("Arial", 15), text_color="red")
         #self.labelError.pack(expand=True, anchor="center")
 
         self.crearTablaBD()
+
+    def crear_scrollable_frame(self):
+        container1 = ct.CTkScrollableFrame(self, fg_color="transparent")
+        container1.pack(padx=10, pady=10, fill="both", expand=True)
+
+        return container1
+
+    def crear_frame_titulo(self, scrollable_frame):
+        frame = ct.CTkFrame(scrollable_frame, fg_color="transparent")
+        frame.pack(padx=10, pady=10, fill="both")
+
+        lbTitulo = ct.CTkLabel(frame, text="JOIN UP", text_color="#F27171", font=("Eras Bold ITC", 70))
+        lbTitulo.pack(expand=True, anchor="center")
+
+        lbSubtitulo = ct.CTkLabel(frame, text="Registro de usuario", text_color="white", font=("Arial", 30))
+        lbSubtitulo.pack(expand=True, anchor="center")
+
+        return frame
+
+    def crear_frame_datos(self, scrollable_frame, tipo_datos):
+        frame = ct.CTkFrame(scrollable_frame, fg_color="#D9D9D9", corner_radius=16)
+        frame.pack(padx=10, pady=10, fill="both", expand=True)
+
+        lbDatos = ct.CTkLabel(frame, text=tipo_datos, text_color="black", font=("Arial", 24))
+        lbDatos.pack(padx=10, pady=10, anchor="w")
+
+        frame_datos = ct.CTkFrame(frame, fg_color="#B5B2CA", border_color="white", border_width=3, corner_radius=16)
+        frame_datos.pack(pady=10, padx=10, anchor="center", fill="both", expand=True)
+        frame_datos.grid_columnconfigure((0,1,2,3,4,5,6,7), weight=1)
+
+        return frame_datos
+    
+    #Todos los campos de datos personales
+    def crear_datos_personales(self, frame_datos):
+        self.crear_entry_arriba(frame_datos, 0, "Nombre")
+        self.crear_entry_arriba(frame_datos, 2, "Apellido Paterno")
+        self.crear_entry_arriba(frame_datos, 4, "Apellido Materno")
+        self.crear_frame_radios(frame_datos)
+        self.crear_frame_fecha(frame_datos)
+        self.crear_frame_municipio(frame_datos)
+
+    def crear_entry_arriba(self, frame_datos, columna, texto):
+        entrada = ct.CTkEntry(frame_datos, text_color="black", font=("Arial", 20), fg_color="white")
+        entrada.grid(row=0, column=columna, columnspan=2, pady=10, padx=10)
+
+        label = ct.CTkLabel(frame_datos, text=texto, text_color="black", font=("Arial", 20))
+        label.grid(row=1, column=columna, columnspan=4, pady=10, padx=10, sticky="w")
+
+    def crear_frame_radios(self, frame_datos):
+        frameRadios = ct.CTkFrame(frame_datos, fg_color="white")
+        frameRadios.grid(row=2, column=0, columnspan=4, pady=10, padx=10)
+
+        label = ct.CTkLabel(frameRadios, text="Género", text_color="black", font=("Arial", 20))
+        label.grid(row=0, column=0, columnspan=3, pady=10, padx=10)
+
+        radio_hombre = self.crear_radios(frameRadios, 0, "Hombre")
+        radio_mujer = self.crear_radios(frameRadios, 1, "Mujer")
+        radio_otro = self.crear_radios(frameRadios, 2, "Otro")
+        
+    def crear_radios(self, frame_radios, columna, texto):
+        radio = ct.CTkRadioButton(frame_radios, text=texto, text_color="black", variable=self.seleccion, value=1)
+        radio.grid(row=1, column=columna, pady=10, padx=10)
+
+    def crear_frame_fecha(self, frame_datos):
+        frameFecha = ct.CTkFrame(frame_datos, fg_color="white")
+        frameFecha.grid(row=2,column=4, columnspan=4, pady=10, padx=10, sticky="nsew")
+
+        label = ct.CTkLabel(frameFecha, text="Fecha de nacimiento", text_color="black", font=("Arial", 20))
+        label.grid(row=0, column=0, pady=10, padx=10)
+
+        date_entry = DateEntry(frameFecha, width=16, background='#D9D9D9',
+                       date_pattern='y-mm-dd', mindate=date(1900, 1, 1), maxdate=date.today())
+        date_entry.grid(row=1, column=0, pady=10, padx=10)
+
+    def crear_frame_municipio(self, frame_datos):
+        frame = ct.CTkFrame(frame_datos, fg_color="transparent")
+        frame.grid(row=3, column=0, columnspan=8, pady=10, padx=10)
+
+        self.crear_entry(frame, 0, "Estado")
+        self.crear_entry(frame, 4, "Municipio")
+
+    def crear_entry(self, frame_municipio, columna, texto):
+        label = ct.CTkLabel(frame_municipio, text=texto, text_color="black", font=("Arial", 20))
+        label.grid(row=0, column=columna, pady=10, padx=10, sticky="w")
+
+        entrada = ct.CTkEntry(frame_municipio, text_color="black", font=("Arial", 20), fg_color="white")
+        entrada.grid(row=0, column=columna+1, columnspan=3, pady=10, padx=10)
+
+    # Todos los campos de datos de usuario
+    def crear_datos_usuario(self, frame_datos):
+        self.crear_entry_derecha(frame_datos, 0, 1, "Nombre de usuario")
+        self.crear_entry_derecha(frame_datos, 1, 1, "Contraseña")
+        self.crear_entry_derecha(frame_datos, 2, 1, "Confirmar contraseña")
+        self.crear_entry_derecha(frame_datos, 3, 1, "Teléfono")
+        self.crear_entry_derecha(frame_datos, 4, 1, "Correo electrónico")
+
+    def crear_entry_derecha(self, frame_datos, fila, columna, texto):
+        label = ct.CTkLabel(frame_datos, text=texto, text_color="black", font=("Arial", 20))
+        label.grid(row=fila, column=columna, columnspan=2, pady=10, padx=10, sticky="w")
+
+        entrada = ct.CTkEntry(frame_datos, text_color="black", font=("Arial", 20), fg_color="white")
+        entrada.grid(row=fila, column=columna+2, columnspan=4, pady=10, padx=10, sticky="nsew")
+
+    # Creación de botones
+    def crear_frame_botones(self, scrollable_frame):
+        frame = ct.CTkFrame(scrollable_frame, fg_color="transparent")
+        frame.pack(padx=10, pady=10, fill="both", expand=True)
+
+        self.crear_boton(frame, "Volver", "left", self.volver)
+        self.crear_boton(frame, "Registrar", "right", self.registrar)
+
+        return frame
+        
+    def crear_boton(self, frame_botones, texto, lado, comando):
+        boton = ct.CTkButton(frame_botones, font=("Arial", 20), text=texto, command=comando)
+        boton.pack(pady=10, side=lado, expand=True)
+
 
     def on_enter(self, event):
         self.close_button.configure(text_color="red")  # O fg_color si solo cambia el texto
@@ -445,8 +444,7 @@ class VentanaRegistro(ct.CTkToplevel):
 
     def cerrar(self):
         self.grab_release()
-        self.destroy()    
-
+        self.destroy() 
 class VentanaDatos(ct.CTk):
     def __init__(self, parent, usuario):
         super().__init__()
