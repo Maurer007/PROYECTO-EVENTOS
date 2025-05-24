@@ -127,8 +127,6 @@ boton_editar.grid(pady=10,padx=25,row=1,column=0,sticky="nsew")
 boton_guardar_inv=CTk.CTkButton(frame2,fg_color="#220c56",text="Guardar invitacion")
 boton_guardar_inv.grid(pady=10,padx=25,row=1,column=1,sticky="nsew")
 
-
-
 # Ejecutar la ventana
 ventana.mainloop()
 

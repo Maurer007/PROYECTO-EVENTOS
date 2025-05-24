@@ -166,19 +166,23 @@ class Main(ctk.CTk):
             frame_principal.columnconfigure(i, weight=1)
 
         #Evento grande en la parte superior
-        contenido = [
-            {"type": "image", "path": "assets/cumples/cumple1.png"},
-            {"type": "text", "text": "Este es un mensaje"},
-            {"type": "image", "path": "assets/Logo/logo.png"},
-            {"type": "text", "text": "Otro mensaje importante"},
-        ]
-        
         principal_main = ctk.CTkFrame(frame_principal)
         principal_main.grid(row=0, column=0, sticky="nsew", columnspan=6)
         principal_main.columnconfigure(0, weight=1)
         principal_main.rowconfigure(0, weight=1)
 
-        evento_grande = ctk.CTkLabel(principal_main, text="Evento 1", fg_color="royalblue", text_color=self.text_color, height=evento_height)
+        #contenido = self.obtener_imagenes_eventos()
+        contenido = [
+            {"type": "text", "text": "¡Bienvenido a JoinUp!"},
+            {"type": "image", "path": "assets/grandes/grande1.png"},
+            {"type": "text", "text": "¡Organiza tus eventos con nosotros!"},
+            {"type": "image", "path": "assets/grandes/grande2.png"},
+            {"type": "text", "text": "¡Haz tu evento inolvidable!"},
+            {"type": "image", "path": "assets/grandes/grande3.png"},
+            {"type": "text", "text": "¡Celebra con nosotros!"},
+            {"type": "image", "path": "assets/grandes/grande4.png"},
+        ]
+        evento_grande = CarruselDeslizante(principal_main, contenido, duracion=3000, velocidad=8, height=evento_height)
         evento_grande.grid(sticky="nsew", pady=(0,3))
 
         # Filas de eventos (copia una fila para poner una nueva categoría de eventos)

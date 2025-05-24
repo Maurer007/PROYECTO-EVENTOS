@@ -4,13 +4,12 @@ import itertools
 
 class CarruselDeslizante(ctk.CTkFrame):
     def __init__(
-        self, master, content, width=400, height=300,
-        bg_color="#FFFFFF", text_font=("Arial", 20),
+        self, master, content, width=None, height=300,
+        bg_color="#FFFFFF", text_font=("Arial", 100),
         text_fg="#FFFFFF", text_bg="#518D65",
         duracion=3000, velocidad=5, **kwargs
     ):
         super().__init__(master, **kwargs)
-        self.width = width
         self.height = height
         self.duracion = duracion
         self.velocidad = velocidad
@@ -21,19 +20,11 @@ class CarruselDeslizante(ctk.CTkFrame):
         self.text_bg = text_bg
 
         self.canvas = ctk.CTkCanvas(self, width=width, height=height, highlightthickness=0, bg=bg_color)
-        self.canvas.pack()
+        self.canvas.pack(fill="both", expand=True)
 
-        # Cargar imágenes
-        for item in self.content:
-            if item["type"] == "image":
-                img = Image.open(item["path"]).resize((width, height), Image.LANCZOS)
-                item["image"] = ImageTk.PhotoImage(img)
-
-        # Widgets reutilizables
         self.image_label = ctk.CTkLabel(self.canvas, text="")
         self.text_label = ctk.CTkLabel(
             self.canvas, text="", font=self.text_font,
-            width=width, height=height,
             fg_color=self.text_bg, text_color=self.text_fg
         )
 
@@ -41,17 +32,42 @@ class CarruselDeslizante(ctk.CTkFrame):
         self.current_window = None
         self.next_window = None
 
-        self.mostrar_siguiente()
+        self.bind("<Configure>", self._on_resize)
+        self._resize_images_and_labels()
+        self.after(0, self.mostrar_siguiente)
+        self._imagenes_procesadas = False
+
+    def _on_resize(self, event):
+        self.canvas.config(width=event.width)
+        self._resize_images_and_labels()
+
+    def _resize_images_and_labels(self):
+        contenedor_width = self.winfo_width()
+        if contenedor_width < 2:
+            return  # Evita errores si el frame aún no tiene tamaño
+        self.width = contenedor_width
+        for item in self.content:
+            if item["type"] == "image":
+                img = Image.open(item["path"])
+                w_percent = self.width / float(img.size[0])
+                new_height = int(float(img.size[1]) * w_percent)
+                img = img.resize((self.width, new_height), Image.LANCZOS)
+                top = max(0, (new_height - self.height) // 2)
+                bottom = top + self.height
+                img = img.crop((0, top, self.width, bottom))
+                item["image"] = ImageTk.PhotoImage(img)
+        self.image_label.configure(width=self.width, height=self.height)
+        self.text_label.configure(width=self.width, height=self.height, font=self.text_font)
 
     def animar_transicion(self, x_salida=0, x_entrada=None):
+        contenedor_width = self.winfo_width()
         if x_entrada is None:
-            x_entrada = self.width
-        # Mover ventana actual y siguiente hacia la izquierda
+            x_entrada = contenedor_width
         self.canvas.coords(self.current_window, x_salida, 0)
         self.canvas.coords(self.next_window, x_entrada, 0)
 
-        if x_entrada <= 0:
-            # Fin de la animación
+        if x_entrada - self.velocidad <= 0:
+            self.canvas.coords(self.next_window, 0, 0)
             self.canvas.delete(self.current_window)
             self.current_window = self.next_window
             self.next_window = None
@@ -64,48 +80,24 @@ class CarruselDeslizante(ctk.CTkFrame):
 
     def mostrar_siguiente(self):
         item = next(self.ciclo)
-        # Preparar widget nuevo
-        if item["type"] == "image":
+        if item["type"] == "image" and "image" in item:
             self.image_label.configure(image=item["image"])
             widget = self.image_label
-        else:
+        elif item["type"] == "text":
             self.text_label.configure(text=item["text"])
             widget = self.text_label
+        else:
+            return  # Si no hay imagen procesada, no muestra nada
 
-        # Crear ventana para widget entrante fuera del canvas (a la derecha)
+        contenedor_width = self.winfo_width()
         self.next_window = self.canvas.create_window(
-            self.width, 0, anchor="nw", window=widget
+            contenedor_width, 0, anchor="nw", window=widget
         )
 
         if self.current_window is None:
-            # Primer widget: colocarlo sin animación
             self.canvas.coords(self.next_window, 0, 0)
             self.current_window = self.next_window
             self.next_window = None
             self.after(self.duracion, self.mostrar_siguiente)
         else:
             self.animar_transicion()
-
-# Ejemplo de uso:
-if __name__ == "__main__":
-    ctk.set_appearance_mode("light")
-    ctk.set_default_color_theme("blue")
-
-    app = ctk.CTk()
-    app.geometry("500x400")
-    app.title("Carrusel deslizante")
-
-    contenido = [
-        {"type": "image", "path": "assets/cumples/cumple1.png"},
-        {"type": "text", "text": "Este es un mensaje"},
-        {"type": "image", "path": "assets/Logo/logo.png"},
-        {"type": "text", "text": "Otro mensaje importante"},
-    ]
-
-    carrusel = CarruselDeslizante(
-        app, contenido, width=400, height=300,
-        duracion=3000, velocidad=5
-    )
-    carrusel.pack(pady=40)
-
-    app.mainloop()
