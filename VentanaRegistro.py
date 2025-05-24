@@ -53,6 +53,7 @@ class VentanaRegistro(ct.CTkToplevel):
         self.focus_force()
         self.update()
 
+
         ancho_v = 800
         alto_v = 600
         x = (self.winfo_screenwidth() - ancho_v) // 2
@@ -168,6 +169,7 @@ class VentanaRegistro(ct.CTkToplevel):
     def crear_radios(self, frame_radios, columna, texto):
         radio = ct.CTkRadioButton(frame_radios, text=texto, text_color="black", variable=self.seleccion, value=1)
         radio.grid(row=1, column=columna, pady=10, padx=10)
+        return radio
 
     def crear_frame_fecha(self, frame_datos):
         frameFecha = ct.CTkFrame(frame_datos, fg_color="white")
@@ -176,9 +178,9 @@ class VentanaRegistro(ct.CTkToplevel):
         label = ct.CTkLabel(frameFecha, text="Fecha de nacimiento", text_color="black", font=("Arial", 20))
         label.grid(row=0, column=0, pady=10, padx=10)
 
-        date_entry = DateEntry(frameFecha, width=16, background='#D9D9D9',
+        self.date_entry = DateEntry(frameFecha, width=16, background='#D9D9D9',
                        date_pattern='y-mm-dd', mindate=date(1900, 1, 1), maxdate=date.today())
-        date_entry.grid(row=1, column=0, pady=10, padx=10)
+        self.date_entry.grid(row=1, column=0, pady=10, padx=10)
 
     def crear_frame_municipio(self, frame_datos):
         frame = ct.CTkFrame(frame_datos, fg_color="transparent")
@@ -238,14 +240,20 @@ class VentanaRegistro(ct.CTkToplevel):
         nombre = self.nombre.get()
         apellido_paterno = self.apellido_paterno.get()
         apellido_materno = self.apellido_materno.get()
-        estado = self.estado.get()
+        genero = self.seleccion.get()
         ciudad = self.municipio.get()
+        estado = self.estado.get()
+        fecha_nacimiento = self.date_entry.get_date()
         nom_usuario = self.nom_usuario.get()
         contrasena = self.contrasena.get()
         telefono = self.telefono.get()
         correo = self.correo.get()
+        
 
-        exito = UsuarioManager.registrar_usuario(nombre, apellido_paterno, apellido_materno, genero, ciudad, estado, fecha_nacimiento, nom_usuario, contrasena, telefono, correo)
+        exito = UsuarioManager.registrar_usuario(
+            nombre, apellido_paterno, apellido_materno,
+            genero, ciudad, estado, fecha_nacimiento,
+            nom_usuario, contrasena, telefono, correo)
         """
         if exito:
             self.label_estado.configure(text="¡Usuario registrado con éxito!", text_color="green")
