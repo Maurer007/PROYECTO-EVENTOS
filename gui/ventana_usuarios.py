@@ -3,14 +3,21 @@ from sqlalchemy.exc import SQLAlchemyError
 from utils.orm_utils import Session
 from models.usuario import Usuario 
 
-def registrar_usuario(nombre, apellido_paterno, correo, contrasena):
+def registrar_usuario(nombre, apellido_paterno, apellido_materno, genero, ciudad, estado, fecha_nacimiento, nom_usuario, contrasena, telefono, correo):
     session = Session()
     try:
         nuevo_usuario = Usuario(
             nombre=nombre,
             apellido_paterno=apellido_paterno,
-            correo=correo,
-            contraseña=contrasena
+            apellido_materno=apellido_materno,
+            genero=genero,
+            ciudad=ciudad,
+            estado=estado,
+            fecha_nacimiento=fecha_nacimiento,
+            nom_usuario=nom_usuario,
+            contraseña=contrasena,
+            telefono=telefono,
+            correo=correo
         )
         session.add(nuevo_usuario)
         session.commit()
