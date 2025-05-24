@@ -4,7 +4,7 @@ import customtkinter as ctk
 from database import DatabaseManager
 from carrusel_deslizante import CarruselDeslizante
 
-class SplashScreen(ctk.CTkToplevel):  # Ventana emergente temporal
+class SplashScreen(ctk.CTkToplevel):
     def __init__(self, parent):
         super().__init__(parent)
         ancho_ventana = 300
@@ -360,6 +360,17 @@ class Main(ctk.CTk):
         self.frame_superpuesto_minimizado = False
         self.bind("<Configure>", self.ajustar_frame_superpuesto)
         self.minimizar() 
+
+    def abrir_login(self):
+        print("Creando VentanaUsuario...")
+        if hasattr(self, "ventana_usuario") and self.ventana_usuario.winfo_exists():
+            print("Ya hay una ventana de usuario abierta.")
+            return
+        try:
+            VentanaUsuario(self)
+        except Exception as e:
+            print("ERROR al crear VentanaUsuario:", e)
+
 
     def minimizar(self):
         if not self.frame_superpuesto_minimizado:
