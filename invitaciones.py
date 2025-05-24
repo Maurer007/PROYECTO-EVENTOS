@@ -21,6 +21,8 @@ class Ventana(CTk.CTkFrame):
         #self.geometry("900x700+150+150")
 
         self.crear_interfaz()
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
 
         #Valores para los botones de aumento y disminuyo
         self.valor_edad = 1  # Edad mínima
@@ -709,7 +711,6 @@ class Ventana(CTk.CTkFrame):
         self.boton_guardar_inv=CTk.CTkButton(self.frame2,fg_color="#220c56",text="Guardar invitacion")
         self.boton_guardar_inv.grid(pady=10,padx=25,row=1,column=1,sticky="nsew")
 
-        
         
 # Ejecución
 if __name__ == "__main__":

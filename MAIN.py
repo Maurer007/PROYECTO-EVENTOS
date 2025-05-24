@@ -389,6 +389,8 @@ class Main(ctk.CTk):
         # Limpia el frame_principal
         for widget in self.frame_principal.winfo_children():
             widget.destroy()
+        self.frame_principal.rowconfigure(0, weight=1)
+        self.frame_principal.columnconfigure(0, weight=1)
         # Inserta la Ventana de invitaciones dentro de frame_principal
         try:
             invitacion = Ventana(self.frame_principal)
