@@ -3,6 +3,7 @@ from PIL import Image
 import customtkinter as ctk
 from database import DatabaseManager
 from carrusel_deslizante import CarruselDeslizante
+from VentanaLogin import VentanaUsuario
 
 class SplashScreen(ctk.CTkToplevel):
     def __init__(self, parent):
@@ -191,7 +192,7 @@ class Main(ctk.CTk):
     def create_user(self):
         frame_user = ctk.CTkFrame(self)
         frame_user.grid(row=0, column=0, sticky="nsew", padx=(10, 5), pady=(10, 5))
-        user = ctk.CTkButton(frame_user, text="", image=self.iconos["user"], fg_color="lightblue", corner_radius=8, width=60, height=60)
+        user = ctk.CTkButton(frame_user, text="", image=self.iconos["user"], fg_color="lightblue", corner_radius=8, width=60, height=60, command=self.abrir_login)
         user.grid(row=0, column=0, sticky="nsew", padx=(0, 5))
 
     def cargar_imagenes_eventos(self):
@@ -370,7 +371,6 @@ class Main(ctk.CTk):
             VentanaUsuario(self)
         except Exception as e:
             print("ERROR al crear VentanaUsuario:", e)
-
 
     def minimizar(self):
         if not self.frame_superpuesto_minimizado:
