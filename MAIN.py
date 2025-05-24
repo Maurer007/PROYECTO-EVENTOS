@@ -3,6 +3,8 @@ from PIL import Image
 import customtkinter as ctk
 from database import DatabaseManager
 from carrusel_deslizante import CarruselDeslizante
+from invitaciones import Ventana
+from MisEventos import MisEventos
 
 class SplashScreen(ctk.CTkToplevel):
     def __init__(self, parent):
@@ -108,11 +110,11 @@ class Main(ctk.CTk):
 
         # Lista para agregar botones dinámicamente
         botones_config = [
-            {"icon": self.iconos["home"],   "color": "lightcoral"},
-            {"icon": self.iconos["calendario"],   "color": "red"},
-            {"icon": self.iconos["mis_eventos"],   "color": "cyan"},
-            {"icon": self.iconos["notificaciones"],   "color": "green"},
-            {"icon": self.iconos["ajustes"],   "color": "yellow"},
+            {"icon": self.iconos["home"],   "color": "lightcoral", "command": self.abrir_main},
+            {"icon": self.iconos["calendario"],   "color": "red", "command": self.abrir_mis_eventos},
+            {"icon": self.iconos["mis_eventos"],   "color": "cyan", "command": self.abrir_invitacion},
+            {"icon": self.iconos["notificaciones"],   "color": "green", "command": None},
+            {"icon": self.iconos["ajustes"],   "color": "yellow", "command": None},
         ]
 
         # Crear y colocar los botones
@@ -125,7 +127,7 @@ class Main(ctk.CTk):
                 corner_radius=8,
                 width=60,
                 height=60, 
-                #command=config["command"]
+                command=config["command"]
             )
             pady_top = 0 if index == 0 else 3
             pady_bottom = 0 if index == len(botones_config) - 1 else 3
@@ -156,16 +158,16 @@ class Main(ctk.CTk):
     def create_principal(self):
         evento_height = 300
 
-        frame_principal = ctk.CTkScrollableFrame(self)
-        frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 10), pady=(0, 4))
-        frame_principal._scrollbar.grid_forget()
+        self.frame_principal = ctk.CTkScrollableFrame(self)
+        self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 10), pady=(0, 4))
+        self.frame_principal._scrollbar.grid_forget()
         for i in range(6):
-            frame_principal.rowconfigure(i, weight=1)
+            self.frame_principal.rowconfigure(i, weight=1)
         for i in range(3):
-            frame_principal.columnconfigure(i, weight=1)
+            self.frame_principal.columnconfigure(i, weight=1)
 
         #Evento grande en la parte superior
-        principal_main = ctk.CTkFrame(frame_principal)
+        principal_main = ctk.CTkFrame(self.frame_principal)
         principal_main.grid(row=0, column=0, sticky="nsew", columnspan=6)
         principal_main.columnconfigure(0, weight=1)
         principal_main.rowconfigure(0, weight=1)
@@ -185,12 +187,12 @@ class Main(ctk.CTk):
         evento_grande.grid(sticky="nsew", pady=(0,3))
 
         # Filas de eventos (copia una fila para poner una nueva categoría de eventos)
-        self.fila_cumple = self.crear_fila_eventos(frame_principal, fila=1, titulo="Cumpleaños")
-        self.fila_fiestas = self.crear_fila_eventos(frame_principal, fila=2, titulo="Fiestas")
-        self.fila_bodas = self.crear_fila_eventos(frame_principal, fila=3, titulo="Bodas")
-        self.fila_xvs = self.crear_fila_eventos(frame_principal, fila=4, titulo="XV años")
-        self.fila_graduaciones = self.crear_fila_eventos(frame_principal, fila=5, titulo="Graduaciones")
-        self.fila_eventos = self.crear_fila_eventos(frame_principal, fila=6, titulo="Eventos")
+        self.fila_cumple = self.crear_fila_eventos(self.frame_principal, fila=1, titulo="Cumpleaños")
+        self.fila_fiestas = self.crear_fila_eventos(self.frame_principal, fila=2, titulo="Fiestas")
+        self.fila_bodas = self.crear_fila_eventos(self.frame_principal, fila=3, titulo="Bodas")
+        self.fila_xvs = self.crear_fila_eventos(self.frame_principal, fila=4, titulo="XV años")
+        self.fila_graduaciones = self.crear_fila_eventos(self.frame_principal, fila=5, titulo="Graduaciones")
+        self.fila_eventos = self.crear_fila_eventos(self.frame_principal, fila=6, titulo="Eventos")
 
     def create_user(self):
         frame_user = ctk.CTkFrame(self)
@@ -375,6 +377,37 @@ class Main(ctk.CTk):
             VentanaUsuario(self)
         except Exception as e:
             print("ERROR al crear VentanaUsuario:", e)
+
+    def abrir_main(self):
+        # Limpia el frame_principal
+        for widget in self.frame_principal.winfo_children():
+            widget.destroy()
+        # Vuelve a crear el contenido principal
+        self.create_principal()
+        self.cargar_imagenes_en_filas()
+
+    def abrir_mis_eventos(self):
+        # Limpia el frame_principal
+        for widget in self.frame_principal.winfo_children():
+            widget.destroy()
+        # Inserta la Ventana de mis eventos dentro de frame_principal
+        try:
+            mis_eventos = MisEventos(self.frame_principal)
+            mis_eventos.pack(fill="both", expand=True)
+        except Exception as e:
+            print("ERROR al crear Ventana de Mis Eventos:", e)
+
+    
+    def abrir_invitacion(self):
+        # Limpia el frame_principal
+        for widget in self.frame_principal.winfo_children():
+            widget.destroy()
+        # Inserta la Ventana de invitaciones dentro de frame_principal
+        try:
+            invitacion = Ventana(self.frame_principal)
+            invitacion.grid(row=0, column=0, sticky="nsew")
+        except Exception as e:
+            print("ERROR al crear Ventana de Invitación:", e)
 
     def minimizar(self):
         if not self.frame_superpuesto_minimizado:
