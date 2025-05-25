@@ -11,7 +11,7 @@ class MisEventos(ctk.CTkFrame):
         self.configure(fg_color="#C4DF62")
         self.crear_titulo()
         self.crear_boton_evento()
-        self.crear_treeview()
+        #self.crear_treeview()
         
     def crear_titulo(self):
         self.titulo = ctk.CTkLabel(self, text="Mis Eventos", font=("Eras Demi ITC", 75), text_color="#0A1A43")

@@ -7,7 +7,6 @@ import bcrypt
 import customtkinter as ct
 from PIL import Image
 import tkinter as tk
-from tkcalendar import DateEntry
 from datetime import date
 
 engine = create_engine("sqlite:///join_up.db", echo=True)
@@ -68,7 +67,7 @@ class VentanaUsuario(ct.CTkToplevel):
         frame = ct.CTkFrame(self, fg_color="transparent")
         frame.pack(padx=10, pady=10, fill="both")
 
-        lbTitulo = ct.CTkLabel(frame, text="JOIN UP", text_color="#F27171", font=("Eras Bold ITC", 70))
+        lbTitulo = ct.CTkLabel(frame, text="JOIN UP", text_color="#df0f69", font=("Eras Bold ITC", 70))
         lbTitulo.pack(expand=True, anchor="center")
 
         lbSubtitulo = ct.CTkLabel(frame, text="Iniciar Sesión", text_color="white", font=("Arial", 30))
@@ -105,14 +104,14 @@ class VentanaUsuario(ct.CTkToplevel):
 
     def crear_boton(self, frame, texto, funcion):
         boton = ct.CTkButton(frame, font=("Arial", 20), text=texto, fg_color="#F27171", hover_color="red", command=funcion)
-        boton.pack(padx=5, pady=5, expand=True)
+        boton.pack(padx=5, pady=5)
 
     def crear_frame_registro(self):
         frame = ct.CTkFrame(self, fg_color="transparent")
         frame.pack(padx=10, pady=10)
 
         label = ct.CTkLabel(frame, text="Aún no tienes cuenta? Regístrate", text_color="#030D24", font=("Arial", 20, "underline"), cursor="hand2")
-        label.pack(padx=5, pady=5, expand=True, side="right")
+        label.pack(padx=5, pady=5, side="right")
 
         label.bind("<Button-1>", lambda event: self.registro())
         label.bind("<Enter>", lambda event: label.configure(text_color="#B9FFF1"))
@@ -125,7 +124,8 @@ class VentanaUsuario(ct.CTkToplevel):
         frame.pack(padx=10, pady=10)
 
         label = ct.CTkLabel(frame, text="", font=("Arial", 15), text_color="red")
-        label.pack(expand=True, anchor="center")
+        label.pack(padx=5, pady=5, anchor="e")
+
 
         return frame
 
@@ -140,8 +140,10 @@ class VentanaUsuario(ct.CTkToplevel):
         from VentanaRegistro import VentanaRegistro
         self.destroy()
         VentanaRegistro(self.menu)
-
+    
     def login(self):
+        print("Login")
+        """
         username = self.entrada1.get()
         password = self.entrada2.get()
 
@@ -167,7 +169,8 @@ class VentanaUsuario(ct.CTkToplevel):
             else:
                 self.label.configure(text="Usuario o contraseña incorrectos")
         conexion.close()
-
+        """
+    
     def crearTablaBD(self):
         sqlinstruction = "CREATE TABLE IF NOT EXISTS " \
                          "credenciales(id INTEGER PRIMARY KEY AUTOINCREMENT," \
