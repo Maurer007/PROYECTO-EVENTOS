@@ -1,4 +1,5 @@
-import random, threading, concurrent.futures
+import random, threading, concurrent.futures, sys
+sys.dont_write_bytecode = True
 from PIL import Image
 import customtkinter as ctk
 from database import DatabaseManager
@@ -6,6 +7,7 @@ from carrusel_deslizante import CarruselDeslizante
 from invitaciones import Ventana
 from MisEventos import MisEventos
 from utils.orm_utils import crear_base_de_datos
+
 class SplashScreen(ctk.CTkToplevel):
     def __init__(self, parent):
         super().__init__(parent)
