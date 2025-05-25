@@ -4,7 +4,7 @@ import tkinter.filedialog as filedialog
 import tkinter.filedialog as filedialog
 from tkinter import colorchooser
 import webcolors, random, string
-
+from tkinter import messagebox
 class Ventana(CTk.CTkFrame):
 
     def __init__(self, master=None):
@@ -486,8 +486,20 @@ class Ventana(CTk.CTkFrame):
         self.entry_boda_misa.grid(row=2, column=0, columnspan=2, pady=5, padx=2, sticky="nsew")
         self.entry_boda_misa.grid_remove()
 
+        self.frame_boda_menores=CTk.CTkFrame(self.frame_form, fg_color="#6ea7f1")
+        self.frame_boda_menores.grid(pady=4, padx=4, row=10, column=0, sticky="nsew")
+        self.label_boda_menores=CTk.CTkLabel(self.frame_boda_menores,text="Menores", font=("Verdana", 14, "bold"))
+        self.label_boda_menores.grid(row=0, column=0, pady=5, padx=2, sticky="w")
+        self.frame_boda_menores.columnconfigure(0,weight=1)
+        self.frame_boda_menores.rowconfigure(0,weight=1)
+        self.frame_boda_menores.rowconfigure(1,weight=1)
+        self.frame_boda_menores.rowconfigure(2,weight=1)
+        self.checkbox_boda_menores_var = tk.IntVar()
+        self.checkbox_boda_menores = CTk.CTkCheckBox(self.frame_boda_menores, fg_color="white", text="No se permiten niños",variable=self.checkbox_boda_misa_var)
+        self.checkbox_boda_menores.grid(row=1, column=0, pady=5, padx=2, sticky="nsew")
+
         #Guardar los frames actuales
-        self.paquete_actual = [self.frame_novios,self.frame_boda_padrinos,self.frame_boda_cortesia,self.frame_boda_misa]
+        self.paquete_actual = [self.frame_novios,self.frame_boda_padrinos,self.frame_boda_cortesia,self.frame_boda_misa,self.frame_boda_menores]
 
     def crear_interfaz(self):
         # Frame principal
