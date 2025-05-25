@@ -5,6 +5,8 @@ import tkinter.filedialog as filedialog
 from tkinter import colorchooser
 import webcolors, random, string
 from tkinter import messagebox
+from datetime import datetime
+
 class Ventana(CTk.CTkFrame):
 
     def __init__(self, master=None):
@@ -19,14 +21,8 @@ class Ventana(CTk.CTkFrame):
 
         #self.title("Invitaciones")
         #self.geometry("900x700+150+150")
-
+    
         self.crear_interfaz()
-
-        #Valores para los botones de aumento y disminuyo
-        self.valor_edad = 1  # Edad mínima
-        self.valor_generacion = 2000  # Generación inicial mínima
-        self.valor_inv_grad = 0 # Invitados minimo permitidos por graduado
-        
         self.colores_agregados = []  # Lista para guardar los colores
         self.limite_colores = 5
 
@@ -38,6 +34,26 @@ class Ventana(CTk.CTkFrame):
         "XVs": self.crear_xv,
         "Boda": self.crear_boda
         }
+        #Valores para los botones de aumento y disminuyo
+        self.valor_edad = 1  # Edad mínima
+        self.valor_generacion = 2000  # Generación inicial mínima
+        self.valor_inv_grad = 0 # Invitados minimo permitidos por graduado
+
+        # Obtener fecha y hora actual
+        self.fecha_actual = datetime.now().strftime("%d/%m/%Y")
+        self.hora_actual = datetime.now().strftime("%H:%M")  # Formato 24 horas
+        
+
+    def validar_fecha_input(self, texto):
+        return all(c in "0123456789/" for c in texto) and len(texto) <= 10
+
+    def validar_hora_input(self, texto):
+        return all(c in "0123456789:" for c in texto) and len(texto) <= 5
+
+    def formato_auto_hora(self, event):
+        contenido = self.entry_hora.get()
+        if len(contenido) == 2 and ":" not in contenido:
+            self.entry_hora.insert("end", ":")
     
     def manejar_clasificacion(self, seleccion):
         self.seleccion_actual = seleccion
@@ -261,9 +277,9 @@ class Ventana(CTk.CTkFrame):
         self.frame_edad.rowconfigure(1,weight=1)
         self.label_edad=CTk.CTkLabel(self.frame_edad,text="Edad",width=20, font=("Verdana", 14, "bold"))
         self.label_edad.grid(row=0, column=0, pady=5, padx=2, sticky="w")
-        self.label_num_edad=CTk.CTkLabel(self.frame_edad,text=str(self.valor_edad),width=20, font=("Arial", 14, "bold"))
+        self.label_num_edad=CTk.CTkLabel(self.frame_edad,text=str(self.valor_edad),width=20, font=("Arial", 24, "bold"))
         self.label_num_edad.grid(row=1, column=0, pady=5, padx=2, sticky="e")
-        self.label_anos=CTk.CTkLabel(self.frame_edad,text="año(s)", font=("Arial", 14, "bold"))
+        self.label_anos=CTk.CTkLabel(self.frame_edad,text="año(s)", font=("Arial", 24, "bold"))
         self.label_anos.grid(row=1, column=1, pady=5, padx=2, sticky="w")
         self.boton_mas_edad=CTk.CTkButton(self.frame_edad,text="+",width=5,command=self.aumentar_edad)
         self.boton_mas_edad.grid(row=1, column=2, pady=5, padx=2, sticky="nsew")
@@ -310,7 +326,7 @@ class Ventana(CTk.CTkFrame):
         self.frame_nivel_edu.rowconfigure(1,weight=1)
         self.label_nivel_edu=CTk.CTkLabel(self.frame_nivel_edu,text="Nivel educativo", font=("Verdana", 14, "bold"))
         self.label_nivel_edu.grid(row=0, column=0, pady=5, padx=2, sticky="w")
-        self.combobox_nivel_edu=CTk.CTkComboBox(self.frame_nivel_edu, fg_color="white",values=("Inicial/Preescolar","Básica","Media superior","Superior","Continua"))
+        self.combobox_nivel_edu=CTk.CTkComboBox(self.frame_nivel_edu, fg_color="white",values=("Inicial/Preescolar","Básica","Media superior","Superior","Continua"),state="readonly")
         self.combobox_nivel_edu.grid(row=1, column=0, columnspan=2, pady=5, padx=2, sticky="nsew")
 
         self.frame_generacion=CTk.CTkFrame(self.frame_form, fg_color="#6ea7f1")
@@ -323,7 +339,7 @@ class Ventana(CTk.CTkFrame):
         self.frame_generacion.rowconfigure(1,weight=1)
         self.label_generacion=CTk.CTkLabel(self.frame_generacion,text="Generacion por graduarse", font=("Verdana", 14, "bold"))
         self.label_generacion.grid(row=0, column=0,columnspan=4, pady=5, padx=2, sticky="w")
-        self.entry_generacion=CTk.CTkLabel(self.frame_generacion,text=str(self.valor_generacion), font=("Arial", 14, "bold"))
+        self.entry_generacion=CTk.CTkLabel(self.frame_generacion,text=str(self.valor_generacion), font=("Arial", 24, "bold"))
         self.entry_generacion.grid(row=1, column=0, columnspan=2, pady=5, padx=2, sticky="nsew")
         self.boton_mas_gene=CTk.CTkButton(self.frame_generacion,text="+",width=5,command=self.aumentar_generacion)
         self.boton_mas_gene.grid(row=1, column=2, pady=5, padx=2, sticky="nsew")
@@ -340,7 +356,7 @@ class Ventana(CTk.CTkFrame):
         self.frame_inv_x_grad.rowconfigure(1,weight=1)
         self.label_inv_x_grad=CTk.CTkLabel(self.frame_inv_x_grad,text="Invitados permitidos por graduado", font=("Verdana", 14, "bold"))
         self.label_inv_x_grad.grid(row=0, column=0,columnspan=4, pady=5, padx=2, sticky="w")
-        self.label_num_inv_x_grad=CTk.CTkLabel(self.frame_inv_x_grad,text=str(self.valor_inv_grad), font=("Arial", 14, "bold"))
+        self.label_num_inv_x_grad=CTk.CTkLabel(self.frame_inv_x_grad,text=str(self.valor_inv_grad), font=("Arial", 24, "bold"))
         self.label_num_inv_x_grad.grid(row=1, column=0,columnspan=2, pady=5, padx=2, sticky="nsew")
         self.boton_mas_inv=CTk.CTkButton(self.frame_inv_x_grad,text="+",width=5,command=self.aumentar_inv_grad)
         self.boton_mas_inv.grid(row=1, column=2, pady=5, padx=2, sticky="nsew")
@@ -495,7 +511,7 @@ class Ventana(CTk.CTkFrame):
         self.frame_boda_menores.rowconfigure(1,weight=1)
         self.frame_boda_menores.rowconfigure(2,weight=1)
         self.checkbox_boda_menores_var = tk.IntVar()
-        self.checkbox_boda_menores = CTk.CTkCheckBox(self.frame_boda_menores, fg_color="white", text="No se permiten niños",variable=self.checkbox_boda_misa_var)
+        self.checkbox_boda_menores = CTk.CTkCheckBox(self.frame_boda_menores, fg_color="white", text="No se permiten niños",variable=self.checkbox_boda_menores_var)
         self.checkbox_boda_menores.grid(row=1, column=0, pady=5, padx=2, sticky="nsew")
 
         #Guardar los frames actuales
@@ -554,7 +570,7 @@ class Ventana(CTk.CTkFrame):
         self.frame_clasif.rowconfigure(1,weight=1)
         self.label_clasif = CTk.CTkLabel(self.frame_clasif, text="Clasificación", font=("Verdana", 14, "bold"))
         self.label_clasif.grid(row=0, column=0, pady=5, padx=2, sticky="w")
-        self.combobox_clasif = CTk.CTkComboBox(self.frame_clasif, fg_color="white", values=("Evento", "Fiesta", "Cumpleaños", "Graduación", "XVs", "Boda"),command=self.manejar_clasificacion)
+        self.combobox_clasif = CTk.CTkComboBox(self.frame_clasif, fg_color="white", values=("Evento", "Fiesta", "Cumpleaños", "Graduación", "XVs", "Boda"),command=self.manejar_clasificacion,state="readonly")
         self.combobox_clasif.grid(row=1, column=0, pady=5, padx=2, sticky="nsew")
         self.combobox_clasif.set("Evento")
 
@@ -569,12 +585,26 @@ class Ventana(CTk.CTkFrame):
         self.frame_lugar_fecha_hora.rowconfigure(2,weight=1)     
         self.label_lugar_fecha_hora = CTk.CTkLabel(self.frame_lugar_fecha_hora, text="Lugar, fecha y hora", font=("Verdana", 14, "bold"))
         self.label_lugar_fecha_hora.grid(row=0, column=0, columnspan=2, pady=5, padx=2, sticky="w")
-        self.entry_lugar = CTk.CTkEntry(self.frame_lugar_fecha_hora, fg_color="white")
+        self.entry_lugar = CTk.CTkEntry(self.frame_lugar_fecha_hora, fg_color="white",place_holder_text="Calle/Col./No./Municipio/Ciudad/Estado/País")
         self.entry_lugar.grid(row=1, column=0, columnspan=2, pady=5, padx=2, sticky="nsew")
-        self.entry_fecha = CTk.CTkEntry(self.frame_lugar_fecha_hora, fg_color="white")
+        self.entry_fecha = CTk.CTkEntry(self.frame_lugar_fecha_hora, fg_color="white",place_holder_text="dd/mm/yyyy")
         self.entry_fecha.grid(row=2, column=0, pady=5, padx=2, sticky="nsew")
-        self.entry_hora = CTk.CTkEntry(self.frame_lugar_fecha_hora, fg_color="white")
+        self.entry_hora = CTk.CTkEntry(self.frame_lugar_fecha_hora, fg_color="white",place_holder_text="HH:MM")
         self.entry_hora.grid(row=2, column=1, pady=5, padx=2, sticky="nsew")
+
+        # 💡 Establecer fecha y hora actual
+        self.entry_fecha.insert(0, datetime.now().strftime("%d/%m/%Y"))
+        self.entry_hora.insert(0, datetime.now().strftime("%H:%M"))
+
+        # 💡 Validación
+        vcmd_fecha = self.register(self.validar_fecha_input)
+        vcmd_hora = self.register(self.validar_hora_input)
+
+        self.entry_fecha.configure(validate="key", validatecommand=(vcmd_fecha, "%P"))
+        self.entry_hora.configure(validate="key", validatecommand=(vcmd_hora, "%P"))
+    
+        # 💡 Autoformato de hora
+        self.entry_hora.bind("<KeyRelease>", self.formato_auto_hora)
 
     # Privacidad
     def crear_frame_privacidad_form(self):
@@ -605,8 +635,7 @@ class Ventana(CTk.CTkFrame):
         self.boton_copiar_cod=CTk.CTkButton(self.frame_privacidad,text="Copiar",width=5,command=self.copiar_codigo_al_portapapeles)
         self.boton_copiar_cod.grid(row=2, column=2, pady=5, padx=2, sticky="nsew")
         self.boton_copiar_cod.grid_remove()
-        
-    
+            
     # Cupo invitados
     def crear_frame_cupo_inv_form(self):
         self.frame_cupo_inv = CTk.CTkFrame(self.frame_form, fg_color="#6ea7f1")
@@ -631,7 +660,7 @@ class Ventana(CTk.CTkFrame):
             command=lambda e: self.toggle_widgets_by_combobox(
                 combobox_cupo_inv,
                 {"Limitado": [self.label_personas, self.entry_num_inv], "Ilimitado": []}
-            )
+            ),state="readonly"
         )
         combobox_cupo_inv.grid(row=1, column=0, columnspan=2, pady=5, padx=2, sticky="nsew")
         combobox_cupo_inv.set("Ilimitado")
@@ -659,7 +688,7 @@ class Ventana(CTk.CTkFrame):
             self.frame_estilo,
             fg_color="white",
             values=("Casual", "Casual elegante", "Coctel", "Formal", "Etiqueta rigurosa", "Temático")
-        )
+        ,state="readonly")
         self.combobox_estilo.grid(row=2, column=0, pady=5, padx=2, sticky="nsew")
         self.combobox_estilo.grid_remove()
         self.checkbox_paletaco_var = tk.IntVar()
