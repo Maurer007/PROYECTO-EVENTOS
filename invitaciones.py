@@ -1,7 +1,6 @@
 import customtkinter as CTk
 import tkinter as tk
 import tkinter.filedialog as filedialog
-from PIL import Image, ImageTk
 import tkinter.filedialog as filedialog
 from tkinter import colorchooser
 import webcolors, random, string

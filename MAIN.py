@@ -1,4 +1,5 @@
-import random, threading, concurrent.futures
+import random, threading, concurrent.futures, sys
+sys.dont_write_bytecode = True
 from PIL import Image
 import customtkinter as ctk
 from database import DatabaseManager

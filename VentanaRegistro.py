@@ -115,7 +115,7 @@ class VentanaRegistro(ct.CTkToplevel):
         frame = ct.CTkFrame(scrollable_frame, fg_color="transparent")
         frame.pack(padx=10, pady=10, fill="both")
 
-        lbTitulo = ct.CTkLabel(frame, text="JOIN UP", text_color="#F27171", font=("Eras Bold ITC", 70))
+        lbTitulo = ct.CTkLabel(frame, text="JOIN UP", text_color="#df0f69", font=("Eras Bold ITC", 70))
         lbTitulo.pack(expand=True, anchor="center")
 
         lbSubtitulo = ct.CTkLabel(frame, text="Registro de usuario", text_color="white", font=("Arial", 30))
