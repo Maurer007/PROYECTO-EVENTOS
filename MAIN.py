@@ -2,7 +2,6 @@ import random, threading, concurrent.futures, sys
 sys.dont_write_bytecode = True
 from PIL import Image
 import customtkinter as ctk
-from database import DatabaseManager
 from carrusel_deslizante import CarruselDeslizante
 from invitaciones import Ventana
 from MisEventos import MisEventos
@@ -38,9 +37,6 @@ class Main(ctk.CTk):
         self.configure(fg_color=color_fondo)
 
         crear_base_de_datos()
-        # Inicializar la base de datos
-        self.db_manager = DatabaseManager()
-        self.db_manager.insertar_eventos_ejemplo()  # Insertar datos de ejemplo si la tabla está vacía
 
         self.columnconfigure(0, weight=0)
         self.columnconfigure(1, weight=1)
@@ -56,7 +52,7 @@ class Main(ctk.CTk):
         self.cargar_iconos()
         self.cargar_imagenes_eventos()
         self.create_widgets()
-        #self.desordenar_filas() # Descomentar para desordenar filas
+        #self.desordenar_filas() #Descomentar para desordenar filas
         #self.cargar_eventos()
 
     def create_widgets(self):
