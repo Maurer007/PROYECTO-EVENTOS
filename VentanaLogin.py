@@ -1,12 +1,12 @@
 import os
 import sqlite3
-from tkinter import filedialog
+#from tkinter import filedialog
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 import bcrypt
 import customtkinter as ct
 from PIL import Image
-import tkinter as tk
+#import tkinter as tk
 from datetime import date
 
 engine = create_engine("sqlite:///join_up.db", echo=True)
@@ -16,12 +16,6 @@ class VentanaUsuario(ct.CTkToplevel):
         super().__init__(menu)
         self.title("Iniciar sesión")
         self.menu=menu
-
-        self.transient(menu)
-        self.deiconify()
-        self.lift()
-        self.focus_force()
-        self.update()
 
         ancho_v = 500
         alto_v = 500
@@ -60,8 +54,12 @@ class VentanaUsuario(ct.CTkToplevel):
         self.crear_frame_registro()
         self.crear_frame_error()
 
+        self.withdraw()
+        self.deiconify()
+
         self.crearTablaBD()
         self.obtenerCredenciales()
+
 
     def crear_frame_titulo(self):
         frame = ct.CTkFrame(self, fg_color="transparent")
@@ -215,5 +213,4 @@ class VentanaUsuario(ct.CTkToplevel):
     def cerrar(self):
         self.grab_release()
         self.destroy()
-
 

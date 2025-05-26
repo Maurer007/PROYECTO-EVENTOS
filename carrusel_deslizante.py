@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from PIL import Image, ImageTk
 import itertools
+from utils.carga_imagenes import cargar_imagenes_desde_carpeta
 
 class CarruselDeslizante(ctk.CTkFrame):
     def __init__(
@@ -37,6 +38,31 @@ class CarruselDeslizante(ctk.CTkFrame):
         self.after(0, self.mostrar_siguiente)
         self._imagenes_procesadas = False
 
+    def cargar_imagenes_desde_carpeta(self, carpeta, prefijo, cantidad, placeholder_path=None, sharpen=True, allow_upscale=True):
+        """Carga imágenes usando el método de carga optimizado"""
+        width = self.winfo_width() or 800
+        imagenes_cargadas = cargar_imagenes_desde_carpeta(
+            carpeta=carpeta,
+            prefijo=prefijo,
+            cantidad=cantidad,
+            size=(width, self.height),
+            placeholder_path=placeholder_path,
+            sharpen=sharpen,
+            allow_upscale=allow_upscale
+        )
+        
+        # Convertir a formato del carrusel y agregar al contenido
+        for clave, imagen_ctk in imagenes_cargadas.items():
+            self.content.append({
+                "type": "image",
+                "image": imagen_ctk,
+                "key": clave
+            })
+        
+        # Recrear el ciclo con el nuevo contenido
+        self.ciclo = itertools.cycle(self.content)
+        return len(imagenes_cargadas)
+
     def _on_resize(self, event):
         self.canvas.config(width=event.width)
         self._resize_images_and_labels()
@@ -55,7 +81,7 @@ class CarruselDeslizante(ctk.CTkFrame):
                 top = max(0, (new_height - self.height) // 2)
                 bottom = top + self.height
                 img = img.crop((0, top, self.width, bottom))
-                item["image"] = ImageTk.PhotoImage(img)
+                item["image"] = ctk.CTkImage(img, size=(self.width, self.height))
         self.image_label.configure(width=self.width, height=self.height)
         self.text_label.configure(width=self.width, height=self.height, font=self.text_font)
 

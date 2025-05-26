@@ -7,7 +7,6 @@ from PIL import Image
 import tkinter as tk
 from tkcalendar import DateEntry
 from datetime import date
-
 from sqlalchemy.exc import SQLAlchemyError
 from utils.orm_utils import Session
 from models.usuario import Usuario 
@@ -46,13 +45,6 @@ class VentanaRegistro(ct.CTkToplevel):
         super().__init__(menu)
         self.title("Registro")
         self.menu=menu
-
-        self.transient(menu)
-        self.deiconify()
-        self.lift()
-        self.focus_force()
-        self.update()
-
 
         ancho_v = 800
         alto_v = 600
@@ -99,6 +91,9 @@ class VentanaRegistro(ct.CTkToplevel):
         self.crear_datos_usuario(self.datos_usuario)
 
         self.frme_botones = self.crear_frame_botones(self.frame_principal)
+
+        self.withdraw()
+        self.deiconify()
 
         #self.labelError = ct.CTkLabel(self.container9, text="", font=("Arial", 15), text_color="red")
         #self.labelError.pack(expand=True, anchor="center")
