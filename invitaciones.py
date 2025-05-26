@@ -2,9 +2,11 @@ import customtkinter as CTk
 import tkinter as tk
 import tkinter.filedialog as filedialog
 import tkinter.filedialog as filedialog
-from tkinter import colorchooser, messagebox
+from tkinter import colorchooser
 import webcolors, random, string
+from tkinter import messagebox
 from datetime import datetime
+
 class Ventana(CTk.CTkFrame):
 
     def __init__(self, master=None):
@@ -29,9 +31,15 @@ class Ventana(CTk.CTkFrame):
         "XVs": self.crear_xv,
         "Boda": self.crear_boda
         }
+        #Valores para los botones de aumento y disminuyo
+        self.valor_edad = 1  # Edad mínima
+        self.valor_generacion = 2000  # Generación inicial mínima
+        self.valor_inv_grad = 0 # Invitados minimo permitidos por graduado
 
+        # Obtener fecha y hora actual
         self.fecha_actual = datetime.now().strftime("%d/%m/%Y")
-        self.hora_actual = datetime.now().strftime("%H:%M")
+        self.hora_actual = datetime.now().strftime("%H:%M")  # Formato 24 horas
+        
 
     def validar_fecha_input(self, texto):
         return all(c in "0123456789/" for c in texto) and len(texto) <= 10
@@ -43,7 +51,7 @@ class Ventana(CTk.CTkFrame):
         contenido = self.entry_hora.get()
         if len(contenido) == 2 and ":" not in contenido:
             self.entry_hora.insert("end", ":")
-
+    
     def manejar_clasificacion(self, seleccion):
         self.seleccion_actual = seleccion
 
@@ -574,11 +582,11 @@ class Ventana(CTk.CTkFrame):
         self.frame_lugar_fecha_hora.rowconfigure(2,weight=1)     
         self.label_lugar_fecha_hora = CTk.CTkLabel(self.frame_lugar_fecha_hora, text="Lugar, fecha y hora", font=("Verdana", 14, "bold"))
         self.label_lugar_fecha_hora.grid(row=0, column=0, columnspan=2, pady=5, padx=2, sticky="w")
-        self.entry_lugar = CTk.CTkEntry(self.frame_lugar_fecha_hora, fg_color="white",place_holder_text="Calle/Col./No./Municipio/Ciudad/Estado/País")
+        self.entry_lugar = CTk.CTkEntry(self.frame_lugar_fecha_hora, fg_color="white",placeholder_text="Calle/Col./No./Municipio/Ciudad/Estado/País")
         self.entry_lugar.grid(row=1, column=0, columnspan=2, pady=5, padx=2, sticky="nsew")
-        self.entry_fecha = CTk.CTkEntry(self.frame_lugar_fecha_hora, fg_color="white",place_holder_text="dd/mm/yyyy")
+        self.entry_fecha = CTk.CTkEntry(self.frame_lugar_fecha_hora, fg_color="white",placeholder_text="dd/mm/yyyy")
         self.entry_fecha.grid(row=2, column=0, pady=5, padx=2, sticky="nsew")
-        self.entry_hora = CTk.CTkEntry(self.frame_lugar_fecha_hora, fg_color="white",place_holder_text="HH:MM")
+        self.entry_hora = CTk.CTkEntry(self.frame_lugar_fecha_hora, fg_color="white",placeholder_text="HH:MM")
         self.entry_hora.grid(row=2, column=1, pady=5, padx=2, sticky="nsew")
 
         # 💡 Establecer fecha y hora actual
