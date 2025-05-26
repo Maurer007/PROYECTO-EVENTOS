@@ -246,7 +246,6 @@ class Ventana(CTk.CTkFrame):
         self.limite_colores = 5
 
         self.paquetes_frames = {
-        "Evento": self.vaciar_paquete,
         "Fiesta": self.crear_fiesta,
         "Cumpleaños": self.crear_cumple,
         "Graduación": self.crear_grad,
@@ -465,6 +464,7 @@ class Ventana(CTk.CTkFrame):
         self.colores_agregados.clear()
         self.actualizar_visibilidad_colores_agregados()
         #Fiesta
+
     def crear_fiesta(self):
         if self.seleccion_actual != "Fiesta":
          return
@@ -772,7 +772,7 @@ class Ventana(CTk.CTkFrame):
         self.frame_izquierdo_form.rowconfigure(0, weight=24)
         self.frame_izquierdo_form.rowconfigure(1, weight=1)
 
-        self.boton_reg_evento = CTk.CTkButton(self.frame_izquierdo_form, fg_color="#1277fa", text="Registrar evento",font=("Verdana",24,"bold"))
+        self.boton_reg_evento = CTk.CTkButton(self.frame_izquierdo_form, fg_color="#1277fa", text="Registrar evento",font=("Verdana",24,"bold"),command=self.on_registrar_eventos)
         self.boton_reg_evento.grid(pady=8, padx=15, row=1, column=0, sticky="nsew")
 
     def crear_frame_form(self):
@@ -800,9 +800,9 @@ class Ventana(CTk.CTkFrame):
         self.frame_clasif.rowconfigure(1,weight=1)
         self.label_clasif = CTk.CTkLabel(self.frame_clasif, text="Clasificación", font=("Verdana", 20, "bold"))
         self.label_clasif.grid(row=0, column=0, pady=5, padx=2, sticky="w")
-        self.combo_eventos= self.combobox_clasif = CTk.CTkComboBox(self.frame_clasif, fg_color="white",text_color="dark gray", font=("Verdana", 16), values=("Evento", "Fiesta", "Cumpleaños", "Graduación", "XV Años", "Boda"),command=self.manejar_clasificacion,state="readonly")
+        self.combo_eventos= self.combobox_clasif = CTk.CTkComboBox(self.frame_clasif, fg_color="white",text_color="dark gray", font=("Verdana", 16), values=("Fiesta", "Cumpleaños", "Graduación", "XV Años", "Boda"),command=self.manejar_clasificacion,state="readonly")
         self.combobox_clasif.grid(row=1, column=0, pady=5, padx=2, sticky="nsew")
-        self.combobox_clasif.set("Evento")
+        self.combobox_clasif.set("Elija un tipo de evento")
 
     # Lugar, fecha, hora
     def crear_frame_lugar_fecha_hora_form(self):
@@ -958,9 +958,6 @@ class Ventana(CTk.CTkFrame):
 
         self.boton_elegir_imagen.grid_remove()
         self.label_imagen.grid_remove()
-
-        self.boton_reg_evento = CTk.CTkButton(self.frame_izquierdo_form, fg_color="#1277fa", text="Registrar evento", command=self.on_registrar_eventos)
-        self.boton_reg_evento.grid(pady=4, padx=8, row=5, column=0, sticky="nsew")
 
     # Vista de la invitación (parte derecha)
     def crear_frame_derecho_vis(self):
