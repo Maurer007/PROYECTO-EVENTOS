@@ -18,9 +18,6 @@ class Ventana(CTk.CTkFrame):
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
-
-        #self.title("Invitaciones")
-        #self.geometry("900x700+150+150")
     
         self.crear_interfaz()
         self.colores_agregados = []  # Lista para guardar los colores
