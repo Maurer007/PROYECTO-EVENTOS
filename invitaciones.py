@@ -537,7 +537,7 @@ class Ventana(CTk.CTkFrame):
     #Frame izquierdo contenedor del formulario
     def crear_frame_izquierdo_form(self):
         self.frame_izquierdo_form = CTk.CTkFrame(self.frame0, fg_color="#df0f69")
-        self.frame_izquierdo_form.grid(pady=15, padx=8, row=0, column=0, columnspan=2, rowspan=2, sticky="nsew")
+        self.frame_izquierdo_form.grid(pady=15, padx=15, row=0, column=0, columnspan=2, rowspan=2, sticky="nsew")
         self.frame_izquierdo_form.columnconfigure(0, weight=1)
         self.frame_izquierdo_form.rowconfigure(0, weight=24)
         self.frame_izquierdo_form.rowconfigure(1, weight=1)
