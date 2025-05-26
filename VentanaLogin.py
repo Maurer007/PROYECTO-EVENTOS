@@ -8,14 +8,17 @@ import customtkinter as ct
 from PIL import Image
 #import tkinter as tk
 from datetime import date
+from models.usuario import Usuario
+from Calendario import Calendario
 
 engine = create_engine("sqlite:///join_up.db", echo=True)
 
 class VentanaUsuario(ct.CTkToplevel):
-    def __init__(self, menu, colorFondo="#1256E8"):
+    def __init__(self, menu, calendario, colorFondo="#1256E8"):
         super().__init__(menu)
         self.title("Iniciar sesión")
         self.menu=menu
+        self.calendario = calendario 
 
         ancho_v = 500
         alto_v = 500
@@ -24,8 +27,6 @@ class VentanaUsuario(ct.CTkToplevel):
         self.geometry(f"{ancho_v}x{alto_v}+{x}+{y}")
 
         self.grab_set()
-
-        print("VentanaUsuario creada Vol.4")
         
         self.overrideredirect(True)
         frame_top = ct.CTkFrame(self, height=30, corner_radius=0, fg_color=colorFondo)
@@ -42,7 +43,9 @@ class VentanaUsuario(ct.CTkToplevel):
         self._set_appearance_mode("dark")
         ct.set_default_color_theme("blue")
 
-        self.CREDENTIALS_BD = "credentials.db"
+        self.entrada1 = None
+        self.entrada2 = None
+        self.label = None
         self.usuario = ""
         self.contrasenia = ""
 
@@ -57,8 +60,6 @@ class VentanaUsuario(ct.CTkToplevel):
         self.withdraw()
         self.deiconify()
 
-        self.crearTablaBD()
-        self.obtenerCredenciales()
 
 
     def crear_frame_titulo(self):
@@ -77,8 +78,8 @@ class VentanaUsuario(ct.CTkToplevel):
         frame = ct.CTkFrame(self, fg_color="#D9D9D9", corner_radius=10)
         frame.pack(padx=30, pady=10, fill="both")
 
-        self.crear_entry_derecha(frame, "Usuario", 0)
-        self.crear_entry_derecha(frame, "Contraseña", 1)
+        self.entrada1 = self.crear_entry_derecha(frame, "Usuario", 0)
+        self.entrada2 = self.crear_entry_derecha(frame, "Contraseña", 1)
 
         checkbox = ct.CTkCheckBox(frame, text="Recordar usuario", text_color="black", variable=self.opcion)
         checkbox.grid(row=2, column=0, padx=10, pady=10)
@@ -91,6 +92,8 @@ class VentanaUsuario(ct.CTkToplevel):
 
         entrada = ct.CTkEntry(frame, font=("Arial", 20), fg_color="white", border_color="black", border_width=2)
         entrada.grid(row=fila, column=1, columnspan=3, padx=10, pady=10, sticky="nsew")
+
+        return entrada
 
     def crear_frame_boton(self):
         frame = ct.CTkFrame(self, fg_color="transparent")
@@ -121,8 +124,8 @@ class VentanaUsuario(ct.CTkToplevel):
         frame = ct.CTkFrame(self, fg_color="transparent")
         frame.pack(padx=10, pady=10)
 
-        label = ct.CTkLabel(frame, text="", font=("Arial", 15), text_color="red")
-        label.pack(padx=5, pady=5, anchor="e")
+        self.label = ct.CTkLabel(frame, text="", font=("Arial", 15), text_color="red")
+        self.label.pack(padx=5, pady=5, anchor="e")
 
 
         return frame
@@ -139,35 +142,36 @@ class VentanaUsuario(ct.CTkToplevel):
         self.destroy()
         VentanaRegistro(self.menu)
     
-    def login(self):
-        print("Login")
-        """
-        username = self.entrada1.get()
-        password = self.entrada2.get()
+    def login(self):        
+        username = self.entrada1.get().strip()
+        password = self.entrada2.get().strip()
 
-        conexion = sqlite3.connect(self.CREDENTIALS_BD)
-        cursor = conexion.cursor()
-        cursor.execute("SELECT * FROM registro WHERE usuario=?", (username,))
-        user = cursor.fetchone()
+        engine = create_engine("sqlite:///db/app.db")
+        Session = sessionmaker(bind=engine)
+        session = Session()
 
         if not username:
             self.label.configure(text="Ingrese un usuario por favor")
-        elif not password:
+            return
+        if not password:
             self.label.configure(text="Ingrese una contraseña por favor")
-        else:
-            if user:
-                hashed_password = user[5].encode('utf-8')
-                if bcrypt.checkpw(password.encode('utf-8'), hashed_password):
-                    ventana_datos = VentanaDatos(self, username).mainloop()
+            return
 
-                    if self.checkbox.get():
-                        self.insertarDatos(username, password, self.profile_image_path)
-                    else:
-                        self.borrarCredenciales()
+        user = session.query(Usuario).filter_by(nom_usuario=username).first()
+
+        if user:
+            if bcrypt.checkpw(password.encode("utf-8"), user.contraseña.encode("utf-8")):
+                # Usuario y contraseña correctos
+                print("Login correcto con:", username)
+                import Sesion
+                Sesion.usuario_actual = username
+                self.calendario.actualizar_contenido()
+                self.cerrar()
             else:
-                self.label.configure(text="Usuario o contraseña incorrectos")
-        conexion.close()
-        """
+                self.label.configure(text="Contraseña incorrecta")
+        else:
+            self.label.configure(text="Usuario no encontrado")
+        
     
     def crearTablaBD(self):
         sqlinstruction = "CREATE TABLE IF NOT EXISTS " \

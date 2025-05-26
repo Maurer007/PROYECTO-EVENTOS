@@ -10,6 +10,9 @@ from datetime import date
 from sqlalchemy.exc import SQLAlchemyError
 from utils.orm_utils import Session
 from models.usuario import Usuario 
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
+from sqlalchemy.orm import declarative_base, sessionmaker, relationship
+import bcrypt
 
 class UsuarioManager:
 
@@ -17,6 +20,9 @@ class UsuarioManager:
     def registrar_usuario(nombre, apellido_paterno, apellido_materno, género, ciudad, estado, fecha_nacimiento, nom_usuario, contraseña, teléfono, correo):
         session = Session()
         try:
+
+            hashed_password = bcrypt.hashpw(contraseña.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
             nuevo_usuario = Usuario(
                 nombre=nombre,
                 apellido_paterno=apellido_paterno,
@@ -26,7 +32,7 @@ class UsuarioManager:
                 género=género,
                 fecha_nacimiento=fecha_nacimiento,
                 nom_usuario=nom_usuario,
-                contraseña=contraseña,
+                contraseña=hashed_password,
                 teléfono=teléfono,
                 correo=correo
             )
@@ -195,20 +201,49 @@ class VentanaRegistro(ct.CTkToplevel):
 
     # Todos los campos de datos de usuario
     def crear_datos_usuario(self, frame_datos):
-        self.nom_usuario=self.crear_entry_derecha(frame_datos, 0, 1, "Nombre de usuario")
-        self.contrasena=self.crear_entry_derecha(frame_datos, 1, 1, "Contraseña")
-        self.crear_entry_derecha(frame_datos, 2, 1, "Confirmar contraseña")
-        self.telefono=self.crear_entry_derecha(frame_datos, 3, 1, "Teléfono")
-        self.correo=self.crear_entry_derecha(frame_datos, 4, 1, "Correo electrónico")
+        self.nom_usuario=self.crear_entry_derecha(frame_datos, 0, 0, "Nombre de usuario")
+        self.nom_usuario_var = tk.StringVar()
+        self.nom_usuario.configure(textvariable=self.nom_usuario_var)
+        self.nom_usuario_var.trace_add("write", self.verificar_usuario_en_tiempo_real)
+        self.labelError_usuario = self.crear_label_error(frame_datos, 0)
+
+        self.contrasena=self.crear_entry_derecha(frame_datos, 1, 0, "Contraseña")
+        self.crear_entry_derecha(frame_datos, 2, 0, "Confirmar contraseña")
+        self.labelError_contraseña = self.crear_label_error(frame_datos, 2)
+        self.telefono=self.crear_entry_derecha(frame_datos, 3, 0, "Teléfono")
+        self.correo=self.crear_entry_derecha(frame_datos, 4, 0, "Correo electrónico")
 
     def crear_entry_derecha(self, frame_datos, fila, columna, texto):
         label = ct.CTkLabel(frame_datos, text=texto, text_color="black", font=("Arial", 20))
         label.grid(row=fila, column=columna, columnspan=2, pady=10, padx=10, sticky="w")
 
         entrada = ct.CTkEntry(frame_datos, text_color="black", font=("Arial", 20), fg_color="white")
-        entrada.grid(row=fila, column=columna+2, columnspan=4, pady=10, padx=10, sticky="nsew")
+        entrada.grid(row=fila, column=columna+2, columnspan=2, pady=10, padx=10, sticky="nsew")
 
         return entrada
+    
+    def crear_label_error(self, frame_datos, fila):
+        labelError = ct.CTkLabel(frame_datos, text="", font=("Arial", 15), text_color="red")
+        labelError.grid(row=fila, column=4, columnspan=2, pady=10, padx=10, sticky="w")
+
+        return labelError
+
+    def verificar_usuario_en_tiempo_real(self, *args):
+        engine = create_engine("sqlite:///db/app.db")  # Usa la ruta correcta de tu base
+        Session = sessionmaker(bind=engine)
+        session = Session()
+
+        username = self.nom_usuario_var.get().strip()
+        user = session.query(Usuario).filter_by(nom_usuario=username).first()
+
+        if username and user:
+            self.labelError_usuario.configure(text="El nombre de usuario \nya existe")
+        else:
+            self.labelError_usuario.configure(text="")
+
+        session.close()
+
+
 
     # Creación de botones
     def crear_frame_botones(self, scrollable_frame):
@@ -257,46 +292,9 @@ class VentanaRegistro(ct.CTkToplevel):
             nombre, apellido_paterno, apellido_materno,
             género, ciudad, estado, fecha_nacimiento,
             nom_usuario, contraseña, teléfono, correo)
-        """
-        if exito:
-            self.label_estado.configure(text="¡Usuario registrado con éxito!", text_color="green")
-        else:
-            self.label_estado.configure(text="Error al registrar usuario.", text_color="red")
-    
-    def crearTablaBD(self):
-        sqlinstruction = "CREATE TABLE IF NOT EXISTS " \
-                         "registro(id INTEGER PRIMARY KEY AUTOINCREMENT," \
-                         "nombre varchar(30)," \
-                         "apellidos varchar(45)," \
-                         "email varchar(60)," \
-                         "usuario varchar(20)," \
-                         "contraseña varchar(20))"
-        conexion = sqlite3.connect(self.REGISTRO_BD)
-        conexion.execute(sqlinstruction)
-        conexion.close()
+        
+        self.volver()
 
-    def insertarDatos(self, nom, aps, email, user, psw):
-        hashed_password = bcrypt.hashpw(psw.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        registro = "INSERT INTO registro(nombre, apellidos, email, usuario, contraseña) VALUES(?,?,?,?,?)"
-        conexion = sqlite3.connect(self.REGISTRO_BD)
-        try:
-            conexion.execute(registro, (nom, aps, email, user, hashed_password))
-            conexion.commit()
-        except Exception as e:
-            if type(e).__name__ == "IntegrityError":
-                print("Posible llave duplicada")
-            else:
-                print(type(e).__name__)
-        conexion.close()
-
-    def obtenerUsuario(self):
-        instruccion = "SELECT * FROM registro"
-        conexion = sqlite3.connect(self.REGISTRO_BD)
-        cursor = conexion.cursor()
-        resultado = cursor.execute(instruccion).fetchall()
-        conexion.close()
-        return resultado
-    """
     def volver(self):
         from VentanaLogin import VentanaUsuario
         self.cerrar()

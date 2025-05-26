@@ -5,11 +5,15 @@ import customtkinter as ctk
 from carrusel_deslizante import CarruselDeslizante
 from invitaciones import Ventana
 from MisEventos import MisEventos
+from Alerta_login import AlertaLogin
 from VentanaLogin import VentanaUsuario
 from Calendario import Calendario
+from VentanaInicioSesion import InicioSesion
 from utils.orm_utils import crear_base_de_datos
 from utils.carga_imagenes import cargar_imagenes_desde_carpeta
 from config import ASSETS, ICONOS, THEME, CATEGORIAS_EVENTOS, TEXTOS, ANIMACION
+import Sesion
+
 class SplashScreen(ctk.CTkToplevel):
     def __init__(self, parent):
         super().__init__(parent)
@@ -186,7 +190,7 @@ class Main(ctk.CTk):
     def create_user(self):
         frame_user = ctk.CTkFrame(self)
         frame_user.grid(row=0, column=0, sticky="nsew", padx=(10, 5), pady=(10, 5))
-        user = ctk.CTkButton(frame_user, text="", image=self.iconos["user"], fg_color="lightblue", corner_radius=8, width=60, height=60, command=self.abrir_login)
+        user = ctk.CTkButton(frame_user, text="", image=self.iconos["user"], fg_color="lightblue", corner_radius=8, width=60, height=60, command=self.verificar_sesion)
         user.grid(row=0, column=0, sticky="nsew", padx=(0, 5))
 
     def cargar_imagenes_eventos(self):
@@ -282,13 +286,28 @@ class Main(ctk.CTk):
         self.bind("<Configure>", self.ajustar_frame_superpuesto)
         self.minimizar() 
 
+    def verificar_sesion(self):
+        if Sesion.usuario_actual:
+            print("Sesión activa con:", Sesion.usuario_actual)
+            self.abrir_VentanaInicioSesion()
+        else:
+            print("No hay sesión activa.")
+            self.abrir_login()
+
+    def abrir_alerta_login(self):
+        if Sesion.usuario_actual:
+            print("Sesión activa con:", Sesion.usuario_actual)
+        else:
+            print("No hay sesión activa.")
+            self.abrir_login()
+        
     def abrir_login(self):
         print("Creando VentanaUsuario...")
         if hasattr(self, "ventana_usuario") and self.ventana_usuario.winfo_exists():
             print("Ya hay una ventana de usuario abierta.")
             return
         try:
-            VentanaUsuario(self)
+            VentanaUsuario(self, Calendario)
         except Exception as e:
             print("ERROR al crear VentanaUsuario:", e)
 
@@ -310,6 +329,17 @@ class Main(ctk.CTk):
         # Vuelve a crear el contenido principal
         self.create_principal()
         self.cargar_imagenes_en_filas()
+
+    def abrir_VentanaInicioSesion(self):
+        # Limpia el frame_principal
+        for widget in self.frame_principal.winfo_children():
+            widget.destroy()
+        # Inserta la Ventana de mis eventos dentro de frame_principal
+        try:
+            ventana_usuario = InicioSesion(self.frame_principal)
+            ventana_usuario.pack(fill="both", expand=True)
+        except Exception as e:
+            print("ERROR al crear ventana inicio sesion:", e)
 
     def abrir_calendario(self):
         # Limpia el frame_principal

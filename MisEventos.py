@@ -3,7 +3,6 @@ from tkinter import *
 from tkinter.ttk import Treeview, Style
 
 class MisEventos(ctk.CTkFrame):
-
     def __init__(self, parent, funcion_invitaciones):
         super().__init__(parent)
         self.parent = parent
