@@ -201,7 +201,7 @@ class EventosManager:
             boda = Boda(
                 id_evento=nuevo_evento.id_evento,
                 #anfitrion=anfitrion,
-                tipo_evento="Fiesta",
+                tipo_evento="Boda",
                 fecha=fecha,
                 hora=hora,
                 direccion=direccion,
@@ -260,7 +260,7 @@ class Ventana(CTk.CTkFrame):
         # Obtener fecha y hora actual
         self.fecha_actual = datetime.now().strftime("%d/%m/%Y")
         self.hora_actual = datetime.now().strftime("%H:%M")  # Formato 24 horas
-        
+        self.entry_cumpleanero = None
 
     def validar_fecha_input(self, texto):
         return all(c in "0123456789/" for c in texto) and len(texto) <= 10
@@ -478,7 +478,7 @@ class Ventana(CTk.CTkFrame):
         self.entry_descrip.grid(row=1, column=0, columnspan=2, pady=5, padx=2, sticky="nsew")
 
         #Guardar los frames actuales
-        self.paquete_actual = [self.frame_descrip_inv]
+        self.paquete_actual = [self.frame_descrip]
 
     def crear_cumple(self):
         if self.seleccion_actual != "Cumpleaños":
@@ -989,12 +989,14 @@ class Ventana(CTk.CTkFrame):
         privacidad = True if privacidad_valor == 1 else False
 
         descripcion = ""
-        if hasattr(self, "descripcion") and self.descripcion is not None:
-            descripcion = self.descripcion.get()
+        descripcion = self.descripcion.get() if hasattr(self, "entry_descrip")  else ""
 
         cumpleañero = ""
         if hasattr(self, "entry_cumpleanero") and self.entry_cumpleanero is not None:
-            cumpleañero = self.entry_cumpleanero.get()
+            try:
+                cumpleañero = self.entry_cumpleanero.get()
+            except Exception as e:
+                print(f"⚠️ No se pudo obtener el texto de 'entry_cumpleanero': {e}")
 
         edad = getattr(self, "valor_edad", None)
         mesa_regalos = self.checkbox_estilo_var.get() if hasattr(self, "checkbox_estilo_var") else 0
