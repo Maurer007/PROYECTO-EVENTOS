@@ -2,25 +2,19 @@ import customtkinter as ctk
 from tkinter import *
 from tkinter.ttk import Treeview, Style
 
-class MisEventos(ctk.CTkFrame):
+class Calendario(ctk.CTkFrame):
 
-    def __init__(self, parent, funcion_invitaciones):
+    def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
-        self.funcion_invitaciones = funcion_invitaciones
-
+        
         self.configure(fg_color="#C4DF62")
         self.crear_titulo()
-        self.crear_boton_evento(self.funcion_invitaciones)
         self.crear_treeview()
-
+        
     def crear_titulo(self):
-        self.titulo = ctk.CTkLabel(self, text="Mis Eventos", font=("Eras Demi ITC", 75), text_color="#0A1A43")
+        self.titulo = ctk.CTkLabel(self, text="Calendario", font=("Eras Demi ITC", 75), text_color="#0A1A43")
         self.titulo.pack(pady=10)    
-
-    def crear_boton_evento(self, funcion):
-        self.boton = ctk.CTkButton(self, text="Crear Evento", command=funcion)
-        self.boton.pack(pady=10)    
 
     def crear_treeview(self):
         style = Style()
