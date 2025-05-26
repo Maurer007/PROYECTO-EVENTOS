@@ -2,9 +2,9 @@ import customtkinter as CTk
 import tkinter as tk
 import tkinter.filedialog as filedialog
 import tkinter.filedialog as filedialog
-from tkinter import colorchooser
+from tkinter import colorchooser, messagebox
 import webcolors, random, string
-
+from datetime import datetime
 class Ventana(CTk.CTkFrame):
 
     def __init__(self, master=None):
@@ -38,7 +38,21 @@ class Ventana(CTk.CTkFrame):
         "XVs": self.crear_xv,
         "Boda": self.crear_boda
         }
-    
+
+        self.fecha_actual = datetime.now().strftime("%d/%m/%Y")
+        self.hora_actual = datetime.now().strftime("%H:%M")
+
+    def validar_fecha_input(self, texto):
+        return all(c in "0123456789/" for c in texto) and len(texto) <= 10
+
+    def validar_hora_input(self, texto):
+        return all(c in "0123456789:" for c in texto) and len(texto) <= 5
+
+    def formato_auto_hora(self, event):
+        contenido = self.entry_hora.get()
+        if len(contenido) == 2 and ":" not in contenido:
+            self.entry_hora.insert("end", ":")
+
     def manejar_clasificacion(self, seleccion):
         self.seleccion_actual = seleccion
 
