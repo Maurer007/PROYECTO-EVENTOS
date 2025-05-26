@@ -163,13 +163,13 @@ class Main(ctk.CTk):
         #contenido = self.obtener_imagenes_eventos()
         contenido = [
             {"type": "text", "text": TEXTOS["bienvenida"]},
-            {"type": "image", "path": ASSETS["categorias"]["grandes"] + "/grande1.png"},
+            {"type": "image", "path": ASSETS["categorias"]["grande"] + "/grande4.png"},
             {"type": "text", "text": TEXTOS["organiza"]},
-            {"type": "image", "path": ASSETS["categorias"]["grandes"] + "/grande2.png"},
+            {"type": "image", "path": ASSETS["categorias"]["grande"] + "/grande2.png"},
             {"type": "text", "text": TEXTOS["inolvidable"]},
-            {"type": "image", "path": ASSETS["categorias"]["grandes"] + "/grande3.png"},
+            {"type": "image", "path": ASSETS["categorias"]["grande"] + "/grande3.png"},
             {"type": "text", "text": TEXTOS["celebra"]},
-            {"type": "image", "path": ASSETS["categorias"]["grandes"] + "/grande4.png"},
+            {"type": "image", "path": ASSETS["categorias"]["grande"] + "/grande4.png"},
         ]
         evento_grande = CarruselDeslizante(principal_main, contenido, duracion=ANIMACION["duracion"], velocidad=ANIMACION["velocidad"], height=THEME["evento_height"])
         evento_grande.grid(sticky="nsew", pady=(0,3))

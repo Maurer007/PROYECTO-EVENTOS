@@ -9,7 +9,7 @@ ASSETS = {
         "xv": "assets/xvs",
         "grad": "assets/graduaciones",
         "evento": "assets/eventos",
-        "grandes": "assets/grandes",
+        "grande": "assets/grandes",
     }
 }
 
@@ -45,6 +45,7 @@ CATEGORIAS_EVENTOS = [
     {"nombre": "XV años", "clave": "xv", "cantidad": 10},
     {"nombre": "Graduaciones", "clave": "grad", "cantidad": 10},
     {"nombre": "Eventos", "clave": "evento", "cantidad": 10},
+    {"nombre": "Grandes", "clave": "grande", "cantidad": 4},
 ]
 
 # Textos
