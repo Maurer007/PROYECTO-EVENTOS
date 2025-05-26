@@ -239,17 +239,17 @@ class Ventana(CTk.CTkFrame):
     def crear_fiesta(self):
         if self.seleccion_actual != "Fiesta":
          return
-        self.frame_descrip=CTk.CTkFrame(self.frame_form, fg_color="#6ea7f1")
-        self.frame_descrip.grid(pady=4, padx=4, row=6, column=0, sticky="nsew")
-        self.frame_descrip.columnconfigure(0,weight=1)
-        self.frame_descrip.rowconfigure(1,weight=1)
-        self.label_descrip=CTk.CTkLabel(self.frame_descrip,text="Descripción", font=("Verdana", 20, "bold"))
-        self.label_descrip.grid(row=0, column=0, pady=5, padx=2, sticky="w")
-        self.entry_descrip=CTk.CTkEntry(self.frame_descrip,placeholder_text="p. ej.Disfraces con temática de Shrek 2", fg_color="white", font=("Verdana", 16))
-        self.entry_descrip.grid(row=1, column=0, columnspan=2, pady=5, padx=2, sticky="nsew")
+        self.frame_descrip_inv=CTk.CTkFrame(self.frame_form, fg_color="#6ea7f1")
+        self.frame_descrip_inv.grid(pady=4, padx=4, row=6, column=0, sticky="nsew")
+        self.frame_descrip_inv.columnconfigure(0,weight=1)
+        self.frame_descrip_inv.rowconfigure(1,weight=1)
+        self.label_descrip_inv=CTk.CTkLabel(self.frame_descrip_inv,text="Descripción", font=("Verdana", 20, "bold"))
+        self.label_descrip_inv.grid(row=0, column=0, pady=5, padx=2, sticky="w")
+        self.entry_descrip_inv=CTk.CTkEntry(self.frame_descrip_inv,placeholder_text="p. ej.Disfraces con temática de Shrek 2", fg_color="white", font=("Verdana", 16))
+        self.entry_descrip_inv.grid(row=1, column=0, columnspan=2, pady=5, padx=2, sticky="nsew")
 
         #Guardar los frames actuales
-        self.paquete_actual = [self.frame_descrip]
+        self.paquete_actual = [self.frame_descrip_inv]
 
     def crear_cumple(self):
         if self.seleccion_actual != "Cumpleaños":
