@@ -5,8 +5,10 @@ import customtkinter as ctk
 from carrusel_deslizante import CarruselDeslizante
 from invitaciones import Ventana
 from MisEventos import MisEventos
+from VentanaLogin import VentanaUsuario
 from utils.orm_utils import crear_base_de_datos
-
+from utils.carga_imagenes import cargar_imagenes_desde_carpeta
+from config import ASSETS, ICONOS, THEME, CATEGORIAS_EVENTOS, TEXTOS, ANIMACION
 class SplashScreen(ctk.CTkToplevel):
     def __init__(self, parent):
         super().__init__(parent)
@@ -26,7 +28,6 @@ class SplashScreen(ctk.CTkToplevel):
 
     def close_splash(self):
         self.destroy()
-
 class Main(ctk.CTk):
     def __init__(self, color_fondo="#2b2b2b", color_texto="black", color_placeholder="gray", color_texto_botones="white", carga_event=None):
         super().__init__()
@@ -35,6 +36,7 @@ class Main(ctk.CTk):
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("green")
         self.configure(fg_color=color_fondo)
+        self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=30)
 
         crear_base_de_datos()
 
@@ -63,20 +65,9 @@ class Main(ctk.CTk):
         self.create_frame_superpuesto()
 
     def cargar_iconos(self):
-        iconos_info = {
-            "user": "user.png",
-            "lupa": "lupa.png",
-            "home": "home.png",
-            "calendario": "calendario.png",
-            "mis_eventos": "mis_eventos.png",
-            "notificaciones": "notificaciones.png",
-            "ajustes": "ajustes.png",
-            "logout": "logout.png"
-        }
-
-        self.iconos = {}  # Diccionario donde se almacenarán los CTkImage
-        for nombre, archivo in iconos_info.items():
-            ruta = f"assets/iconos/{archivo}"
+        self.iconos = {}  
+        for nombre, archivo in ICONOS.items():
+            ruta = ASSETS["iconos"] + archivo
             self.iconos[nombre] = ctk.CTkImage(Image.open(ruta), size=(40, 40))
 
     def create_barra_superior(self):
@@ -155,13 +146,6 @@ class Main(ctk.CTk):
         return frame_contenido
 
     def create_principal(self):
-        evento_height = 300
-
-        """self.frame_contenedor = ctk.CTkFrame(self)
-        self.frame_contenedor.grid(row=1, column=1, sticky="nsew")
-        self.frame_contenedor.grid_columnconfigure(0, weight=1)
-        self.frame_contenedor.grid_rowconfigure(0, weight=1)"""
-
         self.frame_principal = ctk.CTkScrollableFrame(self)
         self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 10), pady=(0, 4))
         self.frame_principal._scrollbar.grid_forget()
@@ -178,16 +162,16 @@ class Main(ctk.CTk):
 
         #contenido = self.obtener_imagenes_eventos()
         contenido = [
-            {"type": "text", "text": "¡Bienvenido a JoinUp!"},
-            {"type": "image", "path": "assets/grandes/grande1.png"},
-            {"type": "text", "text": "¡Organiza tus eventos con nosotros!"},
-            {"type": "image", "path": "assets/grandes/grande2.png"},
-            {"type": "text", "text": "¡Haz tu evento inolvidable!"},
-            {"type": "image", "path": "assets/grandes/grande3.png"},
-            {"type": "text", "text": "¡Celebra con nosotros!"},
-            {"type": "image", "path": "assets/grandes/grande4.png"},
+            {"type": "text", "text": TEXTOS["bienvenida"]},
+            {"type": "image", "path": ASSETS["categorias"]["grandes"] + "/grande1.png"},
+            {"type": "text", "text": TEXTOS["organiza"]},
+            {"type": "image", "path": ASSETS["categorias"]["grandes"] + "/grande2.png"},
+            {"type": "text", "text": TEXTOS["inolvidable"]},
+            {"type": "image", "path": ASSETS["categorias"]["grandes"] + "/grande3.png"},
+            {"type": "text", "text": TEXTOS["celebra"]},
+            {"type": "image", "path": ASSETS["categorias"]["grandes"] + "/grande4.png"},
         ]
-        evento_grande = CarruselDeslizante(principal_main, contenido, duracion=3000, velocidad=8, height=evento_height)
+        evento_grande = CarruselDeslizante(principal_main, contenido, duracion=ANIMACION["duracion"], velocidad=ANIMACION["velocidad"], height=THEME["evento_height"])
         evento_grande.grid(sticky="nsew", pady=(0,3))
 
         # Filas de eventos (copia una fila para poner una nueva categoría de eventos)
@@ -208,94 +192,19 @@ class Main(ctk.CTk):
         self.imagenes_eventos = {}
 
         def cargar():
-            imagenes_info = {
-            "cumple":{
-                "cumple1": "assets/cumples/cumple1.png",
-                "cumple2": "assets/cumples/cumple2.png",
-                "cumple3": "assets/cumples/cumple3.png",
-                "cumple4": "assets/cumples/cumple4.png",
-                "cumple5": "assets/cumples/cumple5.png",
-                "cumple6": "assets/cumples/cumple6.png",
-                "cumple7": "assets/cumples/cumple7.png",
-                "cumple8": "assets/cumples/cumple8.png",
-                "cumple9": "assets/cumples/cumple9.png",
-                "cumple10": "assets/cumples/cumple10.png",
-            },            
-            "boda": {
-                "boda1": "assets/bodas/boda1.png",
-                "boda2": "assets/bodas/boda2.png",
-                "boda3": "assets/bodas/boda3.png",
-                "boda4": "assets/bodas/boda4.png",
-                "boda5": "assets/bodas/boda5.png",
-                "boda6": "assets/bodas/boda6.png",
-                "boda7": "assets/bodas/boda7.png",
-                "boda8": "assets/bodas/boda8.png",
-                "boda9": "assets/bodas/boda9.png",
-                "boda10": "assets/bodas/boda10.png",        
-            },
-            "fiesta": {
-                "fiesta1": "assets/fiestas/fiesta1.png",
-                "fiesta2": "assets/fiestas/fiesta2.png",
-                "fiesta3": "assets/fiestas/fiesta3.png",
-                "fiesta4": "assets/fiestas/fiesta4.png",
-                "fiesta5": "assets/fiestas/fiesta5.png",
-                "fiesta6": "assets/fiestas/fiesta6.png",
-                "fiesta7": "assets/fiestas/fiesta7.png",
-                "fiesta8": "assets/fiestas/fiesta8.png",
-                "fiesta9": "assets/fiestas/fiesta9.png",
-                "fiesta10": "assets/fiestas/fiesta10.png",        
-            },
-            "xv" : {
-                "xv1": "assets/xvs/xv1.png",
-                "xv2": "assets/xvs/xv2.png",
-                "xv3": "assets/xvs/xv3.png",
-                "xv4": "assets/xvs/xv4.png",
-                "xv5": "assets/xvs/xv5.png",
-                "xv6": "assets/xvs/xv6.png",
-                "xv7": "assets/xvs/xv7.png",
-                "xv8": "assets/xvs/xv8.png",
-                "xv9": "assets/xvs/xv9.png",
-                "xv10": "assets/xvs/xv10.png",        
-            },
-            "graduacion" : {
-                "grad1": "assets/graduaciones/grad1.png",
-                "grad2": "assets/graduaciones/grad2.png",
-                "grad3": "assets/graduaciones/grad3.png",
-                "grad4": "assets/graduaciones/grad4.png",
-                "grad5": "assets/graduaciones/grad5.png",
-                "grad6": "assets/graduaciones/grad6.png",
-                "grad7": "assets/graduaciones/grad7.png",
-                "grad8": "assets/graduaciones/grad8.png",
-                "grad9": "assets/graduaciones/grad9.png",
-                "grad10": "assets/graduaciones/grad10.png",        
-            },
-            "eventos" : {
-                "evento1": "assets/eventos/evento1.png",
-                "evento2": "assets/eventos/evento2.png",
-                "evento3": "assets/eventos/evento3.png",
-                "evento4": "assets/eventos/evento4.png",
-                "evento5": "assets/eventos/evento5.png",
-                "evento6": "assets/eventos/evento6.png",
-                "evento7": "assets/eventos/evento7.png",
-                "evento8": "assets/eventos/evento8.png",
-                "evento9": "assets/eventos/evento9.png",
-                "evento10": "assets/eventos/evento10.png",        
-            },
-        }
-            for categoria, imagenes in imagenes_info.items():
-                for clave, ruta in imagenes.items():
-                    try:
-                        imagen = ctk.CTkImage(Image.open(ruta), size=(400, 300))
-                        self.imagenes_eventos[clave] = imagen
-                    except Exception as e:
-                        print(f"Error al cargar {ruta}: {e}")
-            # Cuando termina, llama a la función para poblar las filas (en el hilo principal)
+            placeholder = ASSETS["placeholder"]
+            for cat in CATEGORIAS_EVENTOS:
+                carpeta = ASSETS["categorias"][cat["clave"]]
+                prefijo = cat["clave"]
+                cantidad = cat["cantidad"]
+                imagenes = cargar_imagenes_desde_carpeta(
+                    carpeta, prefijo, cantidad, size=(THEME["evento_width"], THEME["evento_height"]), placeholder_path=placeholder
+                )
+                self.imagenes_eventos.update(imagenes)
             self.after(0, self.cargar_imagenes_en_filas)
             if self.carga_event:
                 self.carga_event.set()
-
-        executor = concurrent.futures.ThreadPoolExecutor(max_workers=30)
-        executor.submit(cargar)
+        threading.Thread(target=cargar, daemon=True).start()
 
     def cargar_imagenes_en_filas(self):
         evento_height = 300
@@ -373,7 +282,6 @@ class Main(ctk.CTk):
         self.minimizar() 
 
     def abrir_login(self):
-        from VentanaLogin import VentanaUsuario
         print("Creando VentanaUsuario...")
         if hasattr(self, "ventana_usuario") and self.ventana_usuario.winfo_exists():
             print("Ya hay una ventana de usuario abierta.")

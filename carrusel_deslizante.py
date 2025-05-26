@@ -55,7 +55,7 @@ class CarruselDeslizante(ctk.CTkFrame):
                 top = max(0, (new_height - self.height) // 2)
                 bottom = top + self.height
                 img = img.crop((0, top, self.width, bottom))
-                item["image"] = ImageTk.PhotoImage(img)
+                item["image"] = ctk.CTkImage(img, size=(self.width, self.height))
         self.image_label.configure(width=self.width, height=self.height)
         self.text_label.configure(width=self.width, height=self.height, font=self.text_font)
 
