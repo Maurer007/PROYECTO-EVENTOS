@@ -6,11 +6,233 @@ from tkinter import colorchooser
 import webcolors, random, string
 from tkinter import messagebox
 from datetime import datetime
+from sqlalchemy.exc import SQLAlchemyError
+from utils.orm_utils import Session
+from models.evento import Evento, Fiesta, Cumpleaños, Graduacion, XVAnos, Boda 
 
+
+class EventosManager:
+    
+    @staticmethod
+    def insertar_fiesta(fecha, hora, direccion, num_invitados, privacidad, descripcion):
+        session = Session()
+        try:
+            nuevo_evento = Evento(
+                #anfitrion=anfitrion,
+                tipo_evento="Fiesta",
+                fecha=fecha,
+                hora=hora,
+                direccion=direccion,
+                num_invitados=num_invitados,
+                privacidad=privacidad
+            )
+            session.add(nuevo_evento)
+            session.commit()
+
+            fiesta = Fiesta(
+                id_evento=nuevo_evento.id_evento,
+                #anfitrion=anfitrion,
+                tipo_evento="Fiesta",
+                fecha=fecha,
+                hora=hora,
+                direccion=direccion,
+                num_invitados=num_invitados,
+                privacidad=privacidad,
+                descripcion=descripcion
+            )
+            session.add(fiesta)
+            session.commit()
+            return True
+
+        except SQLAlchemyError as e:
+            session.rollback()
+            print(f"❌ Error al registrar: {e}")
+            return False
+
+        finally:
+            session.close()
+    @staticmethod
+    def insertar_cumpleaños(fecha, hora, direccion, num_invitados, privacidad, cumpleañero, edad, mesa_regalos):
+        session = Session()
+        try:
+            nuevo_evento = Evento(
+                #anfitrion=anfitrion,
+                tipo_evento="Cumpleaños",
+                fecha=fecha,
+                hora=hora,
+                direccion=direccion,
+                num_invitados=num_invitados,
+                privacidad=privacidad
+                
+            )
+            session.add(nuevo_evento)
+            session.commit()
+
+            cumpleaños = Cumpleaños(
+                id_evento=nuevo_evento.id_evento,
+                #anfitrion=anfitrion,
+                tipo_evento="Cumpleaños",
+                fecha=fecha,
+                hora=hora,
+                direccion=direccion,
+                num_invitados=num_invitados,
+                privacidad=privacidad,
+                cumpleañero=cumpleañero,
+                edad=edad,
+                mesa_regalos=mesa_regalos
+            )
+            session.add(cumpleaños)
+            session.commit()
+            return True
+
+        except SQLAlchemyError as e:
+            session.rollback()
+            print(f"❌ Error al registrar: {e}")
+            return False
+
+        finally:
+            session.close()
+
+    @staticmethod
+    def insertar_graduacion(fecha, hora, direccion, num_invitados, privacidad, escuela, nivel_educativo, generacion, invitados_por_alumno):
+        session = Session()
+        try:
+            nuevo_evento = Evento(
+                #anfitrion=anfitrion,
+                tipo_evento="Graduacion",
+                fecha=fecha,
+                hora=hora,
+                direccion=direccion,
+                num_invitados=num_invitados,
+                privacidad=privacidad
+                
+            )
+            session.add(nuevo_evento)
+            session.commit()
+
+            graduacion = Graduacion(
+                id_evento=nuevo_evento.id_evento,
+                #anfitrion=anfitrion,
+                tipo_evento="Graduacion",
+                fecha=fecha,
+                hora=hora,
+                direccion=direccion,
+                num_invitados=num_invitados,
+                privacidad=privacidad,
+                escuela=escuela,
+                nivel_educativo=nivel_educativo,
+                generacion=generacion,
+                invitados_por_alumno=invitados_por_alumno
+            )
+            session.add(graduacion)
+            session.commit()
+            return True
+
+        except SQLAlchemyError as e:
+            session.rollback()
+            print(f"❌ Error al registrar: {e}")
+            return False
+
+        finally:
+            session.close()
+    
+    @staticmethod
+    def insertar_xv(fecha, hora, direccion, num_invitados, privacidad, cumpleañero_xv, padre, madre, padrino, madrina, mesa_regalos_xv):
+        session = Session()
+        try:
+            nuevo_evento = Evento(
+                #anfitrion=anfitrion,
+                tipo_evento="XVAños",
+                fecha=fecha,
+                hora=hora,
+                direccion=direccion,
+                num_invitados=num_invitados,
+                privacidad=privacidad
+                
+            )
+            session.add(nuevo_evento)
+            session.commit()
+
+            xv = XVAnos(
+                id_evento=nuevo_evento.id_evento,
+                #anfitrion=anfitrion,
+                tipo_evento="XV Años",
+                fecha=fecha,
+                hora=hora,
+                direccion=direccion,
+                num_invitados=num_invitados,
+                privacidad=privacidad,
+                cumpleañero_xv=cumpleañero_xv,
+                padre=padre,
+                madre=madre,
+                padrino=padrino,
+                madrina=madrina,
+                mesa_regalos_xv=mesa_regalos_xv
+            )
+            session.add(xv)
+            session.commit()
+            return True
+
+        except SQLAlchemyError as e:
+            session.rollback()
+            print(f"❌ Error al registrar: {e}")
+            return False
+
+        finally:
+            session.close()
+        
+    @staticmethod
+    def insertar_boda(fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos):
+        session = Session()
+        try:
+            nuevo_evento = Evento(
+                #anfitrion=anfitrion,
+                tipo_evento="Boda",
+                fecha=fecha,
+                hora=hora,
+                direccion=direccion,
+                num_invitados=num_invitados,
+                privacidad=privacidad
+                
+            )
+            session.add(nuevo_evento)
+            session.commit()
+
+            boda = Boda(
+                id_evento=nuevo_evento.id_evento,
+                #anfitrion=anfitrion,
+                tipo_evento="Fiesta",
+                fecha=fecha,
+                hora=hora,
+                direccion=direccion,
+                num_invitados=num_invitados,
+                privacidad=privacidad,
+                novia=novia,
+                novio=novio,
+                padrino_boda=padrino_boda,
+                madrina_boda=madrina_boda,
+                mesa_regalos_boda=mesa_regalos_boda,
+                misa=misa,
+                iglesia=iglesia,
+                menores_permitidos=menores_permitidos
+            )
+            session.add(boda)
+            session.commit()
+            return True
+
+        except SQLAlchemyError as e:
+            session.rollback()
+            print(f"❌ Error al registrar: {e}")
+            return False
+
+        finally:
+            session.close()
+       
 class Ventana(CTk.CTkFrame):
 
     def __init__(self, master=None):
         super().__init__(master)
+        #self.anfitrion_id = anfitrion_id
 
         # Configuración inicial del tema
         CTk.set_appearance_mode("System")
@@ -28,7 +250,7 @@ class Ventana(CTk.CTkFrame):
         "Fiesta": self.crear_fiesta,
         "Cumpleaños": self.crear_cumple,
         "Graduación": self.crear_grad,
-        "XVs": self.crear_xv,
+        "XV Años": self.crear_xv,
         "Boda": self.crear_boda
         }
         #Valores para los botones de aumento y disminuyo
@@ -51,6 +273,13 @@ class Ventana(CTk.CTkFrame):
         contenido = self.entry_hora.get()
         if len(contenido) == 2 and ":" not in contenido:
             self.entry_hora.insert("end", ":")
+        self.descripcion = None
+        self.entry_cumpleanero = None
+        """self.lugar=""
+        self.fecha=""
+        self.hora="""""
+
+        #self.tipo_evento=""
     
     def manejar_clasificacion(self, seleccion):
         self.seleccion_actual = seleccion
@@ -145,7 +374,7 @@ class Ventana(CTk.CTkFrame):
         while True:
             caracteres = string.ascii_letters + string.digits + string.punctuation
             codigo = ''.join(random.choice(caracteres) for _ in range(longitud))
-            # Validar que tenga al menos un carácter de cada tipo
+            # Validar que tenga al menos un carácter de cada tipo_evento
             if (any(c.islower() for c in codigo) and
                 any(c.isupper() for c in codigo) and
                 any(c.isdigit() for c in codigo) and
@@ -235,18 +464,18 @@ class Ventana(CTk.CTkFrame):
             widget.destroy()
         self.colores_agregados.clear()
         self.actualizar_visibilidad_colores_agregados()
-
+        #Fiesta
     def crear_fiesta(self):
         if self.seleccion_actual != "Fiesta":
          return
-        self.frame_descrip_inv=CTk.CTkFrame(self.frame_form, fg_color="#6ea7f1")
-        self.frame_descrip_inv.grid(pady=4, padx=4, row=6, column=0, sticky="nsew")
-        self.frame_descrip_inv.columnconfigure(0,weight=1)
-        self.frame_descrip_inv.rowconfigure(1,weight=1)
-        self.label_descrip_inv=CTk.CTkLabel(self.frame_descrip_inv,text="Descripción", font=("Verdana", 20, "bold"))
-        self.label_descrip_inv.grid(row=0, column=0, pady=5, padx=2, sticky="w")
-        self.entry_descrip_inv=CTk.CTkEntry(self.frame_descrip_inv,placeholder_text="p. ej.Disfraces con temática de Shrek 2", fg_color="white", font=("Verdana", 16))
-        self.entry_descrip_inv.grid(row=1, column=0, columnspan=2, pady=5, padx=2, sticky="nsew")
+        self.frame_descrip=CTk.CTkFrame(self.frame_form, fg_color="#6ea7f1")
+        self.frame_descrip.grid(pady=4, padx=4, row=6, column=0, sticky="nsew")
+        self.frame_descrip.columnconfigure(0,weight=1)
+        self.frame_descrip.rowconfigure(1,weight=1)
+        self.label_descrip=CTk.CTkLabel(self.frame_descrip,text="Descripción", font=("Verdana", 20, "bold"))
+        self.label_descrip.grid(row=0, column=0, pady=5, padx=2, sticky="w")
+        self.descripcion=self.entry_descrip=CTk.CTkEntry(self.frame_descrip,placeholder_text="p. ej.Disfraces con temática de Shrek 2", fg_color="white", font=("Verdana", 16))
+        self.entry_descrip.grid(row=1, column=0, columnspan=2, pady=5, padx=2, sticky="nsew")
 
         #Guardar los frames actuales
         self.paquete_actual = [self.frame_descrip_inv]
@@ -365,7 +594,7 @@ class Ventana(CTk.CTkFrame):
         self.paquete_actual = [self.frame_instituto,self.frame_nivel_edu,self.frame_generacion,self.frame_inv_x_grad]
 
     def crear_xv(self):
-        if self.seleccion_actual != "XVs":
+        if self.seleccion_actual != "XV Años":
          return
         self.frame_quinceanero=CTk.CTkFrame(self.frame_form, fg_color="#6ea7f1")
         self.frame_quinceanero.grid(pady=4, padx=4, row=6, column=0, sticky="nsew")
@@ -571,7 +800,7 @@ class Ventana(CTk.CTkFrame):
         self.frame_clasif.rowconfigure(1,weight=1)
         self.label_clasif = CTk.CTkLabel(self.frame_clasif, text="Clasificación", font=("Verdana", 20, "bold"))
         self.label_clasif.grid(row=0, column=0, pady=5, padx=2, sticky="w")
-        self.combobox_clasif = CTk.CTkComboBox(self.frame_clasif, fg_color="white",text_color="dark gray", font=("Verdana", 16), values=("Evento", "Fiesta", "Cumpleaños", "Graduación", "XVs", "Boda"),command=self.manejar_clasificacion,state="readonly")
+        self.combo_eventos= self.combobox_clasif = CTk.CTkComboBox(self.frame_clasif, fg_color="white",text_color="dark gray", font=("Verdana", 16), values=("Evento", "Fiesta", "Cumpleaños", "Graduación", "XV Años", "Boda"),command=self.manejar_clasificacion,state="readonly")
         self.combobox_clasif.grid(row=1, column=0, pady=5, padx=2, sticky="nsew")
         self.combobox_clasif.set("Evento")
 
@@ -586,11 +815,11 @@ class Ventana(CTk.CTkFrame):
         self.frame_lugar_fecha_hora.rowconfigure(2,weight=1)     
         self.label_lugar_fecha_hora = CTk.CTkLabel(self.frame_lugar_fecha_hora, text="Lugar, fecha y hora", font=("Verdana", 20, "bold"))
         self.label_lugar_fecha_hora.grid(row=0, column=0, columnspan=2, pady=5, padx=2, sticky="w")
-        self.entry_lugar = CTk.CTkEntry(self.frame_lugar_fecha_hora,text_color="dark gray", fg_color="white",placeholder_text="Calle/Col./No./Municipio/Ciudad/Estado",placeholder_text_color="dark gray", font=("Verdana", 16))
+        self.lugar=self.entry_lugar = CTk.CTkEntry(self.frame_lugar_fecha_hora,text_color="dark gray", fg_color="white",placeholder_text="Calle/Col./No./Municipio/Ciudad/Estado",placeholder_text_color="dark gray", font=("Verdana", 16))
         self.entry_lugar.grid(row=1, column=0, columnspan=2, pady=5, padx=2, sticky="nsew")
-        self.entry_fecha = CTk.CTkEntry(self.frame_lugar_fecha_hora,text_color="dark gray", fg_color="white",placeholder_text="dd/mm/yyyy",placeholder_text_color="dark gray", font=("Verdana", 16))
+        self.fecha=self.entry_fecha = CTk.CTkEntry(self.frame_lugar_fecha_hora,text_color="dark gray", fg_color="white",placeholder_text="dd/mm/yyyy",placeholder_text_color="dark gray", font=("Verdana", 16))
         self.entry_fecha.grid(row=2, column=0, pady=5, padx=2, sticky="nsew")
-        self.entry_hora = CTk.CTkEntry(self.frame_lugar_fecha_hora,text_color="dark gray", fg_color="white",placeholder_text="HH:MM",placeholder_text_color="dark gray", font=("Verdana", 16))
+        self.hora=self.entry_hora = CTk.CTkEntry(self.frame_lugar_fecha_hora,text_color="dark gray", fg_color="white",placeholder_text="HH:MM",placeholder_text_color="dark gray", font=("Verdana", 16))
         self.entry_hora.grid(row=2, column=1, pady=5, padx=2, sticky="nsew")
 
         # 💡 Establecer fecha y hora actual
@@ -654,7 +883,7 @@ class Ventana(CTk.CTkFrame):
         self.label_personas.grid_remove()
         self.entry_num_inv.grid_remove()
 
-        combobox_cupo_inv = CTk.CTkComboBox(
+        self.cupo=combobox_cupo_inv = CTk.CTkComboBox(
             self.frame_cupo_inv,
             fg_color="white",text_color="dark gray", font=("Verdana", 16),
             values=("Limitado", "Ilimitado"),
@@ -730,6 +959,9 @@ class Ventana(CTk.CTkFrame):
         self.boton_elegir_imagen.grid_remove()
         self.label_imagen.grid_remove()
 
+        self.boton_reg_evento = CTk.CTkButton(self.frame_izquierdo_form, fg_color="#1277fa", text="Registrar evento", command=self.on_registrar_eventos)
+        self.boton_reg_evento.grid(pady=4, padx=8, row=5, column=0, sticky="nsew")
+
     # Vista de la invitación (parte derecha)
     def crear_frame_derecho_vis(self):
         self.frame2 = CTk.CTkFrame(self.frame0, fg_color="#1503b8")
@@ -750,7 +982,84 @@ class Ventana(CTk.CTkFrame):
         self.boton_guardar_inv.grid(pady=10,padx=25,row=1,column=1,sticky="nsew")
 
 
-# Ejecución
+    def on_registrar_eventos(self):
+        tipo_evento = self.combo_eventos.get()
+        fecha = self.fecha.get()
+        hora = self.hora.get()
+        direccion = self.lugar.get()
+        num_invitados = self.cupo.get()
+        privacidad_valor = self.checkbox_privacidad_var.get()
+        privacidad = True if privacidad_valor == 1 else False
+
+        descripcion = ""
+        if hasattr(self, "descripcion") and self.descripcion is not None:
+            descripcion = self.descripcion.get()
+
+        cumpleañero = ""
+        if hasattr(self, "entry_cumpleanero") and self.entry_cumpleanero is not None:
+            cumpleañero = self.entry_cumpleanero.get()
+
+        edad = getattr(self, "valor_edad", None)
+        mesa_regalos = self.checkbox_estilo_var.get() if hasattr(self, "checkbox_estilo_var") else 0
+
+        escuela = ""
+        nivel_educativo = ""
+        generacion = getattr(self, "valor_generacion", None)
+        invitados_por_alumno = getattr(self, "valor_inv_grad", None)
+
+        if tipo_evento == "Graduación":
+            if hasattr(self, "entry_instituto"):
+                escuela = self.entry_instituto.get()
+            if hasattr(self, "combobox_nivel_edu"):
+                try:
+                    nivel_educativo = self.combobox_nivel_edu.get()
+                except Exception as e:
+                    print(f"⚠️ No se pudo obtener nivel educativo: {e}")
+                    nivel_educativo = ""
+
+        cumpleañero_xv = self.entry_quinceanero.get() if hasattr(self, "entry_quinceanero") else ""
+        padre = self.entry_xv_padre1.get() if hasattr(self, "entry_xv_padre1") else ""
+        madre = self.entry_xv_padre2.get() if hasattr(self, "entry_xv_padre2") else ""
+        padrino = self.entry_xv_padrino1.get() if hasattr(self, "entry_xv_padrino1") else ""
+        madrina = self.entry_xv_padrino2.get() if hasattr(self, "entry_xv_padrino2") else ""
+        mesa_regalos_xv = self.checkbox_xv_mesa_var.get() if hasattr(self, "checkbox_xv_mesa_var") else 0
+
+        novia = self.entry_novia.get() if hasattr(self, "entry_novia") else ""
+        novio = self.entry_novio.get() if hasattr(self, "entry_novio") else ""
+        padrino_boda = self.entry_padrino_boda.get() if hasattr(self, "entry_padrino_boda") else ""
+        madrina_boda = self.entry_madrina_boda.get() if hasattr(self, "entry_madrina_boda") else ""
+        mesa_regalos_boda = getattr(self, "checkbox_boda_mesa_var", tk.IntVar()).get()
+        misa = getattr(self, "misa", "")
+        iglesia = getattr(self, "iglesia", "")
+        menores_permitidos = getattr(self, "menores_permitidos", False)
+        print(f"Tipo de evento seleccionado: '{tipo_evento}'")
+        # Inserciones
+        if tipo_evento == "Evento":
+            EventosManager.insertar_evento(
+                fecha, hora, direccion, num_invitados, privacidad
+            )
+        elif tipo_evento == "Fiesta":
+            EventosManager.insertar_fiesta(
+                fecha, hora, direccion, num_invitados, privacidad, descripcion
+            )
+        elif tipo_evento == "Cumpleaños":
+            EventosManager.insertar_cumpleaños(
+                fecha, hora, direccion, num_invitados, privacidad, cumpleañero, edad, mesa_regalos
+            )
+        elif tipo_evento == "Graduación":
+            EventosManager.insertar_graduacion(
+                fecha, hora, direccion, num_invitados, privacidad, escuela, nivel_educativo, generacion, invitados_por_alumno
+            )
+        elif tipo_evento == "XV Años":
+            EventosManager.insertar_xv(
+                fecha, hora, direccion, num_invitados, privacidad, cumpleañero_xv, padre, madre, padrino, madrina, mesa_regalos_xv
+            )
+        elif tipo_evento == "Boda":
+            EventosManager.insertar_boda(
+                fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos
+            )
+        else:
+            print("⚠️ Tipo de evento no reconocido")
 """if __name__ == "__main__":
     app = Ventana()
     app.mainloop()"""
