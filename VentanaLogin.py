@@ -161,11 +161,15 @@ class VentanaUsuario(ct.CTkToplevel):
 
         if user:
             if bcrypt.checkpw(password.encode("utf-8"), user.contraseña.encode("utf-8")):
-                # Usuario y contraseña correctos
                 print("Login correcto con:", username)
                 import Sesion
                 Sesion.usuario_actual = username
-                self.calendario.actualizar_contenido()
+                # Actualiza el calendario visible si existe
+                if hasattr(self.menu, "calendario_actual") and self.menu.calendario_actual is not None:
+                    self.menu.calendario_actual.actualizar_contenido()
+                # O actualiza el principal si lo usas así
+                if self.calendario is not None:
+                    self.calendario.actualizar_contenido()
                 self.cerrar()
             else:
                 self.label.configure(text="Contraseña incorrecta")

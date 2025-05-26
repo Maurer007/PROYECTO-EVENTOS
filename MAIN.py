@@ -56,11 +56,14 @@ class Main(ctk.CTk):
         self.carga_event=carga_event
         self.filas_eventos = []
 
+        self.calendario = Calendario(self)
         self.cargar_iconos()
         self.cargar_imagenes_eventos()
         self.create_widgets()
         #self.desordenar_filas() #Descomentar para desordenar filas
-        #self.cargar_eventos()
+        #self.cargar_eventos()}
+        if self.calendario is not None:
+            self.calendario.actualizar_contenido()
 
     def create_widgets(self):
         self.create_barra_superior()
@@ -307,7 +310,7 @@ class Main(ctk.CTk):
             print("Ya hay una ventana de usuario abierta.")
             return
         try:
-            VentanaUsuario(self, Calendario)
+            VentanaUsuario(self, self.calendario)
         except Exception as e:
             print("ERROR al crear VentanaUsuario:", e)
 
@@ -347,8 +350,9 @@ class Main(ctk.CTk):
             widget.destroy()
         # Inserta la Ventana de mis eventos dentro de frame_principal
         try:
-            calendario = Calendario(self.frame_principal)
-            calendario.pack(fill="both", expand=True)
+            self.calendario_actual = Calendario(self.frame_principal)
+            self.calendario_actual.pack(fill="both", expand=True)
+
         except Exception as e:
             print("ERROR al crear Ventana de Calendario:", e)
 
