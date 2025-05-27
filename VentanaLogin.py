@@ -10,6 +10,7 @@ from PIL import Image
 from datetime import date
 from models.usuario import Usuario
 import Sesion
+import json
 
 engine = create_engine("sqlite:///join_up.db", echo=True)
 
@@ -42,6 +43,7 @@ class VentanaUsuario(ct.CTkToplevel):
         self._set_appearance_mode("dark")
         ct.set_default_color_theme("blue")
 
+        self.json = "credenciales.json"
         self.entrada1 = None
         self.entrada2 = None
         self.label = None
@@ -61,6 +63,7 @@ class VentanaUsuario(ct.CTkToplevel):
         self.withdraw()
         self.deiconify()
 
+        self.cargar_credenciales_json()
 
 
     def crear_frame_titulo(self):
@@ -99,6 +102,32 @@ class VentanaUsuario(ct.CTkToplevel):
             self.entrada2.configure(show="*")
             self.ver_contraseña.configure(text="🔒")
 
+    
+    def guardar_credenciales_json(self):
+        datos = {
+            "usuario": self.entrada1.get().strip(),
+            "contraseña": self.entrada2.get().strip(),
+        }
+        try:
+            with open(self.json, "w") as f:
+                json.dump(datos, f)
+            print("Archivo credenciales.json creado correctamente.")
+        except Exception as e:
+            print("Error al crear credenciales.json:", e)
+
+    def cargar_credenciales_json(self):
+        if os.path.exists(self.json):
+            with open(self.json, "r") as f:
+                datos = json.load(f)
+                self.entrada1.insert(0, datos.get("usuario", ""))
+                self.entrada2.insert(0, datos.get("contraseña", ""))
+                self.opcion.set(True)
+
+    def borrar_credenciales_json(self):
+        if os.path.exists(self.json):
+            os.remove(self.json)
+
+            
     def crear_entry_derecha(self, frame, texto, fila, show):
         label = ct.CTkLabel(frame, text=texto, text_color="black", font=("Arial", 20))
         label.grid(row=fila, column=0, padx=10, pady=10)
@@ -178,8 +207,14 @@ class VentanaUsuario(ct.CTkToplevel):
                 import Sesion
                 Sesion.usuario_actual = username
 
+                if self.opcion.get():
+                    self.guardar_credenciales_json()
+                else:
+                    self.borrar_credenciales_json()
+
                 self.cerrar()
                 print(f"Usuario: {Sesion.usuario_actual}")
+
 
             else:
                 self.label.configure(text="Contraseña incorrecta")
