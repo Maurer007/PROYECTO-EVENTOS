@@ -111,7 +111,7 @@ class Main(ctk.CTk):
             {"icon": self.iconos["home"],   "color": "lightcoral", "command": self.abrir_main},
             {"icon": self.iconos["calendario"],   "color": "red", "command": self.abrir_calendario},
             {"icon": self.iconos["mis_eventos"],   "color": "cyan", "command": self.abrir_mis_eventos},
-            {"icon": self.iconos["notificaciones"],   "color": "green", "command": None},
+            #{"icon": self.iconos["notificaciones"],   "color": "green", "command": None},
             {"icon": self.iconos["ajustes"],   "color": "yellow", "command": None},
         ]
 
@@ -188,7 +188,7 @@ class Main(ctk.CTk):
         self.fila_bodas = self.crear_fila_eventos(self.frame_principal, fila=3, titulo="Bodas")
         self.fila_xvs = self.crear_fila_eventos(self.frame_principal, fila=4, titulo="XV años")
         self.fila_graduaciones = self.crear_fila_eventos(self.frame_principal, fila=5, titulo="Graduaciones")
-        self.fila_eventos = self.crear_fila_eventos(self.frame_principal, fila=6, titulo="Eventos")
+        #self.fila_eventos = self.crear_fila_eventos(self.frame_principal, fila=6, titulo="Eventos")
 
     def create_user(self):
         frame_user = ctk.CTkFrame(self)
@@ -225,7 +225,7 @@ class Main(ctk.CTk):
             "boda":     (self.fila_bodas, "boda"),
             "xv":       (self.fila_xvs, "xv"),
             "graduacion": (self.fila_graduaciones, "grad"),
-            "eventos":  (self.fila_eventos, "evento"),
+            #"eventos":  (self.fila_eventos, "evento"),
         }
 
         # Diccionario para definir cuántas imágenes mostrar por categoría
