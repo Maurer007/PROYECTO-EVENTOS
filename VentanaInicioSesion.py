@@ -111,6 +111,8 @@ class InicioSesion(ctk.CTkFrame):
 
     def cerrar_sesion(self):
         Sesion.usuario_actual = None
-        self.parent.master.abrir_main()
-        self.destroy()      
+        root = self.winfo_toplevel()
+        if hasattr(root, "abrir_main"):
+            root.abrir_main()
+        self.destroy()
         print("Sesión cerrada.")

@@ -86,6 +86,7 @@ class VentanaRegistro(ct.CTkToplevel):
         self.telefono=""
         self.correo=""
         self.frame_principal = self.crear_scrollable_frame()
+        
 
         self.frame_titulo = self.crear_frame_titulo(self.frame_principal)
 
@@ -96,6 +97,7 @@ class VentanaRegistro(ct.CTkToplevel):
         self.crear_datos_usuario(self.datos_usuario)
 
         self.frme_botones = self.crear_frame_botones(self.frame_principal)
+        self.label_error = self.crear_frame_Error(self.frame_principal)
 
         self.withdraw()
         self.deiconify()
@@ -147,12 +149,13 @@ class VentanaRegistro(ct.CTkToplevel):
 
     def crear_entry_arriba(self, frame_datos, columna, texto):
         entrada = ct.CTkEntry(frame_datos, text_color="black", font=("Arial", 20), fg_color="white")
-        entrada.grid(row=0, column=columna, columnspan=2, pady=10, padx=10)
+        entrada.grid(row=0, column=columna, columnspan=2, pady=10, padx=10, sticky="w")
 
         label = ct.CTkLabel(frame_datos, text=texto, text_color="black", font=("Arial", 20))
         label.grid(row=1, column=columna, columnspan=4, pady=10, padx=10, sticky="w")
 
         return entrada
+    
     def crear_radios(self, frame_radios, columna, texto, valor):
         print("DEBUG seleccion:", self.seleccion)
         radio = ct.CTkRadioButton(frame_radios, text=texto, text_color="black", variable=self.seleccion, value=valor)
@@ -204,11 +207,11 @@ class VentanaRegistro(ct.CTkToplevel):
         self.nom_usuario_var = tk.StringVar()
         self.nom_usuario.configure(textvariable=self.nom_usuario_var)
         self.nom_usuario_var.trace_add("write", self.verificar_usuario_en_tiempo_real)
-        self.labelError_usuario = self.crear_label_error(frame_datos, 0)
+        self.labelError_usuario = self.crear_label_error(frame_datos, 0, 4)
 
         self.contrasena=self.crear_entry_derecha(frame_datos, 1, 0, "Contraseña")
-        self.crear_entry_derecha(frame_datos, 2, 0, "Confirmar contraseña")
-        self.labelError_contraseña = self.crear_label_error(frame_datos, 2)
+        self.conf_contraseña = self.crear_entry_derecha(frame_datos, 2, 0, "Confirmar contraseña")
+        self.labelError_contraseña = self.crear_label_error(frame_datos, 2, 4)
         self.telefono=self.crear_entry_derecha(frame_datos, 3, 0, "Teléfono")
         self.correo=self.crear_entry_derecha(frame_datos, 4, 0, "Correo electrónico")
 
@@ -221,9 +224,9 @@ class VentanaRegistro(ct.CTkToplevel):
 
         return entrada
     
-    def crear_label_error(self, frame_datos, fila):
+    def crear_label_error(self, frame_datos, fila, columna):
         labelError = ct.CTkLabel(frame_datos, text="", font=("Arial", 15), text_color="red")
-        labelError.grid(row=fila, column=4, columnspan=2, pady=10, padx=10, sticky="w")
+        labelError.grid(row=fila, column=columna, columnspan=2, pady=10, padx=10, sticky="w")
 
         return labelError
 
@@ -242,8 +245,6 @@ class VentanaRegistro(ct.CTkToplevel):
 
         session.close()
 
-
-
     # Creación de botones
     def crear_frame_botones(self, scrollable_frame):
         frame = ct.CTkFrame(scrollable_frame, fg_color="transparent")
@@ -258,6 +259,14 @@ class VentanaRegistro(ct.CTkToplevel):
         self.boton = ct.CTkButton(frame_botones, font=("Arial", 20), text=texto, command=comando)
         self.boton.pack(pady=10, side=lado, expand=True)
 
+    #frame error
+    def crear_frame_Error(self, scrollable_frame):
+        frame = ct.CTkFrame(scrollable_frame, fg_color="transparent")
+        frame.pack(padx=10, pady=10, fill="both", expand=True)
+
+        label_error = self.crear_label_error(frame, 0, 0)
+
+        return label_error
 
     def on_enter(self, event):
         self.close_button.configure(text_color="red")  # O fg_color si solo cambia el texto
@@ -283,16 +292,22 @@ class VentanaRegistro(ct.CTkToplevel):
         fecha_nacimiento = self.date_entry.get_date()
         nom_usuario = self.nom_usuario.get()
         contraseña = self.contrasena.get()
+        conf_contraseña = self.conf_contraseña.get()
         teléfono = self.telefono.get()
         correo = self.correo.get()
         
-
-        exito = UsuarioManager.registrar_usuario(
-            nombre, apellido_paterno, apellido_materno,
-            género, ciudad, estado, fecha_nacimiento,
-            nom_usuario, contraseña, teléfono, correo)
-        
-        self.volver()
+        if not nombre or not apellido_paterno or not apellido_materno or not género or not ciudad or not estado or not fecha_nacimiento or not nom_usuario or not contraseña or not conf_contraseña or not teléfono or not correo:
+            self.label_error.configure(text="Ingrese todos los campos por favor")
+        else:
+            if self.labelError_usuario._text:
+                print("Agregue un usuario diferente")
+            else:
+                exito = UsuarioManager.registrar_usuario(
+                    nombre, apellido_paterno, apellido_materno,
+                    género, ciudad, estado, fecha_nacimiento,
+                    nom_usuario, contraseña, teléfono, correo)
+                
+                self.volver()
 
     def volver(self):
         from VentanaLogin import VentanaUsuario
