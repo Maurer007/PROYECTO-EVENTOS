@@ -1147,13 +1147,14 @@ class Ventana(CTk.CTkFrame):
         madrina = self.entry_xv_padrino2.get() if hasattr(self, "entry_xv_padrino2") else ""
         mesa_regalos_xv = self.checkbox_xv_mesa_var.get() if hasattr(self, "checkbox_xv_mesa_var") else 0
 
-        novia = self.entry_novia.get() if hasattr(self, "entry_novia") else ""
-        novio = self.entry_novio.get() if hasattr(self, "entry_novio") else ""
-        padrino_boda = self.entry_padrino_boda.get() if hasattr(self, "entry_padrino_boda") else ""
-        madrina_boda = self.entry_madrina_boda.get() if hasattr(self, "entry_madrina_boda") else ""
+        novia = self.entry_novio2.get() if hasattr(self, "entry_novio2") else ""
+        novio = self.entry_novio1.get() if hasattr(self, "entry_novio1") else ""
+        padrino_boda = self.entry_boda_padrino1.get() if hasattr(self, "entry_boda_padrino1") else ""
+        madrina_boda = self.entry_boda_padrino2.get() if hasattr(self, "entry_boda_padrino2") else ""
         mesa_regalos_boda = getattr(self, "checkbox_boda_mesa_var", tk.IntVar()).get()
-        misa = getattr(self, "misa", "")
-        iglesia = getattr(self, "iglesia", "")
+        misa_valor = self.checkbox_boda_misa_var.get()
+        misa = True if misa_valor == 1 else False
+        iglesia = self.entry_boda_misa.get() if misa else ""
         menores_permitidos = getattr(self, "menores_permitidos", False)
         print(f"Tipo de evento seleccionado: '{tipo_evento}'")
         # Inserciones
