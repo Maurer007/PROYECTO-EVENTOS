@@ -6,7 +6,7 @@ from utils.carga_imagenes import cargar_imagenes_desde_carpeta
 class CarruselDeslizante(ctk.CTkFrame):
     def __init__(
         self, master, content, width=None, height=300,
-        bg_color="#FFFFFF", text_font=("Arial", 100),
+        bg_color="#FFFFFF", text_font=("Eras Bold ITC", 100),
         text_fg="#FFFFFF", text_bg="#518D65",
         duracion=3000, velocidad=5, **kwargs
     ):

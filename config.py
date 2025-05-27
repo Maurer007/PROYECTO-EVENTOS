@@ -34,7 +34,7 @@ THEME = {
     "evento_height": 300,
     "evento_width": 400,
     "font_main": ("Arial", 25, "bold"),
-    "font_title": ("Arial", 50),
+    "font_title": ("Arial", 30),
 }
 
 # Categorías de eventos
