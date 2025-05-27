@@ -156,7 +156,7 @@ class Main(ctk.CTk):
 
     def create_principal(self):
         self.frame_principal = ctk.CTkScrollableFrame(self, fg_color=THEME["background"])
-        self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 10), pady=(0, 4))
+        self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 5), pady=(0, 5))
         self.frame_principal._scrollbar.grid_forget()
         for i in range(6):
             self.frame_principal.rowconfigure(i, weight=1)
@@ -181,7 +181,7 @@ class Main(ctk.CTk):
             {"type": "image", "path": ASSETS["categorias"]["grande"] + "/grande4.png"},
         ]
         evento_grande = CarruselDeslizante(principal_main, contenido, duracion=ANIMACION["duracion"], velocidad=ANIMACION["velocidad"], height=THEME["evento_height"])
-        evento_grande.grid(sticky="nsew", pady=(0,3))
+        evento_grande.grid(sticky="nsew", pady=(0,3), padx=(0))
 
         # Filas de eventos (copia una fila para poner una nueva categoría de eventos)
         self.fila_cumple = self.crear_fila_eventos(self.frame_principal, fila=1, titulo="Cumpleaños")
