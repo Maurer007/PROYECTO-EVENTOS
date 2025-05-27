@@ -261,40 +261,87 @@ class Ventana(CTk.CTkFrame):
         self.fecha_actual = datetime.now().strftime("%d/%m/%Y")
         self.hora_actual = datetime.now().strftime("%H:%M")  # Formato 24 horas
         self.entry_cumpleanero = None
+        self.entry_fecha.bind("<FocusOut>", self.on_fecha_focus_out)
 
     def validar_fecha_input(self, texto):
-        return all(c in "0123456789/" for c in texto) and len(texto) <= 10
+        if texto == "":
+            return True  # Permitir borrar todo
+    
+        if not all(c in "0123456789/" for c in texto) or len(texto) > 10:
+            return False
+
+    # Validar formato dd/mm/yyyy mínimo para validaciones
+        if len(texto) == 10 and texto[2] == '/' and texto[5] == '/':
+            dia_str = texto[0:2]
+            mes_str = texto[3:5]
+            # año_str = texto[6:10]  # opcional si quieres validar año
+        
+            try:
+               dia = int(dia_str)
+               mes = int(mes_str)
+            except ValueError:
+                return False
+        
+            if not (1 <= mes <= 12):
+                return False
+        
+        # Días máximos por mes (febrero con 28 días sin bisiestos)
+            dias_por_mes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+            max_dias = dias_por_mes[mes - 1]
+            if not (1 <= dia <= max_dias):
+                return False
+        
+            return True
+
+    # Si la longitud es menor a 10 aún no validar día/mes
+        return True
+
 
     def validar_hora_input(self, texto):
+        if texto == "":
+            return True  # permitir borrar todo
         return all(c in "0123456789:" for c in texto) and len(texto) <= 5
+
+    def formato_auto_fecha(self, event):
+        contenido = self.entry_fecha.get()
+        contenido = contenido.replace("/", "")  # eliminar / si el usuario lo puso
+        if len(contenido) == 2 or len(contenido) == 4:
+            self.entry_fecha.delete(0, "end")
+            nuevo_contenido = contenido[:2] + "/" + contenido[2:]
+            if len(contenido) > 2:
+                nuevo_contenido = nuevo_contenido[:5] + "/" + nuevo_contenido[5:]
+            self.entry_fecha.insert(0, nuevo_contenido)
 
     def formato_auto_hora(self, event):
         contenido = self.entry_hora.get()
-        if len(contenido) == 2 and ":" not in contenido:
-            self.entry_hora.insert("end", ":")
-        self.descripcion = None
-        self.entry_cumpleanero = None
-        """self.lugar=""
-        self.fecha=""
-        self.hora="""""
+        contenido = contenido.replace(":", "")  # eliminar : si el usuario lo puso
+        if len(contenido) == 2:
+            self.entry_hora.delete(0, "end")
+            nuevo_contenido = contenido[:2] + ":" + contenido[2:]
+            self.entry_hora.insert(0, nuevo_contenido)
 
-        #self.tipo_evento=""
-    
     def manejar_clasificacion(self, seleccion):
         self.seleccion_actual = seleccion
 
+    # Vaciar etiquetas dinámicas anteriores
+        self.vaciar_paquete()
+
+    # Llamar a la función que crea el formulario del evento
+        if seleccion in self.paquetes_frames:
+            self.paquetes_frames[seleccion]()  # Esto debe incluir también los labels
+
     # Destruir frames anteriores si existen
-        if hasattr(self, 'paquete_actual'):
-            for frame in self.paquete_actual:
-                try:
-                    frame.destroy()
-                except:
-                    pass
-        self.paquete_actual = []
+    #    if hasattr(self, 'paquete_actual'):
+   #         for frame in self.paquete_actual:
+    #            try:
+    #                frame.destroy()
+    #            except:
+    #                pass
+    #    self.paquete_actual = []
 
     # Llamar a la función correspondiente usando el diccionario
-        if seleccion in self.paquetes_frames:
-            self.paquetes_frames[seleccion]()
+    #    if seleccion in self.paquetes_frames:
+    #        self.paquetes_frames[seleccion]()
 
     def alternar_widget(self, widget, mostrar=True, metodo="grid"):
         if mostrar:
@@ -468,6 +515,7 @@ class Ventana(CTk.CTkFrame):
     def crear_fiesta(self):
         if self.seleccion_actual != "Fiesta":
          return
+        self.crear_labels_fiesta_invitacion_din()
         self.frame_descrip=CTk.CTkFrame(self.frame_form, fg_color="#6ea7f1")
         self.frame_descrip.grid(pady=4, padx=4, row=6, column=0, sticky="nsew")
         self.frame_descrip.columnconfigure(0,weight=1)
@@ -815,11 +863,12 @@ class Ventana(CTk.CTkFrame):
         self.frame_lugar_fecha_hora.rowconfigure(2,weight=1)     
         self.label_lugar_fecha_hora = CTk.CTkLabel(self.frame_lugar_fecha_hora, text="Lugar, fecha y hora", font=("Verdana", 20, "bold"))
         self.label_lugar_fecha_hora.grid(row=0, column=0, columnspan=2, pady=5, padx=2, sticky="w")
-        self.lugar=self.entry_lugar = CTk.CTkEntry(self.frame_lugar_fecha_hora,text_color="dark gray", fg_color="white",placeholder_text="Calle/Col./No./Municipio/Ciudad/Estado",placeholder_text_color="dark gray", font=("Verdana", 16))
+        self.lugar=self.entry_lugar = CTk.CTkEntry(self.frame_lugar_fecha_hora,text_color="dark blue", fg_color="white",placeholder_text="Calle/Col./No./Municipio/Ciudad/Estado",placeholder_text_color="dark gray", font=("Verdana", 16))
         self.entry_lugar.grid(row=1, column=0, columnspan=2, pady=5, padx=2, sticky="nsew")
-        self.fecha=self.entry_fecha = CTk.CTkEntry(self.frame_lugar_fecha_hora,text_color="dark gray", fg_color="white",placeholder_text="dd/mm/yyyy",placeholder_text_color="dark gray", font=("Verdana", 16))
+        
+        self.fecha=self.entry_fecha = CTk.CTkEntry(self.frame_lugar_fecha_hora,text_color="dark blue", fg_color="white",placeholder_text="dd/mm/yyyy",placeholder_text_color="dark gray", font=("Verdana", 16))
         self.entry_fecha.grid(row=2, column=0, pady=5, padx=2, sticky="nsew")
-        self.hora=self.entry_hora = CTk.CTkEntry(self.frame_lugar_fecha_hora,text_color="dark gray", fg_color="white",placeholder_text="HH:MM",placeholder_text_color="dark gray", font=("Verdana", 16))
+        self.hora=self.entry_hora = CTk.CTkEntry(self.frame_lugar_fecha_hora,text_color="dark blue", fg_color="white",placeholder_text="HH:MM",placeholder_text_color="dark gray", font=("Verdana", 16))
         self.entry_hora.grid(row=2, column=1, pady=5, padx=2, sticky="nsew")
 
         # 💡 Establecer fecha y hora actual
@@ -835,6 +884,8 @@ class Ventana(CTk.CTkFrame):
     
         # 💡 Autoformato de hora
         self.entry_hora.bind("<KeyRelease>", self.formato_auto_hora)
+        self.entry_fecha.bind("<KeyRelease>", self.formato_auto_fecha)
+        self.entry_fecha.bind("<FocusOut>", self.on_fecha_focus_out)
 
     # Privacidad
     def crear_frame_privacidad_form(self):
@@ -971,12 +1022,62 @@ class Ventana(CTk.CTkFrame):
     def crear_frame_invitacion_vis(self):
         self.frame3 = CTk.CTkFrame(self.frame2, fg_color="#fae9d0")
         self.frame3.grid(pady=25, padx=20, row=0, column=0, columnspan=2, sticky="nsew")
+        self.frame3.rowconfigure(0,weight=1)
+        self.frame3.columnconfigure(0,weight=1)
 
         self.boton_editar = CTk.CTkButton(self.frame2, fg_color="#220c56", text="Editar datos",font=("Verdana",24,"bold"))
         self.boton_editar.grid(pady=10, padx=25, row=1, column=0, sticky="nsew")
 
         self.boton_guardar_inv=CTk.CTkButton(self.frame2,fg_color="#220c56",text="Guardar invitacion",font=("Verdana",24,"bold"))
         self.boton_guardar_inv.grid(pady=10,padx=25,row=1,column=1,sticky="nsew")
+
+    def crear_labels_evento_invitacion_din(self):
+        self.label_din_clasif=CTk.CTkLabel(self.frame3,text="Evento...")
+        self.label_din_clasif.grid()
+        self.label_din_lugar=CTk.CTkLabel(self.frame3,text="Aquí se mostrará la dirección")
+        self.label_din_lugar.grid()
+        self.label_din_fecha=CTk.CTkLabel(self.frame3,text="Aquí se mostrará la fecha")
+        self.label_din_fecha.grid()
+        self.label_din_hora=CTk.CTkLabel(self.frame3,text="Aquí se mostrará la hora")
+        self.label_din_hora.grid()
+        self.label_din_codigo=CTk.CTkLabel(self.frame3,text="Aquí se mostrará el código")
+        self.label_din_codigo.grid()
+        self.label_din_estilo=CTk.CTkLabel(self.frame3,text="Aquí se mostrará el estilo")
+        self.label_din_estilo.grid()
+        self.label_din_colores=CTk.CTkLabel(self.frame3,text="Aquí se mostrarán los colores")
+        self.label_din_colores.grid()
+        self.label_din_descrip=CTk.CTkLabel(self.frame3,text="Aquí se mostrará la descripción")
+        self.label_din_descrip.grid()
+
+    def crear_labels_fiesta_invitacion_din(self):
+        self.frame_din_clasif_fiesta=CTk.CTkFrame(self.frame3,fg_color="#faf7ed")
+        self.frame_din_clasif_fiesta.grid(pady=8,padx=8,row=0,column=0,sticky="nsew")
+        self.frame_din_clasif_fiesta.columnconfigure(0,weight=1)
+        self.frame_din_clasif_fiesta.columnconfigure(1,weight=1)
+        self.frame_din_clasif_fiesta.columnconfigure(2,weight=1)
+        self.frame_din_clasif_fiesta.rowconfigure(0,weight=1)
+        self.frame_din_clasif_fiesta.rowconfigure(1,weight=1)
+        self.frame_din_clasif_fiesta.rowconfigure(2,weight=1)
+        self.frame_din_clasif_fiesta.rowconfigure(3,weight=1)
+        self.frame_din_clasif_fiesta.rowconfigure(4,weight=1)
+        self.frame_din_clasif_fiesta.rowconfigure(5,weight=1)
+        self.frame_din_clasif_fiesta.rowconfigure(6,weight=1)
+        self.label_din_clasif_fiesta=CTk.CTkLabel(self.frame_din_clasif_fiesta,text="Fiesta",text_color="dark blue")
+        self.label_din_clasif_fiesta.grid(pady=4,padx=4,row=0,column=1)
+        self.label_din_lugar_fiesta=CTk.CTkLabel(self.frame_din_clasif_fiesta,text="Aquí se mostrará la dirección",text_color="dark blue")
+        self.label_din_lugar_fiesta.grid(pady=4,padx=4,row=1,column=1)
+        self.label_din_fecha_fiesta=CTk.CTkLabel(self.frame_din_clasif_fiesta,text="Aquí se mostrará la fecha",text_color="dark blue")
+        self.label_din_fecha_fiesta.grid(pady=4,padx=4,row=2,column=1,sticky="e")
+        self.label_din_hora_fiesta=CTk.CTkLabel(self.frame_din_clasif_fiesta,text="Aquí se mostrará la hora",text_color="dark blue")
+        self.label_din_hora_fiesta.grid(pady=4,padx=4,row=2,column=2,sticky="w")
+        self.label_din_codigo_fiesta=CTk.CTkLabel(self.frame_din_clasif_fiesta,text="Aquí se mostrará el código",text_color="dark blue")
+        self.label_din_codigo_fiesta.grid(pady=4,padx=4,row=3,column=1)
+        self.label_din_estilo_fiesta=CTk.CTkLabel(self.frame_din_clasif_fiesta,text="Aquí se mostrará el estilo",text_color="dark blue")
+        self.label_din_estilo_fiesta.grid(pady=4,padx=4,row=4,column=1)
+        self.label_din_colores_fiesta=CTk.CTkLabel(self.frame_din_clasif_fiesta,text="Aquí se mostrarán los colores",text_color="dark blue")
+        self.label_din_colores_fiesta.grid(pady=4,padx=4,row=5,column=1)
+        self.label_din_descrip_fiesta=CTk.CTkLabel(self.frame_din_clasif_fiesta,text="Aquí se mostrará la descripción",text_color="dark blue")
+        self.label_din_descrip_fiesta.grid(pady=4,padx=4,row=6,column=1)
 
 
     def on_registrar_eventos(self):
