@@ -85,23 +85,23 @@ class Main(ctk.CTk):
         frame_superior.grid(row=0, column=1, sticky="nsew", padx=(0, 10), pady=(10, 5))
         lupa = ctk.CTkButton(frame_superior, text="", image=self.iconos["lupa"], fg_color="purple", corner_radius=8, width=60, height=60)
         barra = ctk.CTkEntry(frame_superior, placeholder_text="Barra de búsqueda", fg_color=THEME["background"], font=THEME["font_title"], corner_radius=8, height=60)
-        barra.grid(row=0, column=0, sticky="nsew", padx=(0,5))
-        lupa.grid(row=0, column=1, sticky="nsew", padx=(5,0))
+        barra.grid(row=0, column=0, sticky="nsew", padx=(0,2.5))
+        lupa.grid(row=0, column=1, sticky="nsew", padx=(2.5,0))
 
     def create_menu_lateral(self):
-        frame_barra = ctk.CTkFrame(self, width=60, fg_color=THEME["background"])
-        frame_barra.grid(row=1, column=0, sticky="nsew", padx=(10, 5), pady=(0, 5))
+        frame_barra = ctk.CTkFrame(self, width=60, fg_color=THEME["background"], corner_radius=6)
+        frame_barra.grid(row=1, column=0, sticky="nsew", padx=(10, 5), pady=(0, 2.5))
         frame_barra.rowconfigure(0, weight=1)
         frame_barra.rowconfigure(1, weight=4)
         frame_barra.rowconfigure(2, weight=0)
         
-        subframe_barra_1 = ctk.CTkFrame(frame_barra, fg_color=THEME["background"], width=60, height=60, corner_radius=0)
+        subframe_barra_1 = ctk.CTkFrame(frame_barra, fg_color=THEME["background"], width=60, height=60, corner_radius=6)
         subframe_barra_2 = ctk.CTkFrame(frame_barra, fg_color=THEME["background"], corner_radius=0)
-        subframe_barra_3 = ctk.CTkFrame(frame_barra, fg_color=THEME["background"], width=60, corner_radius=0)
+        subframe_barra_3 = ctk.CTkFrame(frame_barra, fg_color=THEME["background"], width=60, corner_radius=6)
 
-        subframe_barra_1.grid(row=0, sticky="nsew")
+        subframe_barra_1.grid(row=0, sticky="nsew", pady=(6,0))
         subframe_barra_2.grid(row=1, sticky="nsew")
-        subframe_barra_3.grid(row=2, sticky="nsew")
+        subframe_barra_3.grid(row=2, sticky="nsew", pady=(0,6))
 
         for i in range(4):
             subframe_barra_1.rowconfigure(i, weight=0)
@@ -132,7 +132,7 @@ class Main(ctk.CTk):
             boton.grid(row=index, column=0, pady=(pady_top, pady_bottom))
 
     def crear_fila_eventos(self, contenedor, fila, titulo):
-        frame_fila = ctk.CTkFrame(contenedor, corner_radius=0)
+        frame_fila = ctk.CTkFrame(contenedor, corner_radius=6)
         frame_fila.grid(row=fila, column=0, columnspan=6, sticky="nsew")
         frame_fila.columnconfigure(0, weight=1)
         frame_fila.rowconfigure(0, weight=1)
@@ -194,7 +194,7 @@ class Main(ctk.CTk):
         frame_user = ctk.CTkFrame(self)
         frame_user.grid(row=0, column=0, sticky="nsew", padx=(10, 5), pady=(10, 5))
         user = ctk.CTkButton(frame_user, text="", image=self.iconos["user"], fg_color="lightblue", corner_radius=8, width=60, height=60, command=self.verificar_sesion)
-        user.grid(row=0, column=0, sticky="nsew", padx=(0, 5))
+        user.grid(row=0, column=0, sticky="nsew")
 
     def cargar_imagenes_eventos(self):
         self.imagenes_eventos = {}
@@ -380,7 +380,7 @@ class Main(ctk.CTk):
         
         # Crear la invitación en el nuevo frame
         invitacion = Ventana(master=self.frame_principal)
-        invitacion.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)    
+        invitacion.grid(row=0, column=0, sticky="nsew")    
 
     def minimizar(self):
         if not self.frame_superpuesto_minimizado:
