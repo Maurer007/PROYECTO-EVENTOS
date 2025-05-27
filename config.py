@@ -29,7 +29,7 @@ ICONOS = {
 THEME = {
     "background": "#2b2b2b",
     "text": "black",
-    "placeholder": "gray",
+    "placeholder": "white",
     "button_fg": "white",
     "evento_height": 300,
     "evento_width": 400,

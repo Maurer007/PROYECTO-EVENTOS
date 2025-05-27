@@ -39,7 +39,7 @@ class Main(ctk.CTk):
         self.title("JoinUp")
         self.minsize(900, 750)
         ctk.set_appearance_mode("dark")
-        ctk.set_default_color_theme("green")
+        #ctk.set_default_color_theme("green")
         self.configure(fg_color=color_fondo)
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=30)
 
@@ -84,7 +84,7 @@ class Main(ctk.CTk):
         frame_superior.columnconfigure(1, weight=0)
         frame_superior.grid(row=0, column=1, sticky="nsew", padx=(5, 10), pady=(10, 5))
         lupa = ctk.CTkButton(frame_superior, text="", image=self.iconos["lupa"], fg_color="purple", corner_radius=8, width=60, height=60)
-        barra = ctk.CTkLabel(frame_superior, text="Barra de búsqueda", fg_color="lightgreen", corner_radius=8, text_color=self.text_color, height=60)
+        barra = ctk.CTkEntry(frame_superior, placeholder_text="Barra de búsqueda", fg_color="lightgreen", corner_radius=8, text_color=self.text_color, height=60)
         barra.grid(row=0, column=0, sticky="nsew", padx=(0,5))
         lupa.grid(row=0, column=1, sticky="nsew", padx=(5,0))
 
@@ -108,11 +108,11 @@ class Main(ctk.CTk):
 
         # Lista para agregar botones dinámicamente
         botones_config = [
-            {"icon": self.iconos["home"],   "color": "lightcoral", "command": self.abrir_main},
-            {"icon": self.iconos["calendario"],   "color": "red", "command": self.abrir_calendario},
-            {"icon": self.iconos["mis_eventos"],   "color": "cyan", "command": self.abrir_mis_eventos},
+            {"icon": self.iconos["home"],   "color": THEME["button_fg"], "command": self.abrir_main},
+            {"icon": self.iconos["calendario"],   "color": THEME["button_fg"], "command": self.abrir_calendario},
+            {"icon": self.iconos["mis_eventos"],   "color": THEME["button_fg"], "command": self.abrir_mis_eventos},
             #{"icon": self.iconos["notificaciones"],   "color": "green", "command": None},
-            {"icon": self.iconos["ajustes"],   "color": "yellow", "command": None},
+            {"icon": self.iconos["ajustes"],   "color": THEME["button_fg"], "command": None},
         ]
 
         # Crear y colocar los botones
@@ -171,7 +171,7 @@ class Main(ctk.CTk):
         #contenido = self.obtener_imagenes_eventos()
         contenido = [
             {"type": "text", "text": TEXTOS["bienvenida"]},
-            {"type": "image", "path": ASSETS["categorias"]["grande"] + "/grande4.png"},
+            {"type": "image", "path": ASSETS["categorias"]["grande"] + "/grande1.png"},
             {"type": "text", "text": TEXTOS["organiza"]},
             {"type": "image", "path": ASSETS["categorias"]["grande"] + "/grande2.png"},
             {"type": "text", "text": TEXTOS["inolvidable"]},
