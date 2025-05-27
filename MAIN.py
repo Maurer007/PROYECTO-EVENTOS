@@ -7,6 +7,7 @@ from invitaciones import Ventana
 from MisEventos import MisEventos
 from Alerta_login import AlertaLogin
 from VentanaLogin import VentanaUsuario
+from FrameSinSesión import SinSesión
 from Calendario import Calendario
 from VentanaInicioSesion import InicioSesion
 from utils.orm_utils import crear_base_de_datos
@@ -310,7 +311,7 @@ class Main(ctk.CTk):
             print("Ya hay una ventana de usuario abierta.")
             return
         try:
-            VentanaUsuario(self, self.calendario)
+            VentanaUsuario(self)
         except Exception as e:
             print("ERROR al crear VentanaUsuario:", e)
 
@@ -350,8 +351,12 @@ class Main(ctk.CTk):
             widget.destroy()
         # Inserta la Ventana de mis eventos dentro de frame_principal
         try:
-            self.calendario_actual = Calendario(self.frame_principal)
-            self.calendario_actual.pack(fill="both", expand=True)
+            if Sesion.usuario_actual:
+                calendario_actual = Calendario(self.frame_principal)
+                calendario_actual.pack(fill="both", expand=True)
+            else:
+                frame_sin_sesion = SinSesión(self.frame_principal, titulo="Calendario")
+                frame_sin_sesion.pack(fill="both", expand=True)    
 
         except Exception as e:
             print("ERROR al crear Ventana de Calendario:", e)
@@ -362,8 +367,12 @@ class Main(ctk.CTk):
             widget.destroy()
         # Inserta la Ventana de mis eventos dentro de frame_principal
         try:
-            mis_eventos = MisEventos(self.frame_principal, self.abrir_invitacion)
-            mis_eventos.pack(fill="both", expand=True)
+            if Sesion.usuario_actual:
+                mis_eventos = MisEventos(self.frame_principal, self.abrir_invitacion)
+                mis_eventos.pack(fill="both", expand=True)
+            else:
+                frame_sin_sesion = SinSesión(self.frame_principal, titulo="Mis Eventos")
+                frame_sin_sesion.pack(fill="both", expand=True)    
         except Exception as e:
             print("ERROR al crear Ventana de Mis Eventos:", e)
 

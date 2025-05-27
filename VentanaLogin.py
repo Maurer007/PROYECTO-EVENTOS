@@ -9,16 +9,15 @@ from PIL import Image
 #import tkinter as tk
 from datetime import date
 from models.usuario import Usuario
-from Calendario import Calendario
+import Sesion
 
 engine = create_engine("sqlite:///join_up.db", echo=True)
 
 class VentanaUsuario(ct.CTkToplevel):
-    def __init__(self, menu, calendario, colorFondo="#1256E8"):
+    def __init__(self, menu, colorFondo="#1256E8"):
         super().__init__(menu)
         self.title("Iniciar sesión")
         self.menu=menu
-        self.calendario = calendario 
 
         ancho_v = 500
         alto_v = 500
@@ -46,10 +45,12 @@ class VentanaUsuario(ct.CTkToplevel):
         self.entrada1 = None
         self.entrada2 = None
         self.label = None
+        self.ver_contraseña = None
         self.usuario = ""
         self.contrasenia = ""
 
         self.opcion = ct.BooleanVar()
+        self.vista = ct.BooleanVar()
 
         self.crear_frame_titulo()
         self.crear_frame_datos()
@@ -78,19 +79,31 @@ class VentanaUsuario(ct.CTkToplevel):
         frame = ct.CTkFrame(self, fg_color="#D9D9D9", corner_radius=10)
         frame.pack(padx=30, pady=10, fill="both")
 
-        self.entrada1 = self.crear_entry_derecha(frame, "Usuario", 0)
-        self.entrada2 = self.crear_entry_derecha(frame, "Contraseña", 1)
+        self.entrada1 = self.crear_entry_derecha(frame, "Usuario", 0, "")
+        self.entrada2 = self.crear_entry_derecha(frame, "Contraseña", 1, "*")
+
+        self.ver_contraseña = ct.CTkCheckBox(frame, text="🔒", text_color="black", font=("Arial",25), variable=self.vista)
+        self.ver_contraseña.grid(row=1, column=4, padx=10, pady=10)
+        self.ver_contraseña.bind("<Button-1>", lambda event: self.cambiar_show())
 
         checkbox = ct.CTkCheckBox(frame, text="Recordar usuario", text_color="black", variable=self.opcion)
         checkbox.grid(row=2, column=0, padx=10, pady=10)
 
         return frame
 
-    def crear_entry_derecha(self, frame, texto, fila):
+    def cambiar_show(self):
+        if self.vista.get():
+            self.entrada2.configure(show="")
+            self.ver_contraseña.configure(text="🔓")
+        else:
+            self.entrada2.configure(show="*")
+            self.ver_contraseña.configure(text="🔒")
+
+    def crear_entry_derecha(self, frame, texto, fila, show):
         label = ct.CTkLabel(frame, text=texto, text_color="black", font=("Arial", 20))
         label.grid(row=fila, column=0, padx=10, pady=10)
 
-        entrada = ct.CTkEntry(frame, font=("Arial", 20), fg_color="white", border_color="black", border_width=2)
+        entrada = ct.CTkEntry(frame, font=("Arial", 20), text_color="dark grey", fg_color="white", border_color="black", border_width=2, show=show)
         entrada.grid(row=fila, column=1, columnspan=3, padx=10, pady=10, sticky="nsew")
 
         return entrada
@@ -164,18 +177,14 @@ class VentanaUsuario(ct.CTkToplevel):
                 print("Login correcto con:", username)
                 import Sesion
                 Sesion.usuario_actual = username
-                # Actualiza el calendario visible si existe
-                if hasattr(self.menu, "calendario_actual") and self.menu.calendario_actual is not None:
-                    self.menu.calendario_actual.actualizar_contenido()
-                # O actualiza el principal si lo usas así
-                if self.calendario is not None:
-                    self.calendario.actualizar_contenido()
+
                 self.cerrar()
+                print(f"Usuario: {Sesion.usuario_actual}")
+
             else:
                 self.label.configure(text="Contraseña incorrecta")
         else:
             self.label.configure(text="Usuario no encontrado")
-        
     
     def crearTablaBD(self):
         sqlinstruction = "CREATE TABLE IF NOT EXISTS " \
