@@ -11,10 +11,8 @@ class Calendario(ctk.CTkFrame):
         self.configure(fg_color="#C4DF62")
 
         self.crear_titulo()
-        if usuario_actual:
-            self.crear_treeview()
-        else:
-            self.crear_mensaje_login()    
+        self.crear_treeview()
+        
         
     def crear_titulo(self):
         self.titulo = ctk.CTkLabel(self, text="Calendario", font=("Eras Demi ITC", 75), text_color="#0A1A43")
@@ -57,7 +55,7 @@ class Calendario(ctk.CTkFrame):
         label = ctk.CTkLabel(
             self,
             text="Ups, necesitas iniciar sesión \npara continuar",
-            font=("Arial", 40),  # Ajusta tamaño si era demasiado grande
+            font=("Arial", 80),  # Ajusta tamaño si era demasiado grande
             text_color="red",
             justify="center"
         )            

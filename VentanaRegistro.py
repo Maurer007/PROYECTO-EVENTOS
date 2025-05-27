@@ -75,7 +75,6 @@ class VentanaRegistro(ct.CTkToplevel):
         self._set_appearance_mode("dark")
         self.rowconfigure(1, weight=1)
 
-        #self.REGISTRO_BD = "credentials.db"
         self.nombre=""
         self.apellido_paterno=""
         self.apellido_materno=""
@@ -237,7 +236,7 @@ class VentanaRegistro(ct.CTkToplevel):
         user = session.query(Usuario).filter_by(nom_usuario=username).first()
 
         if username and user:
-            self.labelError_usuario.configure(text="El nombre de usuario \nya existe")
+            self.labelError_usuario.configure(text="El nombre de usuario ya existe")
         else:
             self.labelError_usuario.configure(text="")
 
