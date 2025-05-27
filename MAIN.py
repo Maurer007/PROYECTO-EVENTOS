@@ -274,7 +274,6 @@ class Main(ctk.CTk):
         self.frame_superpuesto = ctk.CTkFrame(self, fg_color="white", bg_color="white")
         self.frame_superpuesto.place(relx=1.0, rely=1.0, anchor="se", x=-10, y=-10, relwidth=0.4, relheight=0.35)
 
-        
         self.frame_superpuesto.columnconfigure(0, weight=1)
         self.frame_superpuesto.rowconfigure(0, weight=0, minsize=28)
         self.frame_superpuesto.rowconfigure(1, weight=1)
