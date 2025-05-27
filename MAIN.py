@@ -82,26 +82,26 @@ class Main(ctk.CTk):
         frame_superior = ctk.CTkFrame(self)
         frame_superior.columnconfigure(0, weight=1)
         frame_superior.columnconfigure(1, weight=0)
-        frame_superior.grid(row=0, column=1, sticky="nsew", padx=(5, 10), pady=(10, 5))
+        frame_superior.grid(row=0, column=1, sticky="nsew", padx=(0, 10), pady=(10, 5))
         lupa = ctk.CTkButton(frame_superior, text="", image=self.iconos["lupa"], fg_color="purple", corner_radius=8, width=60, height=60)
-        barra = ctk.CTkEntry(frame_superior, placeholder_text="Barra de búsqueda", fg_color="lightgreen", corner_radius=8, text_color=self.text_color, height=60)
+        barra = ctk.CTkEntry(frame_superior, placeholder_text="Barra de búsqueda", fg_color=THEME["background"], font=THEME["font_title"], corner_radius=8, height=60)
         barra.grid(row=0, column=0, sticky="nsew", padx=(0,5))
         lupa.grid(row=0, column=1, sticky="nsew", padx=(5,0))
 
     def create_menu_lateral(self):
-        frame_barra = ctk.CTkFrame(self)
+        frame_barra = ctk.CTkFrame(self, width=60, fg_color=THEME["background"])
+        frame_barra.grid(row=1, column=0, sticky="nsew", padx=(10, 5), pady=(0, 5))
         frame_barra.rowconfigure(0, weight=1)
         frame_barra.rowconfigure(1, weight=4)
         frame_barra.rowconfigure(2, weight=0)
-        frame_barra.grid(row=1, column=0, sticky="nsew", padx=(10, 5), pady=(5, 10))
+        
+        subframe_barra_1 = ctk.CTkFrame(frame_barra, fg_color=THEME["background"], width=60, height=60, corner_radius=0)
+        subframe_barra_2 = ctk.CTkFrame(frame_barra, fg_color=THEME["background"], corner_radius=0)
+        subframe_barra_3 = ctk.CTkFrame(frame_barra, fg_color=THEME["background"], width=60, corner_radius=0)
 
-        subframe_barra_1 = ctk.CTkFrame(frame_barra, fg_color="transparent", width=0, height=0)
-        subframe_barra_2 = ctk.CTkFrame(frame_barra, fg_color="transparent", width=0, height=0)
-        subframe_barra_3 = ctk.CTkFrame(frame_barra, fg_color="transparent", width=0, height=0)
-
-        subframe_barra_1.grid()
-        subframe_barra_2.grid(sticky="nsew")
-        subframe_barra_3.grid()
+        subframe_barra_1.grid(row=0, sticky="nsew")
+        subframe_barra_2.grid(row=1, sticky="nsew")
+        subframe_barra_3.grid(row=2, sticky="nsew")
 
         for i in range(4):
             subframe_barra_1.rowconfigure(i, weight=0)
@@ -132,20 +132,20 @@ class Main(ctk.CTk):
             boton.grid(row=index, column=0, pady=(pady_top, pady_bottom))
 
     def crear_fila_eventos(self, contenedor, fila, titulo):
-        frame_fila = ctk.CTkFrame(contenedor)
+        frame_fila = ctk.CTkFrame(contenedor, corner_radius=0)
         frame_fila.grid(row=fila, column=0, columnspan=6, sticky="nsew")
         frame_fila.columnconfigure(0, weight=1)
         frame_fila.rowconfigure(0, weight=1)
         frame_fila.rowconfigure(1, weight=4)
 
-        frame_titulo = ctk.CTkFrame(frame_fila, fg_color="transparent")
+        frame_titulo = ctk.CTkFrame(frame_fila, fg_color=THEME["background"], corner_radius=0)
         frame_titulo.grid(row=0, column=0, sticky="nsew")
 
         # Crear el título de la fila
-        label_titulo = ctk.CTkLabel(frame_titulo, text=titulo, font=("Arial", 25, "bold"), fg_color="transparent", text_color="white")
+        label_titulo = ctk.CTkLabel(frame_titulo, text=titulo, font=("Arial", 25, "bold"), fg_color=THEME["background"], text_color="white")
         label_titulo.pack(anchor="w", padx=10)
 
-        frame_contenido = ctk.CTkScrollableFrame(frame_fila, fg_color="transparent", orientation="horizontal", height=300)
+        frame_contenido = ctk.CTkScrollableFrame(frame_fila, fg_color=THEME["background"], orientation="horizontal", height=300, corner_radius=0)
         frame_contenido.grid(row=1, column=0, sticky="nsew", padx=0)
         frame_contenido._scrollbar.grid_forget()  # Oculta scroll por estética
 
@@ -154,7 +154,7 @@ class Main(ctk.CTk):
         return frame_contenido
 
     def create_principal(self):
-        self.frame_principal = ctk.CTkScrollableFrame(self)
+        self.frame_principal = ctk.CTkScrollableFrame(self, fg_color=THEME["background"])
         self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 10), pady=(0, 4))
         self.frame_principal._scrollbar.grid_forget()
         for i in range(6):

@@ -27,14 +27,14 @@ ICONOS = {
 
 # Temas y colores
 THEME = {
-    "background": "#2b2b2b",
+    "background": "#053d57",
     "text": "black",
     "placeholder": "white",
     "button_fg": "white",
     "evento_height": 300,
     "evento_width": 400,
     "font_main": ("Arial", 25, "bold"),
-    "font_title": ("Arial", 70),
+    "font_title": ("Arial", 50),
 }
 
 # Categorías de eventos
