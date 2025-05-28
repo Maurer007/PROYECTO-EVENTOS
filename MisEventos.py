@@ -1,6 +1,11 @@
 import customtkinter as ctk
 from tkinter import *
 from tkinter.ttk import Treeview, Style
+import Sesion
+from models.evento import Evento 
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
+from sqlalchemy.orm import sessionmaker
+import bcrypt
 
 class MisEventos(ctk.CTkFrame):
     def __init__(self, parent, funcion_invitaciones):
@@ -21,6 +26,14 @@ class MisEventos(ctk.CTkFrame):
         self.boton = ctk.CTkButton(self, text="Crear Evento", command=funcion)
         self.boton.pack(pady=10)    
 
+    def recuperar_eventos(self):
+        engine = create_engine("sqlite:///db/app.db")  # Usa la ruta correcta de tu base
+        Session = sessionmaker(bind=engine)
+        session = Session()
+
+        user = session.query(Evento).filter_by(nom_usuario=Sesion.usuario_actual).first()
+
+
     def crear_treeview(self):
         style = Style()
         tv = Treeview(self, columns=("Columna1", "Columna2", "Columna3", "Columna4"))
@@ -29,7 +42,7 @@ class MisEventos(ctk.CTkFrame):
         tv.heading("Columna1", text="Tipo de evento")
         tv.heading("Columna2", text="Fecha")
         tv.heading("Columna3", text="Hora")
-        tv.heading("Columna4", text="Invitación")
+        tv.heading("Columna4", text="Numero de invitados")
         tv.column("#0", width=50, minwidth=50, stretch=True)
         tv.configure()
         tv.tag_configure('par', background='#274687', font=("Arial", 15))
