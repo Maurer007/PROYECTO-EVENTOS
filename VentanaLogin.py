@@ -182,7 +182,8 @@ class VentanaUsuario(ct.CTkToplevel):
     def registro(self):
         from VentanaRegistro import VentanaRegistro
         self.destroy()
-        VentanaRegistro(self.menu)
+        ventana = VentanaRegistro(self.menu)
+        self.wait_window(ventana)
     
     def login(self):        
         username = self.entrada1.get().strip()

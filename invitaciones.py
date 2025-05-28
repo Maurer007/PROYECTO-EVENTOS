@@ -9,16 +9,21 @@ from datetime import datetime
 from sqlalchemy.exc import SQLAlchemyError
 from utils.orm_utils import Session
 from models.evento import Evento, Fiesta, Cumpleaños, Graduacion, XVAnos, Boda 
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
+from sqlalchemy.orm import declarative_base, sessionmaker, relationship
+import bcrypt
+from models.usuario import Usuario
+import Sesion
 
 
 class EventosManager:
     
     @staticmethod
-    def insertar_fiesta(fecha, hora, direccion, num_invitados, privacidad, descripcion):
+    def insertar_fiesta(anfitrion, fecha, hora, direccion, num_invitados, privacidad, descripcion):
         session = Session()
         try:
             nuevo_evento = Evento(
-                #anfitrion=anfitrion,
+                anfitrion=anfitrion,
                 tipo_evento="Fiesta",
                 fecha=fecha,
                 hora=hora,
@@ -31,7 +36,7 @@ class EventosManager:
 
             fiesta = Fiesta(
                 id_evento=nuevo_evento.id_evento,
-                #anfitrion=anfitrion,
+                anfitrion=anfitrion,
                 tipo_evento="Fiesta",
                 fecha=fecha,
                 hora=hora,
@@ -52,11 +57,11 @@ class EventosManager:
         finally:
             session.close()
     @staticmethod
-    def insertar_cumpleaños(fecha, hora, direccion, num_invitados, privacidad, cumpleañero, edad, mesa_regalos):
+    def insertar_cumpleaños(anfitrion, fecha, hora, direccion, num_invitados, privacidad, cumpleañero, edad, mesa_regalos):
         session = Session()
         try:
             nuevo_evento = Evento(
-                #anfitrion=anfitrion,
+                anfitrion=anfitrion,
                 tipo_evento="Cumpleaños",
                 fecha=fecha,
                 hora=hora,
@@ -70,7 +75,7 @@ class EventosManager:
 
             cumpleaños = Cumpleaños(
                 id_evento=nuevo_evento.id_evento,
-                #anfitrion=anfitrion,
+                anfitrion=anfitrion,
                 tipo_evento="Cumpleaños",
                 fecha=fecha,
                 hora=hora,
@@ -94,11 +99,11 @@ class EventosManager:
             session.close()
 
     @staticmethod
-    def insertar_graduacion(fecha, hora, direccion, num_invitados, privacidad, escuela, nivel_educativo, generacion, invitados_por_alumno):
+    def insertar_graduacion(anfitrion, fecha, hora, direccion, num_invitados, privacidad, escuela, nivel_educativo, generacion, invitados_por_alumno):
         session = Session()
         try:
             nuevo_evento = Evento(
-                #anfitrion=anfitrion,
+                anfitrion=anfitrion,
                 tipo_evento="Graduacion",
                 fecha=fecha,
                 hora=hora,
@@ -112,7 +117,7 @@ class EventosManager:
 
             graduacion = Graduacion(
                 id_evento=nuevo_evento.id_evento,
-                #anfitrion=anfitrion,
+                anfitrion=anfitrion,
                 tipo_evento="Graduacion",
                 fecha=fecha,
                 hora=hora,
@@ -137,11 +142,11 @@ class EventosManager:
             session.close()
     
     @staticmethod
-    def insertar_xv(fecha, hora, direccion, num_invitados, privacidad, cumpleañero_xv, padre, madre, padrino, madrina, mesa_regalos_xv):
+    def insertar_xv(anfitrion, fecha, hora, direccion, num_invitados, privacidad, cumpleañero_xv, padre, madre, padrino, madrina, mesa_regalos_xv):
         session = Session()
         try:
             nuevo_evento = Evento(
-                #anfitrion=anfitrion,
+                anfitrion=anfitrion,
                 tipo_evento="XVAños",
                 fecha=fecha,
                 hora=hora,
@@ -155,7 +160,7 @@ class EventosManager:
 
             xv = XVAnos(
                 id_evento=nuevo_evento.id_evento,
-                #anfitrion=anfitrion,
+                anfitrion=anfitrion,
                 tipo_evento="XV Años",
                 fecha=fecha,
                 hora=hora,
@@ -182,11 +187,11 @@ class EventosManager:
             session.close()
         
     @staticmethod
-    def insertar_boda(fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos):
+    def insertar_boda(anfitrion, fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos):
         session = Session()
         try:
             nuevo_evento = Evento(
-                #anfitrion=anfitrion,
+                anfitrion=anfitrion,
                 tipo_evento="Boda",
                 fecha=fecha,
                 hora=hora,
@@ -200,7 +205,7 @@ class EventosManager:
 
             boda = Boda(
                 id_evento=nuevo_evento.id_evento,
-                #anfitrion=anfitrion,
+                anfitrion=anfitrion,
                 tipo_evento="Boda",
                 fecha=fecha,
                 hora=hora,
@@ -232,7 +237,8 @@ class Ventana(CTk.CTkFrame):
 
     def __init__(self, master=None):
         super().__init__(master)
-        #self.anfitrion_id = anfitrion_id
+
+        self.anfitrion_id = self.recuperar_id
 
         # Configuración inicial del tema
         CTk.set_appearance_mode("System")
@@ -262,6 +268,23 @@ class Ventana(CTk.CTkFrame):
         self.hora_actual = datetime.now().strftime("%H:%M")  # Formato 24 horas
         self.entry_cumpleanero = None
         
+    def recuperar_id(self):
+        engine = create_engine("sqlite:///db/app.db")
+        Session = sessionmaker(bind=engine)
+        session = Session()
+
+        try:
+            if not Sesion.usuario_actual:
+                raise ValueError("No hay usuario en sesión.")
+
+            # Recuperar el objeto completo del usuario
+            user = session.query(Usuario).filter_by(nom_usuario=Sesion.usuario_actual).first()
+            id = user.id_usuario
+
+        except (SQLAlchemyError, ValueError) as e:
+            print("Error al obtener credenciales:", e)  
+
+        return id      
 
     def validar_fecha_input(self, texto):
         if texto == "":
@@ -1921,27 +1944,27 @@ class Ventana(CTk.CTkFrame):
         # Inserciones
         if tipo_evento == "Evento":
             EventosManager.insertar_evento(
-                fecha, hora, direccion, num_invitados, privacidad
+                self.anfitrion_id, fecha, hora, direccion, num_invitados, privacidad
             )
         elif tipo_evento == "Fiesta":
             EventosManager.insertar_fiesta(
-                fecha, hora, direccion, num_invitados, privacidad, descripcion
+                self.anfitrion_id, fecha, hora, direccion, num_invitados, privacidad, descripcion
             )
         elif tipo_evento == "Cumpleaños":
             EventosManager.insertar_cumpleaños(
-                fecha, hora, direccion, num_invitados, privacidad, cumpleañero, edad, mesa_regalos
+                self.anfitrion_id, fecha, hora, direccion, num_invitados, privacidad, cumpleañero, edad, mesa_regalos
             )
         elif tipo_evento == "Graduación":
             EventosManager.insertar_graduacion(
-                fecha, hora, direccion, num_invitados, privacidad, escuela, nivel_educativo, generacion, invitados_por_alumno
+                self.anfitrion_id, fecha, hora, direccion, num_invitados, privacidad, escuela, nivel_educativo, generacion, invitados_por_alumno
             )
         elif tipo_evento == "XV Años":
             EventosManager.insertar_xv(
-                fecha, hora, direccion, num_invitados, privacidad, cumpleañero_xv, padre, madre, padrino, madrina, mesa_regalos_xv
+                self.anfitrion_id, fecha, hora, direccion, num_invitados, privacidad, cumpleañero_xv, padre, madre, padrino, madrina, mesa_regalos_xv
             )
         elif tipo_evento == "Boda":
             EventosManager.insertar_boda(
-                fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos
+                self.anfitrion_id, fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos
             )
         else:
             print("⚠️ Tipo de evento no reconocido")
