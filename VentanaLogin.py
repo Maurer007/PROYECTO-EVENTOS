@@ -10,6 +10,7 @@ from PIL import Image
 from datetime import date
 from models.usuario import Usuario
 import Sesion
+import json
 
 engine = create_engine("sqlite:///join_up.db", echo=True)
 
@@ -20,7 +21,7 @@ class VentanaUsuario(ct.CTkToplevel):
         self.menu=menu
 
         ancho_v = 500
-        alto_v = 500
+        alto_v = 520
         x = (self.winfo_screenwidth() - ancho_v) // 2
         y = (self.winfo_screenheight() - alto_v) // 2
         self.geometry(f"{ancho_v}x{alto_v}+{x}+{y}")
@@ -42,6 +43,7 @@ class VentanaUsuario(ct.CTkToplevel):
         self._set_appearance_mode("dark")
         ct.set_default_color_theme("blue")
 
+        self.json = "credenciales.json"
         self.entrada1 = None
         self.entrada2 = None
         self.label = None
@@ -61,6 +63,7 @@ class VentanaUsuario(ct.CTkToplevel):
         self.withdraw()
         self.deiconify()
 
+        self.cargar_credenciales_json()
 
 
     def crear_frame_titulo(self):
@@ -99,6 +102,32 @@ class VentanaUsuario(ct.CTkToplevel):
             self.entrada2.configure(show="*")
             self.ver_contraseña.configure(text="🔒")
 
+    
+    def guardar_credenciales_json(self):
+        datos = {
+            "usuario": self.entrada1.get().strip(),
+            "contraseña": self.entrada2.get().strip(),
+        }
+        try:
+            with open(self.json, "w") as f:
+                json.dump(datos, f)
+            print("Archivo credenciales.json creado correctamente.")
+        except Exception as e:
+            print("Error al crear credenciales.json:", e)
+
+    def cargar_credenciales_json(self):
+        if os.path.exists(self.json):
+            with open(self.json, "r") as f:
+                datos = json.load(f)
+                self.entrada1.insert(0, datos.get("usuario", ""))
+                self.entrada2.insert(0, datos.get("contraseña", ""))
+                self.opcion.set(True)
+
+    def borrar_credenciales_json(self):
+        if os.path.exists(self.json):
+            os.remove(self.json)
+
+            
     def crear_entry_derecha(self, frame, texto, fila, show):
         label = ct.CTkLabel(frame, text=texto, text_color="black", font=("Arial", 20))
         label.grid(row=fila, column=0, padx=10, pady=10)
@@ -178,54 +207,20 @@ class VentanaUsuario(ct.CTkToplevel):
                 import Sesion
                 Sesion.usuario_actual = username
 
+                if self.opcion.get():
+                    self.guardar_credenciales_json()
+                else:
+                    self.borrar_credenciales_json()
+
                 self.cerrar()
                 print(f"Usuario: {Sesion.usuario_actual}")
+
 
             else:
                 self.label.configure(text="Contraseña incorrecta")
         else:
             self.label.configure(text="Usuario no encontrado")
-    
-    def crearTablaBD(self):
-        sqlinstruction = "CREATE TABLE IF NOT EXISTS " \
-                         "credenciales(id INTEGER PRIMARY KEY AUTOINCREMENT," \
-                         "usuario varchar(20)," \
-                         "contraseña varchar(20))"
-        conexion = sqlite3.connect(self.CREDENTIALS_BD)
-        conexion.execute(sqlinstruction)
-        conexion.close()
 
-    def insertarDatos(self, user, psw, img):
-        registro = "INSERT INTO credenciales(usuario, contraseña, imagen) VALUES(?,?,?)"
-        conexion = sqlite3.connect(self.CREDENTIALS_BD)
-        try:
-            conexion.execute(registro, (user, psw, img))
-            conexion.commit()
-        except Exception as e:
-            if type(e).__name__ == "IntegrityError":
-                print("Posible llave duplicada")
-            else:
-                print(type(e).__name__)
-        conexion.close()
-
-    def obtenerCredenciales(self):
-        instruccion = "SELECT * FROM credenciales ORDER BY id DESC LIMIT 1"
-        conexion = sqlite3.connect(self.CREDENTIALS_BD)
-        cursor = conexion.cursor()
-        resultado = cursor.execute(instruccion).fetchone()
-        conexion.close()
-
-        if resultado:
-            self.entrada1.insert(0, resultado[1])
-            self.entrada2.insert(0, resultado[2])
-            self.checkbox.select()
-
-    def borrarCredenciales(self):
-        conexion = sqlite3.connect(self.CREDENTIALS_BD)
-        cursor = conexion.cursor()
-        cursor.execute("DELETE FROM credenciales")
-        conexion.commit()
-        conexion.close()
 
     def cerrar(self):
         self.grab_release()

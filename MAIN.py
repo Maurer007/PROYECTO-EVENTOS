@@ -409,6 +409,8 @@ class Main(ctk.CTk):
             fila.grid_forget()
             fila.grid(row=i+1, column=0, columnspan=6, sticky="nsew")  # i+1 porque la fila 0 es el evento principal
 
+    
+
 if __name__ == "__main__":
     carga_event = threading.Event()
     app = Main(carga_event=carga_event)
