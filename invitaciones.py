@@ -673,7 +673,7 @@ class Ventana(CTk.CTkFrame):
         self.checkbox_mesa_var = tk.IntVar()
         self.checkbox_mesa = CTk.CTkCheckBox(self.frame_cortesia, fg_color="white", text="Mesa de regalos", font=("Verdana", 16),variable=self.checkbox_mesa_var, command=lambda: self.toggle_widgets_by_checkbox(
         self.checkbox_mesa_var,
-        [self.entry_mesa]
+        [self.entry_mesa,self.frame_info_mesa_cumple]
         ))
         self.checkbox_mesa.grid(row=1, column=0, pady=5, padx=2, sticky="nsew")
         self.entry_mesa=CTk.CTkEntry(self.frame_cortesia,placeholder_text="p. ej.Lluvia de sobres", fg_color="white", font=("Verdana", 16))
@@ -790,7 +790,7 @@ class Ventana(CTk.CTkFrame):
         self.checkbox_xv_mesa_var = tk.IntVar()
         self.checkbox_xv_mesa = CTk.CTkCheckBox(self.frame_xv_cortesia, fg_color="white", text="Mesa de regalos", font=("Verdana", 16),variable=self.checkbox_xv_mesa_var, command=lambda: self.toggle_widgets_by_checkbox(
         self.checkbox_xv_mesa_var,
-        [self.entry_xv_mesa]
+        [self.entry_xv_mesa,self.frame_info_mesa_xv]
         ))
         self.checkbox_xv_mesa.grid(row=1, column=0, pady=5, padx=2, sticky="nsew")
         self.entry_xv_mesa=CTk.CTkEntry(self.frame_xv_cortesia,placeholder_text="p. ej.Liverpool a nombre de ...", font=("Verdana", 16), fg_color="white")
@@ -808,7 +808,7 @@ class Ventana(CTk.CTkFrame):
         self.checkbox_xv_misa_var = tk.IntVar()
         self.checkbox_xv_misa = CTk.CTkCheckBox(self.frame_xv_misa, fg_color="white", text="Incluye misa previa a la celebración", font=("Verdana", 16),variable=self.checkbox_xv_misa_var, command=lambda: self.toggle_widgets_by_checkbox(
         self.checkbox_xv_misa_var,
-        [self.entry_xv_misa]
+        [self.entry_xv_misa,self.frame_info_misa_xv]
         ))
         self.checkbox_xv_misa.grid(row=1, column=0, pady=5, padx=2, sticky="nsew")
         self.entry_xv_misa=CTk.CTkEntry(self.frame_xv_misa,placeholder_text="Iglesia de Santa Rita", fg_color="white", font=("Verdana", 16))
@@ -858,7 +858,7 @@ class Ventana(CTk.CTkFrame):
         self.checkbox_boda_mesa_var = tk.IntVar()
         self.checkbox_boda_mesa = CTk.CTkCheckBox(self.frame_boda_cortesia, fg_color="white", text="Mesa de regalos", font=("Verdana", 16),variable=self.checkbox_boda_mesa_var, command=lambda: self.toggle_widgets_by_checkbox(
         self.checkbox_boda_mesa_var,
-        [self.entry_boda_mesa]
+        [self.entry_boda_mesa,self.frame_info_mesa_boda]
         ))
         self.checkbox_boda_mesa.grid(row=1, column=0, pady=5, padx=2, sticky="nsew")
         self.entry_boda_mesa=CTk.CTkEntry(self.frame_boda_cortesia,placeholder_text="p. ej.Palacio de Hierro a nombre de...", fg_color="white", font=("Verdana", 16))
@@ -876,7 +876,7 @@ class Ventana(CTk.CTkFrame):
         self.checkbox_boda_misa_var = tk.IntVar()
         self.checkbox_boda_misa = CTk.CTkCheckBox(self.frame_boda_misa, fg_color="white", font=("Verdana", 16), text="Incluye misa previa a la celebración",variable=self.checkbox_boda_misa_var, command=lambda: self.toggle_widgets_by_checkbox(
         self.checkbox_boda_misa_var,
-        [self.entry_boda_misa]
+        [self.entry_boda_misa,self.frame_info_misa_boda]
         ))
         self.checkbox_boda_misa.grid(row=1, column=0, pady=5, padx=2, sticky="nsew")
         self.entry_boda_misa=CTk.CTkEntry(self.frame_boda_misa,placeholder_text="Iglesia de San Juan", fg_color="white", font=("Verdana", 16))
@@ -892,7 +892,9 @@ class Ventana(CTk.CTkFrame):
         self.frame_boda_menores.rowconfigure(1,weight=1)
         self.frame_boda_menores.rowconfigure(2,weight=1)
         self.checkbox_boda_menores_var = tk.IntVar()
-        self.checkbox_boda_menores = CTk.CTkCheckBox(self.frame_boda_menores, fg_color="white", text="No se permiten niños", font=("Verdana", 16),variable=self.checkbox_boda_menores_var)
+        self.checkbox_boda_menores = CTk.CTkCheckBox(self.frame_boda_menores, fg_color="white", text="No se permiten niños", font=("Verdana", 16),variable=self.checkbox_boda_menores_var,command=lambda: self.toggle_widgets_by_checkbox(
+        self.checkbox_boda_menores_var,
+        [self.frame_info_menores]))
         self.checkbox_boda_menores.grid(row=1, column=0, pady=5, padx=2, sticky="nsew")
 
         #Guardar los frames actuales
@@ -1008,7 +1010,7 @@ class Ventana(CTk.CTkFrame):
         self.checkbox_privacidad_var = tk.IntVar()
         self.checkbox_privacidad = CTk.CTkCheckBox(self.frame_privacidad, fg_color="white", text="Evento privado", font=("Verdana", 16),variable=self.checkbox_privacidad_var, command=lambda: self.toggle_widgets_by_checkbox(
         self.checkbox_privacidad_var,
-        [self.label_codigo_priv,self.boton_generar_cod,self.boton_copiar_cod]
+        [self.label_codigo_priv,self.boton_generar_cod,self.boton_copiar_cod,self.frame_info_codigo]
         ))
         self.checkbox_privacidad.grid(row=1,column=0,columnspan=3,pady=5, padx=2, sticky="nsew")
 
@@ -1067,7 +1069,7 @@ class Ventana(CTk.CTkFrame):
         self.checkbox_estilo_var = tk.IntVar()
         self.checkbox_estilo = CTk.CTkCheckBox(self.frame_estilo, fg_color="white", text="Código de vestimenta", font=("Verdana", 16),variable=self.checkbox_estilo_var, command=lambda: self.toggle_widgets_by_checkbox(
         self.checkbox_estilo_var,
-        [self.combobox_estilo]
+        [self.combobox_estilo,self.frame_info_estilo]
         ))
         self.checkbox_estilo.grid(row=1, column=0, pady=5, padx=2, sticky="nsew")
         self.combobox_estilo = CTk.CTkComboBox(
@@ -1080,7 +1082,7 @@ class Ventana(CTk.CTkFrame):
         self.combobox_estilo.set("Elija un nivel de formalidad")
         self.checkbox_paletaco_var = tk.IntVar()
         self.checkbox_paletaco = CTk.CTkCheckBox(self.frame_estilo, fg_color="white", text="Paleta de colores", font=("Verdana", 16),variable=self.checkbox_paletaco_var,command=lambda : [self.toggle_widgets_by_checkbox(
-            self.checkbox_paletaco_var, [self.boton_ag_color]
+            self.checkbox_paletaco_var, [self.boton_ag_color,self.frame_colores]
         ),self.verificar_checkbox_paleta_colores()])
         self.checkbox_paletaco.grid(row=3, column=0, pady=5, padx=2, sticky="nsew")
         self.frame_colores_agregados = CTk.CTkFrame(self.frame_estilo, fg_color="#5e73ea")
@@ -1119,23 +1121,23 @@ class Ventana(CTk.CTkFrame):
     # Vista de la invitación (parte derecha)
     def crear_frame_derecho_vis(self):
         self.frame2 = CTk.CTkFrame(self.frame0, fg_color="#1503b8")
-        self.frame2.grid(pady=40, padx=30, row=0, column=1, columnspan=2, sticky="nsew")
+        self.frame2.grid(pady=15, padx=30, row=0, column=1, columnspan=2, sticky="nsew")
         self.frame2.columnconfigure(0, weight=1)
         self.frame2.columnconfigure(1, weight=2)
         self.frame2.rowconfigure(0, weight=8)
-        self.frame2.rowconfigure(1, weight=1)
+        self.frame2.rowconfigure(1, weight=0)
     
     def crear_frame_invitacion_vis(self):
         self.frame3 = CTk.CTkFrame(self.frame2, fg_color="#fae9d0")
-        self.frame3.grid(pady=25, padx=20, row=0, column=0, columnspan=2, sticky="nsew")
+        self.frame3.grid(pady=(20,5), padx=20, row=0, column=0, columnspan=2, sticky="nsew")
         self.frame3.rowconfigure(0,weight=1)
         self.frame3.columnconfigure(0,weight=1)
 
-        self.boton_editar = CTk.CTkButton(self.frame2, fg_color="#220c56", text="Editar datos",font=("Verdana",24,"bold"))
-        self.boton_editar.grid(pady=10, padx=25, row=1, column=0, sticky="nsew")
+        self.boton_editar = CTk.CTkButton(self.frame2, fg_color="#220c56", text="Editar datos",font=("Verdana",21,"bold"))
+        self.boton_editar.grid(pady=(5,10), padx=(50,10), row=1, column=0, sticky="nsew")
 
-        self.boton_guardar_inv=CTk.CTkButton(self.frame2,fg_color="#220c56",text="Guardar invitacion",font=("Verdana",24,"bold"))
-        self.boton_guardar_inv.grid(pady=10,padx=25,row=1,column=1,sticky="nsew")
+        self.boton_guardar_inv=CTk.CTkButton(self.frame2,fg_color="#220c56",text="Guardar invitacion",font=("Verdana",21,"bold"))
+        self.boton_guardar_inv.grid(pady=(5,10),padx=(10,50),row=1,column=1,sticky="nsew")
 
     def crear_frame_con_label(
         self,
@@ -1283,7 +1285,7 @@ class Ventana(CTk.CTkFrame):
     def crear_labels_fiesta_invitacion_din(self):
         self.frame_din_fiesta=CTk.CTkFrame(self.frame3,fg_color="#faf7ed")
         self.frame_din_fiesta.grid(pady=8,padx=8,row=0,column=0,sticky="nsew")
-        
+
         for i in range(3):
             self.frame_din_fiesta.columnconfigure(i, weight=1)
         for j in range(7):
@@ -1350,8 +1352,8 @@ class Ventana(CTk.CTkFrame):
         )
 
         self.crear_frame_con_label(
-        nombre_attr_frame="frame_info_hora",
-        nombre_attr_label="label_info_hora",
+        nombre_attr_frame="frame_info_fecha_y_hora",
+        nombre_attr_label="label_info_fecha_y_hora",
         parent=self.frame_din_fiesta,  
         color="white",
         pady=8,
@@ -1389,6 +1391,8 @@ class Ventana(CTk.CTkFrame):
         pady_label=4
         )
 
+        self.frame_info_codigo.grid_remove()
+
         self.crear_frame_con_label(
         nombre_attr_frame="frame_info_estilo",
         nombre_attr_label="label_info_estilo",
@@ -1409,6 +1413,8 @@ class Ventana(CTk.CTkFrame):
         pady_label=4
         )
  
+        self.frame_info_estilo.grid_remove()
+
         self.crear_frame_con_circulos_y_labels(
         nombre_attr_frame="frame_colores",
         parent=self.frame_din_fiesta,
@@ -1423,6 +1429,8 @@ class Ventana(CTk.CTkFrame):
         color_texto_label="#333333",
         tamaño_circulo=50
         )
+
+        self.frame_colores.grid_remove()
 
     def crear_labels_cumple_invitacion_din(self):
         self.frame_din_cumple=CTk.CTkFrame(self.frame3,fg_color="#faf7ed")
@@ -1514,8 +1522,8 @@ class Ventana(CTk.CTkFrame):
         )
         
         self.crear_frame_con_label(
-        nombre_attr_frame="frame_info_mesa",
-        nombre_attr_label="label_info_mesa",
+        nombre_attr_frame="frame_info_mesa_cumple",
+        nombre_attr_label="label_info_mesa_cumple",
         parent=self.frame_din_cumple,  
         color="white",
         pady=8,
@@ -1532,6 +1540,8 @@ class Ventana(CTk.CTkFrame):
         padx_label=4,
         pady_label=4
         )
+
+        self.frame_info_mesa_cumple.grid_remove()
 
         self.crear_frame_con_label(
         nombre_attr_frame="frame_info_codigo",
@@ -1553,6 +1563,8 @@ class Ventana(CTk.CTkFrame):
         pady_label=4
         )
 
+        self.frame_info_codigo.grid_remove()
+
         self.crear_frame_con_label(
         nombre_attr_frame="frame_info_estilo",
         nombre_attr_label="label_info_estilo",
@@ -1573,6 +1585,8 @@ class Ventana(CTk.CTkFrame):
         pady_label=4
         )
  
+        self.frame_info_estilo.grid_remove()
+
         self.crear_frame_con_circulos_y_labels(
         nombre_attr_frame="frame_colores",
         parent=self.frame_din_cumple,
@@ -1587,6 +1601,8 @@ class Ventana(CTk.CTkFrame):
         color_texto_label="#333333",
         tamaño_circulo=50
         )
+
+        self.frame_colores.grid_remove()
 
     def crear_labels_grad_invitacion_din(self):
         self.frame_din_grad=CTk.CTkFrame(self.frame3,fg_color="#faf7ed")
@@ -1698,8 +1714,8 @@ class Ventana(CTk.CTkFrame):
         )
 
         self.crear_frame_con_label(
-        nombre_attr_frame="frame_info_hora",
-        nombre_attr_label="label_info_hora",
+        nombre_attr_frame="frame_info_fecha_y_hora",
+        nombre_attr_label="label_info_fecha_y_hora",
         parent=self.frame_din_grad,  
         color="white",
         pady=8,
@@ -1718,8 +1734,8 @@ class Ventana(CTk.CTkFrame):
         )
         
         self.crear_frame_con_label(
-        nombre_attr_frame="frame_info_invs",
-        nombre_attr_label="label_info_invs",
+        nombre_attr_frame="frame_info_invitados",
+        nombre_attr_label="label_info_invitados",
         parent=self.frame_din_grad,  
         color="white",
         pady=8,
@@ -1757,6 +1773,8 @@ class Ventana(CTk.CTkFrame):
         pady_label=4
         )
 
+        self.frame_info_codigo.grid_remove()
+
         self.crear_frame_con_label(
         nombre_attr_frame="frame_info_estilo",
         nombre_attr_label="label_info_estilo",
@@ -1777,6 +1795,8 @@ class Ventana(CTk.CTkFrame):
         pady_label=4
         )
  
+        self.frame_info_estilo.grid_remove()
+
         self.crear_frame_con_circulos_y_labels(
         nombre_attr_frame="frame_colores",
         parent=self.frame_din_grad,
@@ -1791,6 +1811,8 @@ class Ventana(CTk.CTkFrame):
         color_texto_label="#333333",
         tamaño_circulo=50
         )
+
+        self.frame_colores.grid_remove()
     
     def crear_labels_xv_invitacion_din(self):
         self.frame_din_xv=CTk.CTkFrame(self.frame3,fg_color="#faf7ed")
@@ -1798,7 +1820,7 @@ class Ventana(CTk.CTkFrame):
         
         for i in range(3):
             self.frame_din_xv.columnconfigure(i, weight=1)
-        for j in range(10):
+        for j in range(11):
             self.frame_din_xv.rowconfigure(j, weight=1)
 
         self.crear_frame_con_label(
@@ -1862,8 +1884,8 @@ class Ventana(CTk.CTkFrame):
         )
 
         self.crear_frame_con_label(
-        nombre_attr_frame="frame_info_fecha_hora",
-        nombre_attr_label="label_info_fecha_hora",
+        nombre_attr_frame="frame_info_fecha_y_hora",
+        nombre_attr_label="label_info_fecha_y_hora",
         parent=self.frame_din_xv,  
         color="white",
         pady=8,
@@ -1902,13 +1924,35 @@ class Ventana(CTk.CTkFrame):
         )
 
         self.crear_frame_con_label(
-        nombre_attr_frame="frame_info_padrinos",
-        nombre_attr_label="label_info_padrinos",
+        nombre_attr_frame="frame_info_misa_xv",
+        nombre_attr_label="label_info_misa_xv",
         parent=self.frame_din_xv,  
         color="white",
         pady=8,
         padx=10,
         fila=5,
+        columna=1,
+        texto_label="Ceremonia religiosa:",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.frame_info_misa_xv.grid_remove()
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_padrinos_xv",
+        nombre_attr_label="label_info_padrinos_xv",
+        parent=self.frame_din_xv,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=6,
         columna=1,
         texto_label="padrinos PADRINO Y MADRINA",
         fuente_label=("Verdana", 16, "bold"),
@@ -1928,7 +1972,7 @@ class Ventana(CTk.CTkFrame):
         color="white",
         pady=8,
         padx=10,
-        fila=6,
+        fila=7,
         columna=1,
         texto_label="Mesa de regalos:",
         fuente_label=("Verdana", 16, "bold"),
@@ -1941,6 +1985,8 @@ class Ventana(CTk.CTkFrame):
         pady_label=4
         )
 
+        self.frame_info_mesa_xv.grid_remove()
+
         self.crear_frame_con_label(
         nombre_attr_frame="frame_info_codigo",
         nombre_attr_label="label_info_codigo",
@@ -1948,7 +1994,7 @@ class Ventana(CTk.CTkFrame):
         color="white",
         pady=8,
         padx=10,
-        fila=7,
+        fila=8,
         columna=1,
         texto_label="Codigo",
         fuente_label=("Verdana", 16, "bold"),
@@ -1961,6 +2007,8 @@ class Ventana(CTk.CTkFrame):
         pady_label=4
         )
 
+        self.frame_info_codigo.grid_remove()
+
         self.crear_frame_con_label(
         nombre_attr_frame="frame_info_estilo",
         nombre_attr_label="label_info_estilo",
@@ -1968,7 +2016,7 @@ class Ventana(CTk.CTkFrame):
         color="white",
         pady=8,
         padx=10,
-        fila=8,
+        fila=9,
         columna=1,
         texto_label="Estilo",
         fuente_label=("Verdana", 16, "bold"),
@@ -1981,13 +2029,15 @@ class Ventana(CTk.CTkFrame):
         pady_label=4
         )
  
+        self.frame_info_estilo.grid_remove()
+
         self.crear_frame_con_circulos_y_labels(
         nombre_attr_frame="frame_colores",
         parent=self.frame_din_xv,
         color_fondo="#f0f0f0",
         pady=10,
         padx=10,
-        fila=9,
+        fila=10,
         columna=1,
         textos_labels=["Verde", "Azul", "Amarillo", "Rosa", "Rojo"],
         colores_circulos=["#4caf50", "#2196f3", "#ffeb3b", "#fd5db0", "#f44336"],
@@ -1995,6 +2045,8 @@ class Ventana(CTk.CTkFrame):
         color_texto_label="#333333",
         tamaño_circulo=50
         )
+
+        self.frame_colores.grid_remove()
 
     def crear_labels_boda_invitacion_din(self):
         self.frame_din_boda=CTk.CTkFrame(self.frame3,fg_color="#faf7ed")
@@ -2014,7 +2066,7 @@ class Ventana(CTk.CTkFrame):
         padx=10,
         fila=0,
         columna=2,
-        texto_label="Nuestra Boda",
+        texto_label="Boda",
         fuente_label=("Verdana", 24, "bold"),
         color_texto="dark blue",
         sticky_frame="nsew",
@@ -2066,8 +2118,8 @@ class Ventana(CTk.CTkFrame):
         )
 
         self.crear_frame_con_label(
-        nombre_attr_frame="frame_info_fecha_hora",
-        nombre_attr_label="label_info_fecha_hora",
+        nombre_attr_frame="frame_info_fecha_y_hora",
+        nombre_attr_label="label_info_fecha_y_hora",
         parent=self.frame_din_boda,  
         color="white",
         pady=8,
@@ -2085,15 +2137,36 @@ class Ventana(CTk.CTkFrame):
         pady_label=4
         )
 
-
         self.crear_frame_con_label(
-        nombre_attr_frame="frame_info_padrinos",
-        nombre_attr_label="label_info_padrinos",
+        nombre_attr_frame="frame_info_misa_boda",
+        nombre_attr_label="label_info_misa_boda",
         parent=self.frame_din_boda,  
         color="white",
         pady=8,
         padx=10,
         fila=4,
+        columna=2,
+        texto_label="Ceremonia religiosa boda:",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.frame_info_misa_boda.grid_remove()
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_padrinos_boda",
+        nombre_attr_label="label_info_padrinos_boda",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=5,
         columna=2,
         texto_label="padrinos PADRINO Y MADRINA",
         fuente_label=("Verdana", 16, "bold"),
@@ -2113,7 +2186,7 @@ class Ventana(CTk.CTkFrame):
         color="white",
         pady=8,
         padx=10,
-        fila=5,
+        fila=6,
         columna=2,
         texto_label="Mesa de regalos:",
         fuente_label=("Verdana", 16, "bold"),
@@ -2126,25 +2199,7 @@ class Ventana(CTk.CTkFrame):
         pady_label=4
         )
 
-        self.crear_frame_con_label(
-        nombre_attr_frame="frame_info_mesa_boda",
-        nombre_attr_label="label_info_mesa_boda",
-        parent=self.frame_din_boda,  
-        color="white",
-        pady=8,
-        padx=10,
-        fila=6,
-        columna=2,
-        texto_label="Ceremonia religiosa",
-        fuente_label=("Verdana", 16, "bold"),
-        color_texto="dark blue",
-        sticky_frame="nsew",
-        row_label=0,
-        column_label=0,
-        sticky_label="nsew",
-        padx_label=4,
-        pady_label=4
-        )
+        self.frame_info_mesa_boda.grid_remove()
 
         self.crear_frame_con_label(
         nombre_attr_frame="frame_info_menores",
@@ -2153,7 +2208,7 @@ class Ventana(CTk.CTkFrame):
         color="white",
         pady=7,
         padx=10,
-        fila=6,
+        fila=7,
         columna=2,
         texto_label="No se permiten menores",
         fuente_label=("Verdana", 16, "bold"),
@@ -2165,6 +2220,8 @@ class Ventana(CTk.CTkFrame):
         padx_label=4,
         pady_label=4
         )
+
+        self.frame_info_menores.grid_remove() 
 
         self.crear_frame_con_label(
         nombre_attr_frame="frame_info_codigo",
@@ -2186,6 +2243,8 @@ class Ventana(CTk.CTkFrame):
         pady_label=4
         )
 
+        self.frame_info_codigo.grid_remove()
+
         self.crear_frame_con_label(
         nombre_attr_frame="frame_info_estilo",
         nombre_attr_label="label_info_estilo",
@@ -2206,6 +2265,8 @@ class Ventana(CTk.CTkFrame):
         pady_label=4
         )
  
+        self.frame_info_estilo.grid_remove()
+
         self.crear_frame_con_circulos_y_labels(
         nombre_attr_frame="frame_colores",
         parent=self.frame_din_boda,
@@ -2220,6 +2281,8 @@ class Ventana(CTk.CTkFrame):
         color_texto_label="#333333",
         tamaño_circulo=50
         )
+
+        self.frame_colores.grid_remove()
 
     def on_registrar_eventos(self):
         anfitrion_id = cargar_id_usuario_json()
