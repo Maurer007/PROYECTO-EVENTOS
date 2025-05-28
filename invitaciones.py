@@ -21,7 +21,7 @@ def cargar_id_usuario_json(ruta="usuario_sesion.json"):
 class EventosManager:
     
     @staticmethod
-    def insertar_fiesta(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, descripcion):
+    def insertar_fiesta(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, descripcion, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo):
         anfitrion_id = cargar_id_usuario_json()
         if anfitrion_id is None:
             print("No hay usuario logueado")
@@ -36,7 +36,10 @@ class EventosManager:
                 hora=hora,
                 direccion=direccion,
                 num_invitados=num_invitados,
-                privacidad=privacidad
+                privacidad=privacidad,
+                privacidad_codigo=privacidad_codigo,
+                cupo_limitado=cupo_limitado,
+                vestimenta_tipo=vestimenta_tipo
                 
             )
             session.add(nuevo_evento)
@@ -53,7 +56,10 @@ class EventosManager:
                 num_invitados=num_invitados,
                 privacidad=privacidad,
                 descripcion=descripcion,
-                
+                privacidad_codigo=privacidad_codigo,
+                cupo_limitado=cupo_limitado,
+                vestimenta=vestimenta,
+                vestimenta_tipo=vestimenta_tipo
             )
             session.add(fiesta)
             session.commit()
@@ -67,7 +73,7 @@ class EventosManager:
         finally:
             session.close()
     @staticmethod
-    def insertar_cumpleaños(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, cumpleañero, edad, mesa_regalos, imagen=None):
+    def insertar_cumpleaños(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, cumpleañero, edad, mesa_regalos, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo, txt_mesa_regalos):
         anfitrion_id = cargar_id_usuario_json()
         if anfitrion_id is None:
             print("No hay usuario logueado")
@@ -82,7 +88,10 @@ class EventosManager:
                 hora=hora,
                 direccion=direccion,
                 num_invitados=num_invitados,
-                privacidad=privacidad
+                privacidad=privacidad,
+                privacidad_codigo=privacidad_codigo,
+                cupo_limitado=cupo_limitado,
+                vestimenta_tipo=vestimenta_tipo
                 
             )
             session.add(nuevo_evento)
@@ -100,7 +109,13 @@ class EventosManager:
                 privacidad=privacidad,
                 cumpleañero=cumpleañero,
                 edad=edad,
-                mesa_regalos=mesa_regalos
+                mesa_regalos=mesa_regalos,
+                privacidad_codigo=privacidad_codigo,
+                cupo_limitado=cupo_limitado,
+                vestimenta=vestimenta,
+                vestimenta_tipo=vestimenta_tipo,
+                txt_mesa_regalos=txt_mesa_regalos
+            
             )
             session.add(cumpleaños)
             session.commit()
@@ -115,7 +130,7 @@ class EventosManager:
             session.close()
 
     @staticmethod
-    def insertar_graduacion(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, escuela, nivel_educativo, generacion, invitados_por_alumno, imagen=None):
+    def insertar_graduacion(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, escuela, nivel_educativo, generacion, invitados_por_alumno, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo):
         anfitrion_id = cargar_id_usuario_json()
         if anfitrion_id is None:
             print("No hay usuario logueado")
@@ -130,7 +145,10 @@ class EventosManager:
                 hora=hora,
                 direccion=direccion,
                 num_invitados=num_invitados,
-                privacidad=privacidad
+                privacidad=privacidad,
+                privacidad_codigo=privacidad_codigo,
+                cupo_limitado=cupo_limitado,
+                vestimenta_tipo=vestimenta_tipo
                 
             )
             session.add(nuevo_evento)
@@ -149,7 +167,11 @@ class EventosManager:
                 escuela=escuela,
                 nivel_educativo=nivel_educativo,
                 generacion=generacion,
-                invitados_por_alumno=invitados_por_alumno
+                invitados_por_alumno=invitados_por_alumno,
+                privacidad_codigo=privacidad_codigo,
+                cupo_limitado=cupo_limitado,
+                vestimenta=vestimenta,
+                vestimenta_tipo=vestimenta_tipo
             )
             session.add(graduacion)
             session.commit()
@@ -164,7 +186,7 @@ class EventosManager:
             session.close()
     
     @staticmethod
-    def insertar_xv(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, cumpleañero_xv, padre, madre, padrino, madrina, mesa_regalos_xv, imagen=None):
+    def insertar_xv(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, cumpleañero_xv, padre, madre, padrino, madrina, mesa_regalos_xv, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo, txt_mesa_regalos_xv, misa_xv, iglesia_xv):
         anfitrion_id = cargar_id_usuario_json()
         if anfitrion_id is None:
             print("No hay usuario logueado")
@@ -179,7 +201,10 @@ class EventosManager:
                 hora=hora,
                 direccion=direccion,
                 num_invitados=num_invitados,
-                privacidad=privacidad
+                privacidad=privacidad,
+                privacidad_codigo=privacidad_codigo,
+                cupo_limitado=cupo_limitado,
+                vestimenta_tipo=vestimenta_tipo
                 
             )
             session.add(nuevo_evento)
@@ -200,7 +225,14 @@ class EventosManager:
                 madre=madre,
                 padrino=padrino,
                 madrina=madrina,
-                mesa_regalos_xv=mesa_regalos_xv
+                mesa_regalos_xv=mesa_regalos_xv,
+                privacidad_codigo=privacidad_codigo,
+                cupo_limitado=cupo_limitado,
+                vestimenta=vestimenta,
+                vestimenta_tipo=vestimenta_tipo,
+                txt_mesa_regalos_xv=txt_mesa_regalos_xv,
+                misa_xv=misa_xv,
+                iglesia_xv=iglesia_xv
             )
             session.add(xv)
             session.commit()
@@ -215,7 +247,7 @@ class EventosManager:
             session.close()
         
     @staticmethod
-    def insertar_boda(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos, imagen=None):
+    def insertar_boda(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo):
         anfitrion_id = cargar_id_usuario_json()
         if anfitrion_id is None:
             print("No hay usuario logueado")
@@ -230,7 +262,10 @@ class EventosManager:
                 hora=hora,
                 direccion=direccion,
                 num_invitados=num_invitados,
-                privacidad=privacidad
+                privacidad=privacidad,
+                privacidad_codigo=privacidad_codigo,
+                cupo_limitado=cupo_limitado,
+                vestimenta_tipo=vestimenta_tipo
                 
             )
             session.add(nuevo_evento)
@@ -253,7 +288,11 @@ class EventosManager:
                 mesa_regalos_boda=mesa_regalos_boda,
                 misa=misa,
                 iglesia=iglesia,
-                menores_permitidos=menores_permitidos
+                menores_permitidos=menores_permitidos,
+                privacidad_codigo=privacidad_codigo,
+                cupo_limitado=cupo_limitado,
+                vestimenta=vestimenta,
+                vestimenta_tipo=vestimenta_tipo
             )
             session.add(boda)
             session.commit()
@@ -271,7 +310,8 @@ class Ventana(CTk.CTkFrame):
 
     def __init__(self, master=None):
         super().__init__(master)
-        #self.anfitrion_id = anfitrion_id
+
+        self.anfitrion_id = self.recuperar_id
 
         # Configuración inicial del tema
         CTk.set_appearance_mode("System")
@@ -303,6 +343,23 @@ class Ventana(CTk.CTkFrame):
         self.hora_actual = datetime.now().strftime("%H:%M")  # Formato 24 horas
         self.entry_cumpleanero = None
         
+    def recuperar_id(self):
+        engine = create_engine("sqlite:///db/app.db")
+        Session = sessionmaker(bind=engine)
+        session = Session()
+
+        try:
+            if not Sesion.usuario_actual:
+                raise ValueError("No hay usuario en sesión.")
+
+            # Recuperar el objeto completo del usuario
+            user = session.query(Usuario).filter_by(nom_usuario=Sesion.usuario_actual).first()
+            id = user.id_usuario
+
+        except (SQLAlchemyError, ValueError) as e:
+            print("Error al obtener credenciales:", e)  
+
+        return id      
 
     def validar_fecha_input(self, texto):
         if texto == "":
@@ -2176,8 +2233,10 @@ class Ventana(CTk.CTkFrame):
         num_invitados = self.cupo.get()
         privacidad_valor = self.checkbox_privacidad_var.get()
         privacidad = True if privacidad_valor == 1 else False
+        privacidad_codigo = self.label_codigo_priv.cget("text") if privacidad else ""
 
         descripcion = ""
+        txt_mesa_regalos = ""
         descripcion = self.descripcion.get() if hasattr(self, "entry_descrip")  else ""
 
         cumpleañero = ""
@@ -2188,10 +2247,18 @@ class Ventana(CTk.CTkFrame):
                 print(f"⚠️ No se pudo obtener el texto de 'entry_cumpleanero': {e}")
 
         edad = getattr(self, "valor_edad", None)
-        mesa_regalos = self.checkbox_estilo_var.get() if hasattr(self, "checkbox_estilo_var") else 0
+        #mesa_regalos = self.checkbox_estilo_var.get() if hasattr(self, "checkbox_estilo_var") else 0
+        mesa_regalos_valor = getattr(self, "checkbox_estilo_var", tk.IntVar()).get()
+        mesa_regalos = True if mesa_regalos_valor == 1 else False
+        txt_mesa_regalos = self.entry_mesa.get() if mesa_regalos and hasattr(self, "entry_mesa") else ""
+
+        mesa_regalos_xv_valor = getattr(self, "checkbox_xv_mesa_var", tk.IntVar()).get()
+        mesa_regalos_xv = True if mesa_regalos_xv_valor == 1 else False
+        txt_mesa_regalos_xv = self.entry_xv_mesa.get() if mesa_regalos_xv and hasattr(self, "entry_xv_mesa") else ""
 
         escuela = ""
         nivel_educativo = ""
+        vestimenta_tipo = ""
         generacion = getattr(self, "valor_generacion", None)
         invitados_por_alumno = getattr(self, "valor_inv_grad", None)
 
@@ -2212,7 +2279,7 @@ class Ventana(CTk.CTkFrame):
         madre = self.entry_xv_padre2.get() if hasattr(self, "entry_xv_padre2") else ""
         padrino = self.entry_xv_padrino1.get() if hasattr(self, "entry_xv_padrino1") else ""
         madrina = self.entry_xv_padrino2.get() if hasattr(self, "entry_xv_padrino2") else ""
-        mesa_regalos_xv = self.checkbox_xv_mesa_var.get() if hasattr(self, "checkbox_xv_mesa_var") else 0
+        
 
         novia = self.entry_novio2.get() if hasattr(self, "entry_novio2") else ""
         novio = self.entry_novio1.get() if hasattr(self, "entry_novio1") else ""
@@ -2222,37 +2289,53 @@ class Ventana(CTk.CTkFrame):
         misa_valor = getattr(self, "checkbox_boda_misa_var", tk.IntVar()).get()
         misa = True if misa_valor == 1 else False
         iglesia = self.entry_boda_misa.get() if misa else ""
+
+        misa_xv_valor = getattr(self, "checkbox_xv_misa", tk.IntVar()).get()
+        misa_xv = True if misa_xv_valor == 1 else False
+        iglesia_xv = self.entry_xv_misa.get() if misa_xv else ""
+
         menores_permitidos = getattr(self, "menores_permitidos", False)
+
         print(f"Tipo de evento seleccionado: '{tipo_evento}'")
         imagen_bytes = getattr(self, "imagen", None)
         if imagen_bytes is None:
             print("⚠️ No se ha seleccionado ninguna imagen.")
             return
+        cupo_limitado = self.entry_num_inv.get() if hasattr(self, "entry_num_inv") else ""
+
+        vestimenta_valor = self.checkbox_privacidad_var.get()
+        vestimenta = True if vestimenta_valor == 1 else False
+        if hasattr(self, "combobox_estilo"):
+            try:
+                vestimenta_tipo = self.combobox_estilo.get()
+            except Exception as e:
+                print(f"⚠️ No se pudo obtener nivel educativo: {e}")
+                vestimenta_tipo = ""
         
         # Inserciones
         if tipo_evento == "Evento":
             EventosManager.insertar_evento(
-                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad
+                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo
             )
         elif tipo_evento == "Fiesta":
             EventosManager.insertar_fiesta(
-                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, descripcion
+                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, descripcion, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo
             )
         elif tipo_evento == "Cumpleaños":
             EventosManager.insertar_cumpleaños(
-                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, cumpleañero, edad, mesa_regalos
+                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, cumpleañero, edad, mesa_regalos, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo, txt_mesa_regalos
             )
         elif tipo_evento == "Graduación":
             EventosManager.insertar_graduacion(
-                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, escuela, nivel_educativo, generacion, invitados_por_alumno
+                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, escuela, nivel_educativo, generacion, invitados_por_alumno, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo
             )
         elif tipo_evento == "XV Años":
             EventosManager.insertar_xv(
-                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, cumpleañero_xv, padre, madre, padrino, madrina, mesa_regalos_xv
+                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, cumpleañero_xv, padre, madre, padrino, madrina, mesa_regalos_xv, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo, txt_mesa_regalos_xv, misa_xv, iglesia_xv
             )
         elif tipo_evento == "Boda":
             EventosManager.insertar_boda(
-                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos
+                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo
             )
         else:
             print("⚠️ Tipo de evento no reconocido")

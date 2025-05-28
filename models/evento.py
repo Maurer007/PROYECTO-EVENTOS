@@ -14,6 +14,9 @@ class Evento(Base):
     direccion = Column(String)
     num_invitados = Column(Integer)
     privacidad = Column(String)
+    privacidad_codigo = Column(String)
+    cupo_limitado = Column(String)
+    vestimenta_tipo = Column(String)
 
     anfitrion = relationship("Usuario")
 
@@ -30,6 +33,10 @@ class Fiesta(Base):
     num_invitados = Column(Integer)
     privacidad = Column(String)
     descripcion = Column(String)
+    privacidad_codigo = Column(String)
+    cupo_limitado = Column(String)
+    vestimenta = Column(String)
+    vestimenta_tipo = Column(String)
 
     anfitrion = relationship("Usuario")
 
@@ -48,6 +55,12 @@ class Cumpleaños(Base):
     cumpleañero = Column(String)
     edad = Column(Integer)
     mesa_regalos = Column(String)
+    privacidad_codigo = Column(String)
+    cupo_limitado = Column(String)
+    vestimenta = Column(String)
+    vestimenta_tipo = Column(String)
+    txt_mesa_regalos = Column(String)
+
 
     anfitrion = relationship("Usuario")
 
@@ -67,6 +80,10 @@ class Graduacion(Base):
     nivel_educativo = Column(String)
     generacion = Column(String)
     invitados_por_alumno = Column(Integer)
+    privacidad_codigo = Column(String)
+    cupo_limitado = Column(String)
+    vestimenta = Column(String)
+    vestimenta_tipo = Column(String)
 
     anfitrion = relationship("Usuario")
 
@@ -88,6 +105,13 @@ class XVAnos(Base):
     padrino = Column(String)
     madrina = Column(String)
     mesa_regalos_xv = Column(String)
+    privacidad_codigo = Column(String)
+    cupo_limitado = Column(String)
+    vestimenta = Column(String)
+    vestimenta_tipo = Column(String)
+    txt_mesa_regalos_xv = Column(String)
+    misa_xv = Column(String)
+    iglesia_xv = Column(String)
 
     anfitrion = relationship("Usuario")
 
@@ -111,5 +135,9 @@ class Boda(Base):
     misa = Column(String)
     iglesia = Column(String)
     menores_permitidos = Column(String)
+    privacidad_codigo = Column(String)
+    cupo_limitado = Column(String)
+    vestimenta = Column(String)
+    vestimenta_tipo = Column(String)
 
     anfitrion = relationship("Usuario")

@@ -60,7 +60,6 @@ class VentanaRegistro(ct.CTkToplevel):
 
         self.grab_set()
 
-        #self.resizable(False, False)
         self.overrideredirect(True)
         frame_top = ct.CTkFrame(self, height=30, corner_radius=0, fg_color=colorFondo)
         frame_top.pack(fill="x")
@@ -70,6 +69,7 @@ class VentanaRegistro(ct.CTkToplevel):
         self.close_button.bind("<Enter>", self.on_enter)
         self.close_button.bind("<Leave>", self.on_leave)
         self.attributes("-topmost", True)
+        self.after(1000, lambda: self.attributes("-topmost", False))
 
         self.configure(fg_color=  colorFondo)
         self._set_appearance_mode("dark")
@@ -148,7 +148,7 @@ class VentanaRegistro(ct.CTkToplevel):
         entrada.grid(row=0, column=columna, columnspan=2, pady=10, padx=10, sticky="w")
 
         label = ct.CTkLabel(frame_datos, text=texto, text_color="black", font=("Arial", 20))
-        label.grid(row=1, column=columna, columnspan=4, pady=10, padx=10, sticky="w")
+        label.grid(row=1, column=columna, columnspan=2, pady=10, padx=10, sticky="w")
 
         return entrada
     
