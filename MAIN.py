@@ -84,10 +84,13 @@ class Main(ctk.CTk):
         self.frame_superior.columnconfigure(0, weight=1)
         self.frame_superior.columnconfigure(1, weight=0)
         self.frame_superior.grid(row=0, column=1, sticky="nsew", padx=(0, 10), pady=(10, 5))
-        self.lupa = ctk.CTkButton(self.frame_superior, text="", image=self.iconos["lupa"], fg_color="purple", corner_radius=8, width=60, height=60)
+        self.lupa = ctk.CTkButton(self.frame_superior, text="", image=self.iconos["lupa"], fg_color=THEME["button_fg"], corner_radius=8, width=60, height=60)
         self.barra = ctk.CTkEntry(self.frame_superior, placeholder_text="Barra de búsqueda", fg_color=THEME["background"], font=THEME["font_title"], corner_radius=8, height=60)
         self.barra.grid(row=0, column=0, sticky="nsew", padx=(0,2.5))
         self.lupa.grid(row=0, column=1, sticky="nsew", padx=(2.5,0))
+
+        self.barra.bind("<Return>", lambda event: self.realizar_busqueda())
+
 
     def create_menu_lateral(self):
         self.frame_barra = ctk.CTkFrame(self, width=60, fg_color=THEME["background"], corner_radius=6)
@@ -432,18 +435,22 @@ class Main(ctk.CTk):
         self.frame_principal.grid_columnconfigure(0, weight=1)
         self.frame_principal.grid_rowconfigure(0, weight=1)
 
-        self.titulo = ctk.CTkLabel(self.frame_principal, text="Ajustes", font=("Eras Demi ITC", 75), text_color="#0A1A43")
+        self.titulo = ctk.CTkLabel(self.frame_principal, text="Cambiar tema", font=("Eras Demi ITC", 75), text_color="#0A1A43")
         self.titulo.pack(pady=10)
 
-        opcion = ctk.StringVar(value="opcion1")
+        opcion = ctk.StringVar(value="")
         self.radio1 = ctk.CTkRadioButton(self.frame_principal, text="Default", variable=opcion, value="opcion1", font=("Arial", 40), command=lambda: self.actualizar_tema("background", "#053d57"))
-        self.radio2 = ctk.CTkRadioButton(self.frame_principal, text="Menta", variable=opcion, value="opcion2", font=("Arial", 40), command=lambda: self.actualizar_tema("background", "#E4BE42"))
-        self.radio3 = ctk.CTkRadioButton(self.frame_principal, text="No se lol", variable=opcion, value="opcion3", font=("Arial", 40), command=lambda: self.actualizar_tema("background", "#42A9E4"))
+        self.radio2 = ctk.CTkRadioButton(self.frame_principal, text="NARANJA", variable=opcion, value="opcion2", font=("Arial", 40), command=lambda: self.actualizar_tema("background", "#E4BE42"))
+        self.radio3 = ctk.CTkRadioButton(self.frame_principal, text="CELESTE", variable=opcion, value="opcion3", font=("Arial", 40), command=lambda: self.actualizar_tema("background", "#42A9E4"))
+        self.radio4 = ctk.CTkRadioButton(self.frame_principal, text="VERDE", variable=opcion, value="opcion4", font=("Arial", 40), command=lambda: self.actualizar_tema("background", "#C4DF62"))
+        self.radio5 = ctk.CTkRadioButton(self.frame_principal, text="ROJO", variable=opcion, value="opcion5", font=("Arial", 40), command=lambda: self.actualizar_tema("background", "#E44242"))
 
         # Posicionarlos
         self.radio1.pack(pady=10, anchor='w', padx=20)
         self.radio2.pack(pady=10, anchor='w', padx=20)
         self.radio3.pack(pady=10, anchor='w', padx=20)
+        self.radio4.pack(pady=10, anchor='w', padx=20)
+        self.radio5.pack(pady=10, anchor='w', padx=20)
 
     def minimizar(self):
         if not self.frame_superpuesto_minimizado:
@@ -491,8 +498,16 @@ class Main(ctk.CTk):
         # Actualizar el fondo principal
         #self.configure(fg_color=THEME["background"])
         
-        # Actualizar frame principal
+        # Verificar si estamos en la sección de ajustes
+        en_ajustes = False
         if hasattr(self, 'frame_principal'):
+            for widget in self.frame_principal.winfo_children():
+                if isinstance(widget, ctk.CTkLabel) and widget.cget("text") == "Cambiar tema":
+                    en_ajustes = True
+                    break
+        
+        # Actualizar frame principal solo si no estamos en ajustes
+        if hasattr(self, 'frame_principal') and not en_ajustes:
             self.frame_principal.configure(fg_color=THEME["background"])
         
         # Actualizar todos los frames con fondo del tema
@@ -534,9 +549,129 @@ class Main(ctk.CTk):
                     for subwidget in widget.winfo_children():
                         if isinstance(subwidget, ctk.CTkLabel):
                             subwidget.configure(fg_color=THEME["background"])
-    
-        
 
+    def realizar_busqueda(self):
+        """Busca eventos según el texto en la barra de búsqueda y muestra los resultados"""
+        termino_busqueda = self.barra.get().lower().strip()
+        if not termino_busqueda:
+            # Si la búsqueda está vacía, vuelve a la pantalla principal
+            self.abrir_main()
+            return
+            
+        # Limpiar el frame principal para mostrar resultados
+        self.frame_principal.destroy()
+        
+        # Recrear frame_principal como scrolleable
+        self.frame_principal = ctk.CTkScrollableFrame(self)
+        self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 10), pady=(0, 4))
+        self.frame_principal._scrollbar.grid_forget()
+        
+        # Configurar grid
+        self.frame_principal.columnconfigure(0, weight=1)
+        self.frame_principal.rowconfigure(0, weight=0)
+        self.frame_principal.rowconfigure(1, weight=1)
+        
+        # Título de resultados de búsqueda
+        titulo_frame = ctk.CTkFrame(self.frame_principal, fg_color=THEME["background"], corner_radius=0)
+        titulo_frame.grid(row=0, column=0, sticky="ew", pady=(5, 10))
+        
+        titulo_label = ctk.CTkLabel(titulo_frame, text=f"Resultados de búsqueda: '{termino_busqueda}'", 
+                                font=("Arial", 25, "bold"), text_color="white", 
+                                fg_color=THEME["background"])
+        titulo_label.pack(anchor="w", padx=10, pady=5)
+        
+        # Contenedor para los resultados
+        resultados_frame = ctk.CTkFrame(self.frame_principal, fg_color=THEME["background"])
+        resultados_frame.grid(row=1, column=0, sticky="nsew", pady=5)
+        resultados_frame.columnconfigure(0, weight=1)
+        
+        # Buscar coincidencias en todas las categorías
+        resultados = self.buscar_eventos(termino_busqueda)
+        
+        if resultados:
+            # Mostrar los resultados encontrados
+            self.mostrar_resultados_busqueda(resultados_frame, resultados)
+        else:
+            # Mostrar mensaje de no resultados
+            sin_resultados = ctk.CTkLabel(resultados_frame, text="No se encontraron resultados", 
+                                        font=("Arial", 18), text_color="white", 
+                                        fg_color=THEME["background"])
+            sin_resultados.pack(pady=50)
+
+    def buscar_eventos(self, termino):
+        """
+        Busca eventos que coincidan con el término de búsqueda
+        Retorna una lista de diccionarios con información de los eventos encontrados
+        """
+        resultados = []
+        
+        # Categorías a buscar (puedes expandir esto para incluir datos reales de tu BD)
+        categorias = {
+            "cumple": "Cumpleaños",
+            "fiesta": "Fiestas", 
+            "boda": "Bodas",
+            "xv": "XV años",
+            "grad": "Graduaciones"
+        }
+        
+        # Buscar en las imágenes de eventos (esto es un ejemplo básico)
+        # En una implementación real, deberías buscar en tu base de datos
+        for clave, imagen in self.imagenes_eventos.items():
+            for prefijo, nombre_cat in categorias.items():
+                if prefijo in clave and (
+                    termino in nombre_cat.lower() or 
+                    termino in clave.lower()
+                ):
+                    resultados.append({
+                        "clave": clave,
+                        "imagen": imagen,
+                        "categoria": nombre_cat
+                    })
+        
+        return resultados
+
+    def mostrar_resultados_busqueda(self, contenedor, resultados):
+        """Muestra los resultados de búsqueda en el contenedor especificado"""
+        evento_height = 300
+        evento_width = 400
+        
+        # Crear un frame por categoría para agrupar resultados
+        categorias_encontradas = {}
+        
+        for resultado in resultados:
+            categoria = resultado["categoria"]
+            if categoria not in categorias_encontradas:
+                # Crear frame para esta categoría
+                cat_frame = ctk.CTkFrame(contenedor, fg_color=THEME["background"], corner_radius=0)
+                cat_frame.pack(fill="x", pady=10)
+                
+                # Título de la categoría
+                ctk.CTkLabel(cat_frame, text=categoria, font=("Arial", 20, "bold"), 
+                        text_color="white", fg_color=THEME["background"]).pack(anchor="w", padx=10)
+                
+                # Frame para los eventos de esta categoría
+                eventos_frame = ctk.CTkFrame(cat_frame, fg_color=THEME["background"])
+                eventos_frame.pack(fill="x", padx=10, pady=5)
+                
+                categorias_encontradas[categoria] = eventos_frame
+                
+        # Mostrar las imágenes en sus respectivas categorías
+        for resultado in resultados:
+            cat_frame = categorias_encontradas[resultado["categoria"]]
+            imagen = resultado["imagen"]
+            
+            # Crear un frame contenedor para cada evento
+            evento_frame = ctk.CTkFrame(cat_frame, fg_color=THEME["background"])
+            evento_frame.pack(side="left", padx=5, pady=5)
+            
+            # Agregar la imagen
+            label = ctk.CTkLabel(evento_frame, image=imagen, text="", 
+                            width=evento_width, height=evento_height)
+            label.pack()
+            
+            # Agregar el nombre/ID del evento (opcional)
+            nombre_evento = resultado["clave"]
+            ctk.CTkLabel(evento_frame, text=nombre_evento, text_color="white").pack()
 
 if __name__ == "__main__":
     carga_event = threading.Event()
