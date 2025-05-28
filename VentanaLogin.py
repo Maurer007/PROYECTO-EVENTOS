@@ -11,6 +11,7 @@ from datetime import date
 from models.usuario import Usuario
 import Sesion
 import json
+from pathlib import Path
 
 engine = create_engine("sqlite:///join_up.db", echo=True)
 
@@ -101,6 +102,23 @@ class VentanaUsuario(ct.CTkToplevel):
         else:
             self.entrada2.configure(show="*")
             self.ver_contraseña.configure(text="🔒")
+    def guardar_id_usuario_json(self, id_usuario):
+        datos = {
+            "id_usuario": id_usuario
+        }
+        try:
+            with open("usuario_sesion.json", "w") as f:
+                json.dump(datos, f)
+            print("Archivo usuario_sesion.json creado correctamente.")
+        except Exception as e:
+            print("Error al crear usuario_sesion.json:", e)
+
+    def cargar_id_usuario_json(ruta="usuario_sesion.json"):
+        if not Path(ruta).exists():
+            return None
+        with open(ruta, "r") as f:
+            data = json.load(f)
+            return data.get("id_usuario")
 
     
     def guardar_credenciales_json(self):
@@ -108,6 +126,7 @@ class VentanaUsuario(ct.CTkToplevel):
             "usuario": self.entrada1.get().strip(),
             "contraseña": self.entrada2.get().strip(),
         }
+        
         try:
             with open(self.json, "w") as f:
                 json.dump(datos, f)
@@ -207,6 +226,8 @@ class VentanaUsuario(ct.CTkToplevel):
                 print("Login correcto con:", username)
                 import Sesion
                 Sesion.usuario_actual = username
+
+                self.guardar_id_usuario_json(user.id_usuario)
 
                 if self.opcion.get():
                     self.guardar_credenciales_json()
