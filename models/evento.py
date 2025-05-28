@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, LargeBinary
 from models.base import Base
 from sqlalchemy.orm import relationship
 
@@ -7,6 +7,7 @@ class Evento(Base):
 
     id_evento = Column(Integer, primary_key=True)
     anfitrion_id = Column(Integer, ForeignKey("usuario.id_usuario"))
+    imagen_bytes = Column(LargeBinary)
     tipo_evento = Column(String)
     fecha = Column(String)
     hora = Column(String)
@@ -20,7 +21,8 @@ class Fiesta(Base):
     __tablename__ = "Fiesta"
 
     id_evento = Column(Integer, ForeignKey("evento.id_evento", ondelete="CASCADE"), primary_key=True)
-    anfitrion_id = Column(Integer, ForeignKey("usuario.id_usuario")) 
+    anfitrion_id = Column(Integer, ForeignKey("usuario.id_usuario"))
+    imagen_bytes = Column(LargeBinary)
     tipo_evento = Column(String)
     fecha = Column(String)
     hora = Column(String)
@@ -35,6 +37,8 @@ class Cumpleaños(Base):
     __tablename__ = "Cumpleaños"
 
     id_evento = Column(Integer, ForeignKey("evento.id_evento", ondelete="CASCADE"), primary_key=True)
+    anfitrion_id = Column(Integer, ForeignKey("usuario.id_usuario"))
+    imagen_bytes = Column(LargeBinary)
     tipo_evento = Column(String)
     fecha = Column(String)
     hora = Column(String)
@@ -45,10 +49,14 @@ class Cumpleaños(Base):
     edad = Column(Integer)
     mesa_regalos = Column(String)
 
+    anfitrion = relationship("Usuario")
+
 class Graduacion(Base):
     __tablename__ = "Graduación"
 
     id_evento = Column(Integer, ForeignKey("evento.id_evento", ondelete="CASCADE"), primary_key=True)
+    anfitrion_id = Column(Integer, ForeignKey("usuario.id_usuario"))
+    imagen_bytes = Column(LargeBinary)
     tipo_evento = Column(String)
     fecha = Column(String)
     hora = Column(String)
@@ -60,10 +68,14 @@ class Graduacion(Base):
     generacion = Column(String)
     invitados_por_alumno = Column(Integer)
 
+    anfitrion = relationship("Usuario")
+
 class XVAnos(Base):
     __tablename__ = "XV_años"
 
     id_evento = Column(Integer, ForeignKey("evento.id_evento", ondelete="CASCADE"), primary_key=True)
+    anfitrion_id = Column(Integer, ForeignKey("usuario.id_usuario"))
+    imagen_bytes = Column(LargeBinary)
     tipo_evento = Column(String)
     fecha = Column(String)
     hora = Column(String)
@@ -77,10 +89,14 @@ class XVAnos(Base):
     madrina = Column(String)
     mesa_regalos_xv = Column(String)
 
+    anfitrion = relationship("Usuario")
+
 class Boda(Base):
     __tablename__ = "Boda"
     
     id_evento = Column(Integer, ForeignKey("evento.id_evento", ondelete="CASCADE"), primary_key=True)
+    anfitrion_id = Column(Integer, ForeignKey("usuario.id_usuario"))
+    imagen_bytes = Column(LargeBinary)
     tipo_evento = Column(String)
     fecha = Column(String)
     hora = Column(String)
@@ -95,3 +111,5 @@ class Boda(Base):
     misa = Column(String)
     iglesia = Column(String)
     menores_permitidos = Column(String)
+
+    anfitrion = relationship("Usuario")

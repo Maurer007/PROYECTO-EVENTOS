@@ -16,6 +16,7 @@ ASSETS = {
 # Iconos
 ICONOS = {
     "user": "user.png",
+    "user2": "user2.png",
     "lupa": "lupa.png",
     "home": "home.png",
     "calendario": "calendario.png",
@@ -36,6 +37,7 @@ THEME = {
     "font_main": ("Arial", 25, "bold"),
     "font_title": ("Arial", 30),
 }
+
 
 # Categorías de eventos
 CATEGORIAS_EVENTOS = [
@@ -65,3 +67,4 @@ ANIMACION = {
     "velocidad": 8,
     "max_workers": 30,
 }
+
