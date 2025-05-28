@@ -9,36 +9,51 @@ from datetime import datetime
 from sqlalchemy.exc import SQLAlchemyError
 from utils.orm_utils import Session
 from models.evento import Evento, Fiesta, Cumpleaños, Graduacion, XVAnos, Boda 
+import json
+from pathlib import Path
 
-
+def cargar_id_usuario_json(ruta="usuario_sesion.json"):
+    if not Path(ruta).exists():
+        return None
+    with open(ruta, "r") as f:
+        data = json.load(f)
+        return data.get("id_usuario")
 class EventosManager:
     
     @staticmethod
-    def insertar_fiesta(fecha, hora, direccion, num_invitados, privacidad, descripcion):
+    def insertar_fiesta(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, descripcion):
+        anfitrion_id = cargar_id_usuario_json()
+        if anfitrion_id is None:
+            print("No hay usuario logueado")
+            return False
         session = Session()
         try:
             nuevo_evento = Evento(
-                #anfitrion=anfitrion,
+                anfitrion_id=anfitrion_id,
+                imagen_bytes=imagen_bytes,
                 tipo_evento="Fiesta",
                 fecha=fecha,
                 hora=hora,
                 direccion=direccion,
                 num_invitados=num_invitados,
                 privacidad=privacidad
+                
             )
             session.add(nuevo_evento)
             session.commit()
 
             fiesta = Fiesta(
                 id_evento=nuevo_evento.id_evento,
-                #anfitrion=anfitrion,
+                anfitrion_id=anfitrion_id,
+                imagen_bytes=imagen_bytes,
                 tipo_evento="Fiesta",
                 fecha=fecha,
                 hora=hora,
                 direccion=direccion,
                 num_invitados=num_invitados,
                 privacidad=privacidad,
-                descripcion=descripcion
+                descripcion=descripcion,
+                
             )
             session.add(fiesta)
             session.commit()
@@ -52,11 +67,16 @@ class EventosManager:
         finally:
             session.close()
     @staticmethod
-    def insertar_cumpleaños(fecha, hora, direccion, num_invitados, privacidad, cumpleañero, edad, mesa_regalos):
+    def insertar_cumpleaños(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, cumpleañero, edad, mesa_regalos, imagen=None):
+        anfitrion_id = cargar_id_usuario_json()
+        if anfitrion_id is None:
+            print("No hay usuario logueado")
+            return False
         session = Session()
         try:
             nuevo_evento = Evento(
-                #anfitrion=anfitrion,
+                anfitrion_id=anfitrion_id,
+                imagen_bytes=imagen_bytes,
                 tipo_evento="Cumpleaños",
                 fecha=fecha,
                 hora=hora,
@@ -70,7 +90,8 @@ class EventosManager:
 
             cumpleaños = Cumpleaños(
                 id_evento=nuevo_evento.id_evento,
-                #anfitrion=anfitrion,
+                anfitrion_id=anfitrion_id,
+                imagen_bytes=imagen_bytes,
                 tipo_evento="Cumpleaños",
                 fecha=fecha,
                 hora=hora,
@@ -94,11 +115,16 @@ class EventosManager:
             session.close()
 
     @staticmethod
-    def insertar_graduacion(fecha, hora, direccion, num_invitados, privacidad, escuela, nivel_educativo, generacion, invitados_por_alumno):
+    def insertar_graduacion(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, escuela, nivel_educativo, generacion, invitados_por_alumno, imagen=None):
+        anfitrion_id = cargar_id_usuario_json()
+        if anfitrion_id is None:
+            print("No hay usuario logueado")
+            return False
         session = Session()
         try:
             nuevo_evento = Evento(
-                #anfitrion=anfitrion,
+                anfitrion_id=anfitrion_id,
+                imagen_bytes=imagen_bytes,
                 tipo_evento="Graduacion",
                 fecha=fecha,
                 hora=hora,
@@ -112,7 +138,8 @@ class EventosManager:
 
             graduacion = Graduacion(
                 id_evento=nuevo_evento.id_evento,
-                #anfitrion=anfitrion,
+                anfitrion_id=anfitrion_id,
+                imagen_bytes=imagen_bytes,
                 tipo_evento="Graduacion",
                 fecha=fecha,
                 hora=hora,
@@ -137,11 +164,16 @@ class EventosManager:
             session.close()
     
     @staticmethod
-    def insertar_xv(fecha, hora, direccion, num_invitados, privacidad, cumpleañero_xv, padre, madre, padrino, madrina, mesa_regalos_xv):
+    def insertar_xv(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, cumpleañero_xv, padre, madre, padrino, madrina, mesa_regalos_xv, imagen=None):
+        anfitrion_id = cargar_id_usuario_json()
+        if anfitrion_id is None:
+            print("No hay usuario logueado")
+            return False
         session = Session()
         try:
             nuevo_evento = Evento(
-                #anfitrion=anfitrion,
+                anfitrion_id=anfitrion_id,
+                imagen_bytes=imagen_bytes,
                 tipo_evento="XVAños",
                 fecha=fecha,
                 hora=hora,
@@ -155,7 +187,8 @@ class EventosManager:
 
             xv = XVAnos(
                 id_evento=nuevo_evento.id_evento,
-                #anfitrion=anfitrion,
+                anfitrion_id=anfitrion_id,
+                imagen_bytes=imagen_bytes,
                 tipo_evento="XV Años",
                 fecha=fecha,
                 hora=hora,
@@ -182,11 +215,16 @@ class EventosManager:
             session.close()
         
     @staticmethod
-    def insertar_boda(fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos):
+    def insertar_boda(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos, imagen=None):
+        anfitrion_id = cargar_id_usuario_json()
+        if anfitrion_id is None:
+            print("No hay usuario logueado")
+            return False
         session = Session()
         try:
             nuevo_evento = Evento(
-                #anfitrion=anfitrion,
+                anfitrion_id=anfitrion_id,
+                imagen_bytes=imagen_bytes,
                 tipo_evento="Boda",
                 fecha=fecha,
                 hora=hora,
@@ -200,7 +238,8 @@ class EventosManager:
 
             boda = Boda(
                 id_evento=nuevo_evento.id_evento,
-                #anfitrion=anfitrion,
+                anfitrion_id=anfitrion_id,
+                imagen_bytes=imagen_bytes,
                 tipo_evento="Boda",
                 fecha=fecha,
                 hora=hora,
@@ -244,6 +283,8 @@ class Ventana(CTk.CTkFrame):
         self.crear_interfaz()
         self.colores_agregados = []  # Lista para guardar los colores
         self.limite_colores = 5
+
+        self.imagen = None
 
         self.paquetes_frames = {
         "Fiesta": self.crear_fiesta,
@@ -372,10 +413,14 @@ class Ventana(CTk.CTkFrame):
                 self.alternar_widget(w, mostrar=mostrar, metodo=metodo)
 
     def seleccionar_imagen(self):
-        if self.checkbox_portada_var.get():
-            ruta = filedialog.askopenfilename(filetypes=[("Imágenes", "*.jpg *.png *.jpeg *.gif")])
-            if ruta:
-                print("Ruta seleccionada:", ruta)
+        ruta_imagen = filedialog.askopenfilename(
+            filetypes=[("Imágenes", "*.png *.jpg *.jpeg *.bmp")]
+        )
+        if ruta_imagen:
+        # Leer la imagen como bytes para guardar en la DB
+            with open(ruta_imagen, "rb") as f:
+                self.imagen = f.read()
+                print("✅ Imagen cargada correctamente. Tamaño en bytes:", len(self.imagen))
             
     def vaciar_paquete(self):
         if hasattr(self, 'paquete_actual'):
@@ -1006,6 +1051,7 @@ class Ventana(CTk.CTkFrame):
 
         self.boton_elegir_imagen = CTk.CTkButton(self.frame_portada, text="Elegir imagen", font=("Verdana", 16), command=self.seleccionar_imagen)
         self.boton_elegir_imagen.grid(row=2, column=0, pady=5, padx=5)
+        
         # Label para mostrar la imagen
         self.label_imagen = CTk.CTkLabel(self.frame_portada, text="")
         self.label_imagen.grid(row=2, column=0, pady=5, padx=5)
@@ -1695,7 +1741,7 @@ class Ventana(CTk.CTkFrame):
         
         for i in range(3):
             self.frame_din_xv.columnconfigure(i, weight=1)
-        for j in range(7):
+        for j in range(10):
             self.frame_din_xv.rowconfigure(j, weight=1)
 
         self.crear_frame_con_label(
@@ -1777,9 +1823,67 @@ class Ventana(CTk.CTkFrame):
         padx_label=4,
         pady_label=4
         )
-        
 
-        
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_mama_papa",
+        nombre_attr_label="label_info_mama_papa",
+        parent=self.frame_din_xv,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=4,
+        columna=1,
+        texto_label="Mama y Papa",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_padrinos",
+        nombre_attr_label="label_info_padrinos",
+        parent=self.frame_din_xv,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=5,
+        columna=1,
+        texto_label="padrinos PADRINO Y MADRINA",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_mesa_xv",
+        nombre_attr_label="label_info_mesa_xv",
+        parent=self.frame_din_xv,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=6,
+        columna=1,
+        texto_label="Mesa de regalos:",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
         self.crear_frame_con_label(
         nombre_attr_frame="frame_info_codigo",
         nombre_attr_label="label_info_codigo",
@@ -1787,7 +1891,7 @@ class Ventana(CTk.CTkFrame):
         color="white",
         pady=8,
         padx=10,
-        fila=4,
+        fila=7,
         columna=1,
         texto_label="Codigo",
         fuente_label=("Verdana", 16, "bold"),
@@ -1807,7 +1911,7 @@ class Ventana(CTk.CTkFrame):
         color="white",
         pady=8,
         padx=10,
-        fila=5,
+        fila=8,
         columna=1,
         texto_label="Estilo",
         fuente_label=("Verdana", 16, "bold"),
@@ -1826,7 +1930,7 @@ class Ventana(CTk.CTkFrame):
         color_fondo="#f0f0f0",
         pady=10,
         padx=10,
-        fila=6,
+        fila=9,
         columna=1,
         textos_labels=["Verde", "Azul", "Amarillo", "Rosa", "Rojo"],
         colores_circulos=["#4caf50", "#2196f3", "#ffeb3b", "#fd5db0", "#f44336"],
@@ -1839,9 +1943,9 @@ class Ventana(CTk.CTkFrame):
         self.frame_din_boda=CTk.CTkFrame(self.frame3,fg_color="#faf7ed")
         self.frame_din_boda.grid(pady=8,padx=8,row=0,column=0,sticky="nsew")
         
-        for i in range(3):
+        for i in range(5):
             self.frame_din_boda.columnconfigure(i, weight=1)
-        for j in range(7):
+        for j in range(11):
             self.frame_din_boda.rowconfigure(j, weight=1)
 
         self.crear_frame_con_label(
@@ -1852,8 +1956,8 @@ class Ventana(CTk.CTkFrame):
         pady=8,
         padx=10,
         fila=0,
-        columna=1,
-        texto_label="Boda",
+        columna=2,
+        texto_label="Nuestra Boda",
         fuente_label=("Verdana", 24, "bold"),
         color_texto="dark blue",
         sticky_frame="nsew",
@@ -1864,7 +1968,207 @@ class Ventana(CTk.CTkFrame):
         pady_label=4
         )
 
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_novios",
+        nombre_attr_label="label_info_novios",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=1,
+        columna=2,
+        texto_label="Novio y Novia",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_lugar",
+        nombre_attr_label="label_info_lugar",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=2,
+        columna=2,
+        texto_label="Lugar",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_fecha_hora",
+        nombre_attr_label="label_info_fecha_hora",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=3,
+        columna=2,
+        texto_label="Fecha y Hora",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_padrinos",
+        nombre_attr_label="label_info_padrinos",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=4,
+        columna=2,
+        texto_label="padrinos PADRINO Y MADRINA",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_mesa_boda",
+        nombre_attr_label="label_info_mesa_boda",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=5,
+        columna=2,
+        texto_label="Mesa de regalos:",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_mesa_boda",
+        nombre_attr_label="label_info_mesa_boda",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=6,
+        columna=2,
+        texto_label="Ceremonia religiosa",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_menores",
+        nombre_attr_label="label_info_menores",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=7,
+        padx=10,
+        fila=6,
+        columna=2,
+        texto_label="No se permiten menores",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_codigo",
+        nombre_attr_label="label_info_codigo",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=8,
+        columna=2,
+        texto_label="Codigo",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_estilo",
+        nombre_attr_label="label_info_estilo",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=9,
+        columna=2,
+        texto_label="Estilo",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+ 
+        self.crear_frame_con_circulos_y_labels(
+        nombre_attr_frame="frame_colores",
+        parent=self.frame_din_boda,
+        color_fondo="#f0f0f0",
+        pady=10,
+        padx=10,
+        fila=10,
+        columna=2,
+        textos_labels=["Verde", "Azul", "Amarillo", "Rosa", "Rojo"],
+        colores_circulos=["#4caf50", "#2196f3", "#ffeb3b", "#fd5db0", "#f44336"],
+        fuente_label=("Verdana", 12),
+        color_texto_label="#333333",
+        tamaño_circulo=50
+        )
+
     def on_registrar_eventos(self):
+        anfitrion_id = cargar_id_usuario_json()
+        if anfitrion_id is None:
+            print("⚠️ No hay usuario logueado, no se puede registrar el evento.")
+            return
         tipo_evento = self.combo_eventos.get()
         fecha = self.fecha.get()
         hora = self.hora.get()
@@ -1891,6 +2195,8 @@ class Ventana(CTk.CTkFrame):
         generacion = getattr(self, "valor_generacion", None)
         invitados_por_alumno = getattr(self, "valor_inv_grad", None)
 
+        
+
         if tipo_evento == "Graduación":
             if hasattr(self, "entry_instituto"):
                 escuela = self.entry_instituto.get()
@@ -1913,38 +2219,61 @@ class Ventana(CTk.CTkFrame):
         padrino_boda = self.entry_boda_padrino1.get() if hasattr(self, "entry_boda_padrino1") else ""
         madrina_boda = self.entry_boda_padrino2.get() if hasattr(self, "entry_boda_padrino2") else ""
         mesa_regalos_boda = getattr(self, "checkbox_boda_mesa_var", tk.IntVar()).get()
-        misa_valor = self.checkbox_boda_misa_var.get()
+        misa_valor = getattr(self, "checkbox_boda_misa_var", tk.IntVar()).get()
         misa = True if misa_valor == 1 else False
         iglesia = self.entry_boda_misa.get() if misa else ""
         menores_permitidos = getattr(self, "menores_permitidos", False)
         print(f"Tipo de evento seleccionado: '{tipo_evento}'")
+        imagen_bytes = getattr(self, "imagen", None)
+        if imagen_bytes is None:
+            print("⚠️ No se ha seleccionado ninguna imagen.")
+            return
+        
         # Inserciones
         if tipo_evento == "Evento":
             EventosManager.insertar_evento(
-                fecha, hora, direccion, num_invitados, privacidad
+                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad
             )
         elif tipo_evento == "Fiesta":
             EventosManager.insertar_fiesta(
-                fecha, hora, direccion, num_invitados, privacidad, descripcion
+                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, descripcion
             )
         elif tipo_evento == "Cumpleaños":
             EventosManager.insertar_cumpleaños(
-                fecha, hora, direccion, num_invitados, privacidad, cumpleañero, edad, mesa_regalos
+                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, cumpleañero, edad, mesa_regalos
             )
         elif tipo_evento == "Graduación":
             EventosManager.insertar_graduacion(
-                fecha, hora, direccion, num_invitados, privacidad, escuela, nivel_educativo, generacion, invitados_por_alumno
+                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, escuela, nivel_educativo, generacion, invitados_por_alumno
             )
         elif tipo_evento == "XV Años":
             EventosManager.insertar_xv(
-                fecha, hora, direccion, num_invitados, privacidad, cumpleañero_xv, padre, madre, padrino, madrina, mesa_regalos_xv
+                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, cumpleañero_xv, padre, madre, padrino, madrina, mesa_regalos_xv
             )
         elif tipo_evento == "Boda":
             EventosManager.insertar_boda(
-                fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos
+                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos
             )
         else:
             print("⚠️ Tipo de evento no reconocido")
+
+    
+    def limpiar_campos_dinamicos(self):
+        for widget in self.frame_campos_dinamicos.winfo_children():
+            widget.destroy()
+
+    # Limpieza segura de atributos dinámicos
+        atributos = [
+            "entry_quinceanero", "entry_xv_padre1", "entry_xv_padre2",
+            "entry_xv_padrino1", "entry_xv_padrino2", "checkbox_xv_mesa_var",
+            "entry_cumpleanero", "valor_edad", "checkbox_estilo_var",
+            "entry_instituto", "combobox_nivel_edu", "valor_generacion", "valor_inv_grad",
+            "entry_novio1", "entry_novio2", "entry_boda_padrino1", "entry_boda_padrino2",
+            "checkbox_boda_mesa_var", "checkbox_boda_misa_var", "entry_boda_misa"
+        ]
+        for attr in atributos:
+            if hasattr(self, attr):
+                delattr(self, attr)
 """if __name__ == "__main__":
     app = Ventana()
     app.mainloop()"""
