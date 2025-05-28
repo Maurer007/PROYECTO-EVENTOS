@@ -21,7 +21,7 @@ class VentanaUsuario(ct.CTkToplevel):
         self.menu=menu
 
         ancho_v = 500
-        alto_v = 500
+        alto_v = 520
         x = (self.winfo_screenwidth() - ancho_v) // 2
         y = (self.winfo_screenheight() - alto_v) // 2
         self.geometry(f"{ancho_v}x{alto_v}+{x}+{y}")
@@ -220,47 +220,7 @@ class VentanaUsuario(ct.CTkToplevel):
                 self.label.configure(text="Contraseña incorrecta")
         else:
             self.label.configure(text="Usuario no encontrado")
-    
-    def crearTablaBD(self):
-        sqlinstruction = "CREATE TABLE IF NOT EXISTS " \
-                         "credenciales(id INTEGER PRIMARY KEY AUTOINCREMENT," \
-                         "usuario varchar(20)," \
-                         "contraseña varchar(20))"
-        conexion = sqlite3.connect(self.CREDENTIALS_BD)
-        conexion.execute(sqlinstruction)
-        conexion.close()
 
-    def insertarDatos(self, user, psw, img):
-        registro = "INSERT INTO credenciales(usuario, contraseña, imagen) VALUES(?,?,?)"
-        conexion = sqlite3.connect(self.CREDENTIALS_BD)
-        try:
-            conexion.execute(registro, (user, psw, img))
-            conexion.commit()
-        except Exception as e:
-            if type(e).__name__ == "IntegrityError":
-                print("Posible llave duplicada")
-            else:
-                print(type(e).__name__)
-        conexion.close()
-
-    def obtenerCredenciales(self):
-        instruccion = "SELECT * FROM credenciales ORDER BY id DESC LIMIT 1"
-        conexion = sqlite3.connect(self.CREDENTIALS_BD)
-        cursor = conexion.cursor()
-        resultado = cursor.execute(instruccion).fetchone()
-        conexion.close()
-
-        if resultado:
-            self.entrada1.insert(0, resultado[1])
-            self.entrada2.insert(0, resultado[2])
-            self.checkbox.select()
-
-    def borrarCredenciales(self):
-        conexion = sqlite3.connect(self.CREDENTIALS_BD)
-        cursor = conexion.cursor()
-        cursor.execute("DELETE FROM credenciales")
-        conexion.commit()
-        conexion.close()
 
     def cerrar(self):
         self.grab_release()
