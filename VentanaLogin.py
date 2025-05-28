@@ -102,6 +102,7 @@ class VentanaUsuario(ct.CTkToplevel):
         else:
             self.entrada2.configure(show="*")
             self.ver_contraseña.configure(text="🔒")
+            
     def guardar_id_usuario_json(self, id_usuario):
         datos = {
             "id_usuario": id_usuario
