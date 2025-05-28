@@ -1177,8 +1177,6 @@ class Ventana(CTk.CTkFrame):
         for j in range(8):
             self.frame_din.rowconfigure(j, weight=1)
 
-
-
     def crear_labels_fiesta_invitacion_din(self):
         self.frame_din_fiesta=CTk.CTkFrame(self.frame3,fg_color="#faf7ed")
         self.frame_din_fiesta.grid(pady=8,padx=8,row=0,column=0,sticky="nsew")
@@ -1209,13 +1207,33 @@ class Ventana(CTk.CTkFrame):
         )
 
         self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_descrip",
+        nombre_attr_label="label_info_descrip",
+        parent=self.frame_din_fiesta,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=1,
+        columna=1,
+        texto_label="Descripción",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
         nombre_attr_frame="frame_info_lugar",
         nombre_attr_label="label_info_lugar",
         parent=self.frame_din_fiesta,  
         color="white",
         pady=8,
         padx=10,
-        fila=1,
+        fila=2,
         columna=1,
         texto_label="Lugar",
         fuente_label=("Verdana", 16, "bold"),
@@ -1235,7 +1253,7 @@ class Ventana(CTk.CTkFrame):
         color="white",
         pady=8,
         padx=10,
-        fila=2,
+        fila=3,
         columna=1,
         texto_label="Fecha y Hora",
         fuente_label=("Verdana", 16, "bold"),
@@ -1255,7 +1273,7 @@ class Ventana(CTk.CTkFrame):
         color="white",
         pady=8,
         padx=10,
-        fila=3,
+        fila=4,
         columna=1,
         texto_label="Codigo",
         fuente_label=("Verdana", 16, "bold"),
@@ -1275,7 +1293,7 @@ class Ventana(CTk.CTkFrame):
         color="white",
         pady=8,
         padx=10,
-        fila=4,
+        fila=5,
         columna=1,
         texto_label="Estilo",
         fuente_label=("Verdana", 16, "bold"),
@@ -1294,7 +1312,7 @@ class Ventana(CTk.CTkFrame):
         color_fondo="#f0f0f0",
         pady=10,
         padx=10,
-        fila=5,
+        fila=6,
         columna=1,
         textos_labels=["Verde", "Azul", "Amarillo", "Rosa", "Rojo"],
         colores_circulos=["#4caf50", "#2196f3", "#ffeb3b", "#fd5db0", "#f44336"],
@@ -1303,46 +1321,25 @@ class Ventana(CTk.CTkFrame):
         tamaño_circulo=50
         )
 
-        self.crear_frame_con_label(
-        nombre_attr_frame="frame_info_descrip",
-        nombre_attr_label="label_info_descrip",
-        parent=self.frame_din_fiesta,  
-        color="white",
-        pady=8,
-        padx=10,
-        fila=6,
-        columna=1,
-        texto_label="Descripción",
-        fuente_label=("Verdana", 16, "bold"),
-        color_texto="dark blue",
-        sticky_frame="nsew",
-        row_label=0,
-        column_label=0,
-        sticky_label="nsew",
-        padx_label=4,
-        pady_label=4
-        )
-
-
     def crear_labels_cumple_invitacion_din(self):
         self.frame_din_cumple=CTk.CTkFrame(self.frame3,fg_color="#faf7ed")
         self.frame_din_cumple.grid(pady=8,padx=8,row=0,column=0,sticky="nsew")
         
         for i in range(3):
             self.frame_din_cumple.columnconfigure(i, weight=1)
-        for j in range(7):
+        for j in range(8):
             self.frame_din_cumple.rowconfigure(j, weight=1)
 
         self.crear_frame_con_label(
-        nombre_attr_frame="frame_info_evento",
-        nombre_attr_label="label_info_evento",
+        nombre_attr_frame="frame_info_cumpleanero",
+        nombre_attr_label="label_info_cumpleanero",
         parent=self.frame_din_cumple,  
         color="white",
         pady=8,
         padx=10,
         fila=0,
         columna=1,
-        texto_label="Cumpleaños",
+        texto_label="Cumpleanero cumple",
         fuente_label=("Verdana", 24, "bold"),
         color_texto="dark blue",
         sticky_frame="nsew",
@@ -1353,13 +1350,148 @@ class Ventana(CTk.CTkFrame):
         pady_label=4
         )
 
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_edad",
+        nombre_attr_label="label_info_edad",
+        parent=self.frame_din_cumple,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=1,
+        columna=1,
+        texto_label="edad",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_lugar",
+        nombre_attr_label="label_info_lugar",
+        parent=self.frame_din_cumple,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=2,
+        columna=1,
+        texto_label="Lugar cumple",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_fecha_y_hora",
+        nombre_attr_label="label_info_fecha_y_hora",
+        parent=self.frame_din_cumple,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=3,
+        columna=1,
+        texto_label="Fecha y Hora cumple",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+        
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_mesa",
+        nombre_attr_label="label_info_mesa",
+        parent=self.frame_din_cumple,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=4,
+        columna=1,
+        texto_label="Mesa de regalos:billullos",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_codigo",
+        nombre_attr_label="label_info_codigo",
+        parent=self.frame_din_cumple,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=5,
+        columna=1,
+        texto_label="Codigo cumple",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_estilo",
+        nombre_attr_label="label_info_estilo",
+        parent=self.frame_din_cumple,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=6,
+        columna=1,
+        texto_label="Estilo cumple",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+ 
+        self.crear_frame_con_circulos_y_labels(
+        nombre_attr_frame="frame_colores",
+        parent=self.frame_din_cumple,
+        color_fondo="#f0f0f0",
+        pady=10,
+        padx=10,
+        fila=7,
+        columna=1,
+        textos_labels=["Verde", "Azul", "Amarillo", "Rosa", "Rojo"],
+        colores_circulos=["#4caf50", "#2196f3", "#ffeb3b", "#fd5db0", "#f44336"],
+        fuente_label=("Verdana", 12),
+        color_texto_label="#333333",
+        tamaño_circulo=50
+        )
+
     def crear_labels_grad_invitacion_din(self):
         self.frame_din_grad=CTk.CTkFrame(self.frame3,fg_color="#faf7ed")
         self.frame_din_grad.grid(pady=8,padx=8,row=0,column=0,sticky="nsew")
         
         for i in range(3):
             self.frame_din_grad.columnconfigure(i, weight=1)
-        for j in range(7):
+        for j in range(10):
             self.frame_din_grad.rowconfigure(j, weight=1)
 
         self.crear_frame_con_label(
@@ -1380,8 +1512,183 @@ class Ventana(CTk.CTkFrame):
         sticky_label="nsew",
         padx_label=4,
         pady_label=4
-        )    
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_gene",
+        nombre_attr_label="label_info_gene",
+        parent=self.frame_din_grad,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=1,
+        columna=1,
+        texto_label="Generación 0000",
+        fuente_label=("Verdana", 20, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_instituto",
+        nombre_attr_label="label_info_instituo",
+        parent=self.frame_din_grad,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=2,
+        columna=1,
+        texto_label="Instituto",
+        fuente_label=("Verdana", 20, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_nivel_edu",
+        nombre_attr_label="label_info_nivel_edu",
+        parent=self.frame_din_grad,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=3,
+        columna=1,
+        texto_label="Nivel educativo",
+        fuente_label=("Verdana", 20, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_lugar",
+        nombre_attr_label="label_info_lugar",
+        parent=self.frame_din_grad,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=4,
+        columna=1,
+        texto_label="Lugar grad",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_hora",
+        nombre_attr_label="label_info_hora",
+        parent=self.frame_din_grad,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=5,
+        columna=1,
+        texto_label="Fecha y Hora",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
         
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_invs",
+        nombre_attr_label="label_info_invs",
+        parent=self.frame_din_grad,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=6,
+        columna=1,
+        texto_label="00 invitados por graduado",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_codigo",
+        nombre_attr_label="label_info_codigo",
+        parent=self.frame_din_grad,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=7,
+        columna=1,
+        texto_label="Codigo",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_estilo",
+        nombre_attr_label="label_info_estilo",
+        parent=self.frame_din_grad,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=8,
+        columna=1,
+        texto_label="Estilo",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+ 
+        self.crear_frame_con_circulos_y_labels(
+        nombre_attr_frame="frame_colores",
+        parent=self.frame_din_grad,
+        color_fondo="#f0f0f0",
+        pady=10,
+        padx=10,
+        fila=9,
+        columna=1,
+        textos_labels=["Verde grad", "Azul", "Amarillo", "Rosa", "Rojo"],
+        colores_circulos=["#4caf50", "#2196f3", "#ffeb3b", "#fd5db0", "#f44336"],
+        fuente_label=("Verdana", 12),
+        color_texto_label="#333333",
+        tamaño_circulo=50
+        )
+    
     def crear_labels_xv_invitacion_din(self):
         self.frame_din_xv=CTk.CTkFrame(self.frame3,fg_color="#faf7ed")
         self.frame_din_xv.grid(pady=8,padx=8,row=0,column=0,sticky="nsew")
@@ -1409,6 +1716,123 @@ class Ventana(CTk.CTkFrame):
         sticky_label="nsew",
         padx_label=4,
         pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_xvanero",
+        nombre_attr_label="label_info_xvanero",
+        parent=self.frame_din_xv,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=1,
+        columna=1,
+        texto_label="Quinceanero",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_lugar",
+        nombre_attr_label="label_info_lugar",
+        parent=self.frame_din_xv,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=2,
+        columna=1,
+        texto_label="Lugar",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_fecha_hora",
+        nombre_attr_label="label_info_fecha_hora",
+        parent=self.frame_din_xv,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=3,
+        columna=1,
+        texto_label="Fecha y Hora",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+        
+
+        
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_codigo",
+        nombre_attr_label="label_info_codigo",
+        parent=self.frame_din_xv,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=4,
+        columna=1,
+        texto_label="Codigo",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_estilo",
+        nombre_attr_label="label_info_estilo",
+        parent=self.frame_din_xv,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=5,
+        columna=1,
+        texto_label="Estilo",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+ 
+        self.crear_frame_con_circulos_y_labels(
+        nombre_attr_frame="frame_colores",
+        parent=self.frame_din_xv,
+        color_fondo="#f0f0f0",
+        pady=10,
+        padx=10,
+        fila=6,
+        columna=1,
+        textos_labels=["Verde", "Azul", "Amarillo", "Rosa", "Rojo"],
+        colores_circulos=["#4caf50", "#2196f3", "#ffeb3b", "#fd5db0", "#f44336"],
+        fuente_label=("Verdana", 12),
+        color_texto_label="#333333",
+        tamaño_circulo=50
         )
 
     def crear_labels_boda_invitacion_din(self):
