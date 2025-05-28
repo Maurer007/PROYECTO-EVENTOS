@@ -11,7 +11,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from utils.orm_utils import Session
 from models.usuario import Usuario 
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
-from sqlalchemy.orm import declarative_base, sessionmaker, relationship
+from sqlalchemy.orm import sessionmaker
 import bcrypt
 
 class UsuarioManager:
@@ -102,10 +102,6 @@ class VentanaRegistro(ct.CTkToplevel):
         self.withdraw()
         self.deiconify()
 
-        #self.labelError = ct.CTkLabel(self.container9, text="", font=("Arial", 15), text_color="red")
-        #self.labelError.pack(expand=True, anchor="center")
-
-        #self.crearTablaBD()
 
     def crear_scrollable_frame(self):
         container1 = ct.CTkScrollableFrame(self, fg_color="transparent")
@@ -267,6 +263,7 @@ class VentanaRegistro(ct.CTkToplevel):
         label_error = self.crear_label_error(frame, 0, 0)
 
         return label_error
+
 
     def on_enter(self, event):
         self.close_button.configure(text_color="red")  # O fg_color si solo cambia el texto
