@@ -71,7 +71,7 @@ class Main(ctk.CTk):
         self.create_menu_lateral()
         self.create_principal()
         self.create_user()
-        self.create_frame_superpuesto()
+        #self.create_frame_superpuesto()
 
     def cargar_iconos(self):
         self.iconos = {}  
@@ -113,7 +113,7 @@ class Main(ctk.CTk):
             {"icon": self.iconos["calendario"],   "color": THEME["button_fg"], "command": self.abrir_calendario},
             {"icon": self.iconos["mis_eventos"],   "color": THEME["button_fg"], "command": self.abrir_mis_eventos},
             #{"icon": self.iconos["notificaciones"],   "color": "green", "command": None},
-            {"icon": self.iconos["ajustes"],   "color": THEME["button_fg"], "command": None},
+            {"icon": self.iconos["ajustes"],   "color": THEME["button_fg"], "command": self.actualizar_tema("background", "#E9B23B")},
         ]
 
         # Crear y colocar los botones
@@ -192,10 +192,10 @@ class Main(ctk.CTk):
         #self.fila_eventos = self.crear_fila_eventos(self.frame_principal, fila=6, titulo="Eventos")
 
     def create_user(self):
-        frame_user = ctk.CTkFrame(self)
-        frame_user.grid(row=0, column=0, sticky="nsew", padx=(10, 5), pady=(10, 5))
-        user = ctk.CTkButton(frame_user, text="", image=self.iconos["user"], fg_color="lightblue", corner_radius=8, width=60, height=60, command=self.verificar_sesion)
-        user.grid(row=0, column=0, sticky="nsew")
+        self.frame_user = ctk.CTkFrame(self)
+        self.frame_user.grid(row=0, column=0, sticky="nsew", padx=(10, 5), pady=(10, 5))
+        self.user = ctk.CTkButton(self.frame_user, text="", image=self.iconos["user"], fg_color="lightblue", corner_radius=8, width=60, height=60, command=self.verificar_sesion)
+        self.user.grid(row=0, column=0, sticky="nsew")
 
     def cargar_imagenes_eventos(self):
         self.imagenes_eventos = {}
@@ -292,6 +292,8 @@ class Main(ctk.CTk):
     def verificar_sesion(self):
         if Sesion.usuario_actual:
             print("Sesión activa con:", Sesion.usuario_actual)
+            self.user.configure(image=self.iconos["user2"])
+            self.limpiar_filas_eventos()
             self.abrir_VentanaInicioSesion()
         else:
             print("No hay sesión activa.")
@@ -310,7 +312,18 @@ class Main(ctk.CTk):
             print("Ya hay una ventana de usuario abierta.")
             return
         try:
-            VentanaUsuario(self)
+            ventana = VentanaUsuario(self)
+            # Esperar a que se cierre la ventana y luego reverificar
+            self.wait_window(ventana)
+            # Después de que se cierra, verificar sesión nuevamente
+            if Sesion.usuario_actual:
+                # Solo actualizar la UI si se inició sesión
+                self.user.configure(image=self.iconos["user2"])
+                self.limpiar_filas_eventos()
+                self.abrir_VentanaInicioSesion()
+            else:
+                # Si no se inició sesión, simplemente mantener la UI actual
+                self.cargar_imagenes_en_filas()
         except Exception as e:
             print("ERROR al crear VentanaUsuario:", e)
 
@@ -331,7 +344,8 @@ class Main(ctk.CTk):
         
         # Vuelve a crear el contenido principal
         self.create_principal()
-        self.cargar_imagenes_en_filas()
+        if not Sesion.usuario_actual:
+            self.cargar_imagenes_en_filas()
 
     def abrir_VentanaInicioSesion(self):
         # Limpia el frame_principal
@@ -343,11 +357,20 @@ class Main(ctk.CTk):
             ventana_usuario.pack(fill="both", expand=True)
         except Exception as e:
             print("ERROR al crear ventana inicio sesion:", e)
+            import traceback
+            traceback.print_exc()
 
     def abrir_calendario(self):
         # Limpia el frame_principal
-        for widget in self.frame_principal.winfo_children():
-            widget.destroy()
+        self.frame_principal.destroy()
+        
+        # Crear nuevo frame_principal (normal)
+        self.frame_principal = ctk.CTkFrame(self)
+        self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 10), pady=(0, 4))
+        
+        # Configurar grid del nuevo frame
+        self.frame_principal.grid_columnconfigure(0, weight=1)
+        self.frame_principal.grid_rowconfigure(0, weight=1)
         # Inserta la Ventana de mis eventos dentro de frame_principal
         try:
             if Sesion.usuario_actual:
@@ -362,8 +385,15 @@ class Main(ctk.CTk):
 
     def abrir_mis_eventos(self):
         # Limpia el frame_principal
-        for widget in self.frame_principal.winfo_children():
-            widget.destroy()
+        self.frame_principal.destroy()
+        
+        # Crear nuevo frame_principal (normal)
+        self.frame_principal = ctk.CTkFrame(self)
+        self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 10), pady=(0, 4))
+        
+        # Configurar grid del nuevo frame
+        self.frame_principal.grid_columnconfigure(0, weight=1)
+        self.frame_principal.grid_rowconfigure(0, weight=1)
         # Inserta la Ventana de mis eventos dentro de frame_principal
         try:
             if Sesion.usuario_actual:
@@ -408,6 +438,29 @@ class Main(ctk.CTk):
         for i, fila in enumerate(self.filas_eventos):
             fila.grid_forget()
             fila.grid(row=i+1, column=0, columnspan=6, sticky="nsew")  # i+1 porque la fila 0 es el evento principal
+
+    def limpiar_filas_eventos(self):
+        """Limpia todas las imágenes de las filas de eventos"""
+        categorias = {
+            "cumple": self.fila_cumple,
+            "fiesta": self.fila_fiestas,
+            "boda": self.fila_bodas,
+            "xv": self.fila_xvs,
+            "graduacion": self.fila_graduaciones,
+        }
+        
+        # Eliminar todos los widgets hijos (imágenes) de cada fila
+        for _, fila_widget in categorias.items():
+            for widget in fila_widget.winfo_children():
+                widget.destroy()
+
+    def actualizar_tema(self, clave, nuevo_valor):
+        if clave in THEME:
+            THEME[clave] = nuevo_valor
+            print(f"Tema actualizado: {clave} = {nuevo_valor}")
+        else:
+            print(f"Error: '{clave}' no es una clave válida en THEME.")
+
 
 if __name__ == "__main__":
     carga_event = threading.Event()
