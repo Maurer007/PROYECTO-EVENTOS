@@ -80,32 +80,32 @@ class Main(ctk.CTk):
             self.iconos[nombre] = ctk.CTkImage(Image.open(ruta), size=(40, 40))
 
     def create_barra_superior(self):
-        frame_superior = ctk.CTkFrame(self)
-        frame_superior.columnconfigure(0, weight=1)
-        frame_superior.columnconfigure(1, weight=0)
-        frame_superior.grid(row=0, column=1, sticky="nsew", padx=(0, 10), pady=(10, 5))
-        lupa = ctk.CTkButton(frame_superior, text="", image=self.iconos["lupa"], fg_color="purple", corner_radius=8, width=60, height=60)
-        barra = ctk.CTkEntry(frame_superior, placeholder_text="Barra de búsqueda", fg_color=THEME["background"], font=THEME["font_title"], corner_radius=8, height=60)
-        barra.grid(row=0, column=0, sticky="nsew", padx=(0,2.5))
-        lupa.grid(row=0, column=1, sticky="nsew", padx=(2.5,0))
+        self.frame_superior = ctk.CTkFrame(self)
+        self.frame_superior.columnconfigure(0, weight=1)
+        self.frame_superior.columnconfigure(1, weight=0)
+        self.frame_superior.grid(row=0, column=1, sticky="nsew", padx=(0, 10), pady=(10, 5))
+        self.lupa = ctk.CTkButton(self.frame_superior, text="", image=self.iconos["lupa"], fg_color="purple", corner_radius=8, width=60, height=60)
+        self.barra = ctk.CTkEntry(self.frame_superior, placeholder_text="Barra de búsqueda", fg_color=THEME["background"], font=THEME["font_title"], corner_radius=8, height=60)
+        self.barra.grid(row=0, column=0, sticky="nsew", padx=(0,2.5))
+        self.lupa.grid(row=0, column=1, sticky="nsew", padx=(2.5,0))
 
     def create_menu_lateral(self):
-        frame_barra = ctk.CTkFrame(self, width=60, fg_color=THEME["background"], corner_radius=6)
-        frame_barra.grid(row=1, column=0, sticky="nsew", padx=(10, 5), pady=(0, 2.5))
-        frame_barra.rowconfigure(0, weight=1)
-        frame_barra.rowconfigure(1, weight=4)
-        frame_barra.rowconfigure(2, weight=0)
+        self.frame_barra = ctk.CTkFrame(self, width=60, fg_color=THEME["background"], corner_radius=6)
+        self.frame_barra.grid(row=1, column=0, sticky="nsew", padx=(10, 5), pady=(0, 2.5))
+        self.frame_barra.rowconfigure(0, weight=1)
+        self.frame_barra.rowconfigure(1, weight=4)
+        self.frame_barra.rowconfigure(2, weight=0)
         
-        subframe_barra_1 = ctk.CTkFrame(frame_barra, fg_color=THEME["background"], width=60, height=60, corner_radius=6)
-        subframe_barra_2 = ctk.CTkFrame(frame_barra, fg_color=THEME["background"], corner_radius=0)
-        subframe_barra_3 = ctk.CTkFrame(frame_barra, fg_color=THEME["background"], width=60, corner_radius=6)
+        self.subframe_barra_1 = ctk.CTkFrame(self.frame_barra, fg_color=THEME["background"], width=60, height=60, corner_radius=6)
+        self.subframe_barra_2 = ctk.CTkFrame(self.frame_barra, fg_color=THEME["background"], corner_radius=0)
+        self.subframe_barra_3 = ctk.CTkFrame(self.frame_barra, fg_color=THEME["background"], width=60, corner_radius=6)
 
-        subframe_barra_1.grid(row=0, sticky="nsew", pady=(6,0))
-        subframe_barra_2.grid(row=1, sticky="nsew")
-        subframe_barra_3.grid(row=2, sticky="nsew", pady=(0,6))
+        self.subframe_barra_1.grid(row=0, sticky="nsew", pady=(6,0))
+        self.subframe_barra_2.grid(row=1, sticky="nsew")
+        self.subframe_barra_3.grid(row=2, sticky="nsew", pady=(0,6))
 
         for i in range(4):
-            subframe_barra_1.rowconfigure(i, weight=0)
+            self.subframe_barra_1.rowconfigure(i, weight=0)
 
         # Lista para agregar botones dinámicamente
         botones_config = [
@@ -113,13 +113,13 @@ class Main(ctk.CTk):
             {"icon": self.iconos["calendario"],   "color": THEME["button_fg"], "command": self.abrir_calendario},
             {"icon": self.iconos["mis_eventos"],   "color": THEME["button_fg"], "command": self.abrir_mis_eventos},
             #{"icon": self.iconos["notificaciones"],   "color": "green", "command": None},
-            {"icon": self.iconos["ajustes"],   "color": THEME["button_fg"], "command": self.actualizar_tema("background", "#E9B23B")},
+            {"icon": self.iconos["ajustes"],   "color": THEME["button_fg"], "command": self.abrir_ajustes},
         ]
 
         # Crear y colocar los botones
         for index, config in enumerate(botones_config):
             boton = ctk.CTkButton(
-                subframe_barra_2,
+                self.subframe_barra_2,
                 text="",
                 image=config["icon"],
                 fg_color=config["color"],
@@ -133,26 +133,26 @@ class Main(ctk.CTk):
             boton.grid(row=index, column=0, pady=(pady_top, pady_bottom))
 
     def crear_fila_eventos(self, contenedor, fila, titulo):
-        frame_fila = ctk.CTkFrame(contenedor, corner_radius=6)
-        frame_fila.grid(row=fila, column=0, columnspan=6, sticky="nsew")
-        frame_fila.columnconfigure(0, weight=1)
-        frame_fila.rowconfigure(0, weight=1)
-        frame_fila.rowconfigure(1, weight=4)
+        self.frame_fila = ctk.CTkFrame(contenedor, corner_radius=6)
+        self.frame_fila.grid(row=fila, column=0, columnspan=6, sticky="nsew")
+        self.frame_fila.columnconfigure(0, weight=1)
+        self.frame_fila.rowconfigure(0, weight=1)
+        self.frame_fila.rowconfigure(1, weight=4)
 
-        frame_titulo = ctk.CTkFrame(frame_fila, fg_color=THEME["background"], corner_radius=0)
-        frame_titulo.grid(row=0, column=0, sticky="nsew")
+        self.frame_titulo = ctk.CTkFrame(self.frame_fila, fg_color=THEME["background"], corner_radius=0)
+        self.frame_titulo.grid(row=0, column=0, sticky="nsew")
 
         # Crear el título de la fila
-        label_titulo = ctk.CTkLabel(frame_titulo, text=titulo, font=("Arial", 25, "bold"), fg_color=THEME["background"], text_color="white")
-        label_titulo.pack(anchor="w", padx=10)
+        self.label_titulo = ctk.CTkLabel(self.frame_titulo, text=titulo, font=("Arial", 25, "bold"), fg_color=THEME["background"], text_color="white")
+        self.label_titulo.pack(anchor="w", padx=10)
 
-        frame_contenido = ctk.CTkScrollableFrame(frame_fila, fg_color=THEME["background"], orientation="horizontal", height=300, corner_radius=0)
-        frame_contenido.grid(row=1, column=0, sticky="nsew", padx=0)
-        frame_contenido._scrollbar.grid_forget()  # Oculta scroll por estética
+        self.frame_contenido = ctk.CTkScrollableFrame(self.frame_fila, fg_color=THEME["background"], orientation="horizontal", height=300, corner_radius=0)
+        self.frame_contenido.grid(row=1, column=0, sticky="nsew", padx=0)
+        self.frame_contenido._scrollbar.grid_forget()  # Oculta scroll por estética
 
-        self.filas_eventos.append(frame_fila)
+        self.filas_eventos.append(self.frame_fila)
 
-        return frame_contenido
+        return self.frame_contenido
 
     def create_principal(self):
         self.frame_principal = ctk.CTkScrollableFrame(self, fg_color=THEME["background"])
@@ -164,10 +164,10 @@ class Main(ctk.CTk):
             self.frame_principal.columnconfigure(i, weight=1)
 
         #Evento grande en la parte superior
-        principal_main = ctk.CTkFrame(self.frame_principal)
-        principal_main.grid(row=0, column=0, sticky="nsew", columnspan=6)
-        principal_main.columnconfigure(0, weight=1)
-        principal_main.rowconfigure(0, weight=1)
+        self.principal_main = ctk.CTkFrame(self.frame_principal)
+        self.principal_main.grid(row=0, column=0, sticky="nsew", columnspan=6)
+        self.principal_main.columnconfigure(0, weight=1)
+        self.principal_main.rowconfigure(0, weight=1)
 
         #contenido = self.obtener_imagenes_eventos()
         contenido = [
@@ -180,8 +180,8 @@ class Main(ctk.CTk):
             {"type": "text", "text": TEXTOS["celebra"]},
             {"type": "image", "path": ASSETS["categorias"]["grande"] + "/grande4.png"},
         ]
-        evento_grande = CarruselDeslizante(principal_main, contenido, duracion=ANIMACION["duracion"], velocidad=ANIMACION["velocidad"], height=THEME["evento_height"])
-        evento_grande.grid(sticky="nsew", pady=(0,3), padx=(0))
+        self.evento_grande = CarruselDeslizante(self.principal_main, contenido, duracion=ANIMACION["duracion"], velocidad=ANIMACION["velocidad"], height=THEME["evento_height"])
+        self.evento_grande.grid(sticky="nsew", pady=(0,3), padx=(0))
 
         # Filas de eventos (copia una fila para poner una nueva categoría de eventos)
         self.fila_cumple = self.crear_fila_eventos(self.frame_principal, fila=1, titulo="Cumpleaños")
@@ -421,6 +421,30 @@ class Main(ctk.CTk):
         invitacion = Ventana(master=self.frame_principal)
         invitacion.grid(row=0, column=0, sticky="nsew")    
 
+    def abrir_ajustes(self):
+        self.frame_principal.destroy()
+        
+        # Crear nuevo frame_principal (normal)
+        self.frame_principal = ctk.CTkFrame(self, fg_color="#C4DF62")
+        self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 10), pady=(0, 4))
+        
+        # Configurar grid del nuevo frame
+        self.frame_principal.grid_columnconfigure(0, weight=1)
+        self.frame_principal.grid_rowconfigure(0, weight=1)
+
+        self.titulo = ctk.CTkLabel(self.frame_principal, text="Ajustes", font=("Eras Demi ITC", 75), text_color="#0A1A43")
+        self.titulo.pack(pady=10)
+
+        opcion = ctk.StringVar(value="opcion1")
+        self.radio1 = ctk.CTkRadioButton(self.frame_principal, text="Default", variable=opcion, value="opcion1", font=("Arial", 40), command=lambda: self.actualizar_tema("background", "#053d57"))
+        self.radio2 = ctk.CTkRadioButton(self.frame_principal, text="Menta", variable=opcion, value="opcion2", font=("Arial", 40), command=lambda: self.actualizar_tema("background", "#E4BE42"))
+        self.radio3 = ctk.CTkRadioButton(self.frame_principal, text="No se lol", variable=opcion, value="opcion3", font=("Arial", 40), command=lambda: self.actualizar_tema("background", "#42A9E4"))
+
+        # Posicionarlos
+        self.radio1.pack(pady=10, anchor='w', padx=20)
+        self.radio2.pack(pady=10, anchor='w', padx=20)
+        self.radio3.pack(pady=10, anchor='w', padx=20)
+
     def minimizar(self):
         if not self.frame_superpuesto_minimizado:
             # Minimizar: ocultar horarios y reducir tamaño
@@ -449,7 +473,6 @@ class Main(ctk.CTk):
             "graduacion": self.fila_graduaciones,
         }
         
-        # Eliminar todos los widgets hijos (imágenes) de cada fila
         for _, fila_widget in categorias.items():
             for widget in fila_widget.winfo_children():
                 widget.destroy()
@@ -458,8 +481,61 @@ class Main(ctk.CTk):
         if clave in THEME:
             THEME[clave] = nuevo_valor
             print(f"Tema actualizado: {clave} = {nuevo_valor}")
+            # Aplicar los cambios a la interfaz
+            self.aplicar_cambios_tema()
         else:
             print(f"Error: '{clave}' no es una clave válida en THEME.")
+        
+    def aplicar_cambios_tema(self):
+        """Actualiza todos los elementos que usan configuraciones del tema"""
+        # Actualizar el fondo principal
+        #self.configure(fg_color=THEME["background"])
+        
+        # Actualizar frame principal
+        if hasattr(self, 'frame_principal'):
+            self.frame_principal.configure(fg_color=THEME["background"])
+        
+        # Actualizar todos los frames con fondo del tema
+        frames_con_tema = [
+            self.frame_barra,
+            self.barra,
+            self.frame_fila,
+            self.frame_contenido,
+            self.fila_bodas,
+            self.fila_cumple,
+            self.fila_fiestas,
+            self.fila_xvs,
+            self.fila_graduaciones
+        ]
+        
+        for frame in frames_con_tema:
+            if frame and frame.winfo_exists():
+                frame.configure(fg_color=THEME["background"])
+        
+        # Actualizar los subframes de la barra lateral
+        if hasattr(self, 'frame_barra'):
+            for widget in self.frame_barra.winfo_children():
+                if isinstance(widget, ctk.CTkFrame):
+                    widget.configure(fg_color=THEME["background"])
+        
+        # Actualizar botones del menú lateral
+        botones = []
+        for widget in self.winfo_children():
+            if isinstance(widget, ctk.CTkFrame):
+                for subwidget in widget.winfo_children():
+                    if isinstance(subwidget, ctk.CTkButton) and subwidget != self.user:
+                        subwidget.configure(fg_color=THEME["button_fg"])
+        
+        # Actualizar etiquetas de títulos
+        for fila in self.filas_eventos:
+            for widget in fila.winfo_children():
+                if isinstance(widget, ctk.CTkFrame):  # Frame de título
+                    widget.configure(fg_color=THEME["background"])
+                    for subwidget in widget.winfo_children():
+                        if isinstance(subwidget, ctk.CTkLabel):
+                            subwidget.configure(fg_color=THEME["background"])
+    
+        
 
 
 if __name__ == "__main__":

@@ -310,7 +310,8 @@ class Ventana(CTk.CTkFrame):
 
     def __init__(self, master=None):
         super().__init__(master)
-        #self.anfitrion_id = anfitrion_id
+
+        self.anfitrion_id = self.recuperar_id
 
         # Configuración inicial del tema
         CTk.set_appearance_mode("System")
@@ -342,6 +343,23 @@ class Ventana(CTk.CTkFrame):
         self.hora_actual = datetime.now().strftime("%H:%M")  # Formato 24 horas
         self.entry_cumpleanero = None
         
+    def recuperar_id(self):
+        engine = create_engine("sqlite:///db/app.db")
+        Session = sessionmaker(bind=engine)
+        session = Session()
+
+        try:
+            if not Sesion.usuario_actual:
+                raise ValueError("No hay usuario en sesión.")
+
+            # Recuperar el objeto completo del usuario
+            user = session.query(Usuario).filter_by(nom_usuario=Sesion.usuario_actual).first()
+            id = user.id_usuario
+
+        except (SQLAlchemyError, ValueError) as e:
+            print("Error al obtener credenciales:", e)  
+
+        return id      
 
     def validar_fecha_input(self, texto):
         if texto == "":
@@ -1780,7 +1798,7 @@ class Ventana(CTk.CTkFrame):
         
         for i in range(3):
             self.frame_din_xv.columnconfigure(i, weight=1)
-        for j in range(7):
+        for j in range(10):
             self.frame_din_xv.rowconfigure(j, weight=1)
 
         self.crear_frame_con_label(
@@ -1862,9 +1880,67 @@ class Ventana(CTk.CTkFrame):
         padx_label=4,
         pady_label=4
         )
-        
 
-        
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_mama_papa",
+        nombre_attr_label="label_info_mama_papa",
+        parent=self.frame_din_xv,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=4,
+        columna=1,
+        texto_label="Mama y Papa",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_padrinos",
+        nombre_attr_label="label_info_padrinos",
+        parent=self.frame_din_xv,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=5,
+        columna=1,
+        texto_label="padrinos PADRINO Y MADRINA",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_mesa_xv",
+        nombre_attr_label="label_info_mesa_xv",
+        parent=self.frame_din_xv,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=6,
+        columna=1,
+        texto_label="Mesa de regalos:",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
         self.crear_frame_con_label(
         nombre_attr_frame="frame_info_codigo",
         nombre_attr_label="label_info_codigo",
@@ -1872,7 +1948,7 @@ class Ventana(CTk.CTkFrame):
         color="white",
         pady=8,
         padx=10,
-        fila=4,
+        fila=7,
         columna=1,
         texto_label="Codigo",
         fuente_label=("Verdana", 16, "bold"),
@@ -1892,7 +1968,7 @@ class Ventana(CTk.CTkFrame):
         color="white",
         pady=8,
         padx=10,
-        fila=5,
+        fila=8,
         columna=1,
         texto_label="Estilo",
         fuente_label=("Verdana", 16, "bold"),
@@ -1911,7 +1987,7 @@ class Ventana(CTk.CTkFrame):
         color_fondo="#f0f0f0",
         pady=10,
         padx=10,
-        fila=6,
+        fila=9,
         columna=1,
         textos_labels=["Verde", "Azul", "Amarillo", "Rosa", "Rojo"],
         colores_circulos=["#4caf50", "#2196f3", "#ffeb3b", "#fd5db0", "#f44336"],
@@ -1924,9 +2000,9 @@ class Ventana(CTk.CTkFrame):
         self.frame_din_boda=CTk.CTkFrame(self.frame3,fg_color="#faf7ed")
         self.frame_din_boda.grid(pady=8,padx=8,row=0,column=0,sticky="nsew")
         
-        for i in range(3):
+        for i in range(5):
             self.frame_din_boda.columnconfigure(i, weight=1)
-        for j in range(7):
+        for j in range(11):
             self.frame_din_boda.rowconfigure(j, weight=1)
 
         self.crear_frame_con_label(
@@ -1937,8 +2013,8 @@ class Ventana(CTk.CTkFrame):
         pady=8,
         padx=10,
         fila=0,
-        columna=1,
-        texto_label="Boda",
+        columna=2,
+        texto_label="Nuestra Boda",
         fuente_label=("Verdana", 24, "bold"),
         color_texto="dark blue",
         sticky_frame="nsew",
@@ -1947,6 +2023,202 @@ class Ventana(CTk.CTkFrame):
         sticky_label="nsew",
         padx_label=4,
         pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_novios",
+        nombre_attr_label="label_info_novios",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=1,
+        columna=2,
+        texto_label="Novio y Novia",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_lugar",
+        nombre_attr_label="label_info_lugar",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=2,
+        columna=2,
+        texto_label="Lugar",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_fecha_hora",
+        nombre_attr_label="label_info_fecha_hora",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=3,
+        columna=2,
+        texto_label="Fecha y Hora",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_padrinos",
+        nombre_attr_label="label_info_padrinos",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=4,
+        columna=2,
+        texto_label="padrinos PADRINO Y MADRINA",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_mesa_boda",
+        nombre_attr_label="label_info_mesa_boda",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=5,
+        columna=2,
+        texto_label="Mesa de regalos:",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_mesa_boda",
+        nombre_attr_label="label_info_mesa_boda",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=6,
+        columna=2,
+        texto_label="Ceremonia religiosa",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_menores",
+        nombre_attr_label="label_info_menores",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=7,
+        padx=10,
+        fila=6,
+        columna=2,
+        texto_label="No se permiten menores",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_codigo",
+        nombre_attr_label="label_info_codigo",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=8,
+        columna=2,
+        texto_label="Codigo",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+
+        self.crear_frame_con_label(
+        nombre_attr_frame="frame_info_estilo",
+        nombre_attr_label="label_info_estilo",
+        parent=self.frame_din_boda,  
+        color="white",
+        pady=8,
+        padx=10,
+        fila=9,
+        columna=2,
+        texto_label="Estilo",
+        fuente_label=("Verdana", 16, "bold"),
+        color_texto="dark blue",
+        sticky_frame="nsew",
+        row_label=0,
+        column_label=0,
+        sticky_label="nsew",
+        padx_label=4,
+        pady_label=4
+        )
+ 
+        self.crear_frame_con_circulos_y_labels(
+        nombre_attr_frame="frame_colores",
+        parent=self.frame_din_boda,
+        color_fondo="#f0f0f0",
+        pady=10,
+        padx=10,
+        fila=10,
+        columna=2,
+        textos_labels=["Verde", "Azul", "Amarillo", "Rosa", "Rojo"],
+        colores_circulos=["#4caf50", "#2196f3", "#ffeb3b", "#fd5db0", "#f44336"],
+        fuente_label=("Verdana", 12),
+        color_texto_label="#333333",
+        tamaño_circulo=50
         )
 
     def on_registrar_eventos(self):
