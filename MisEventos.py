@@ -6,16 +6,20 @@ from models.evento import Evento
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.orm import sessionmaker
 import bcrypt
+import json
+from pathlib import Path
 
 class MisEventos(ctk.CTkFrame):
     def __init__(self, parent, funcion_invitaciones):
         super().__init__(parent)
         self.parent = parent
         self.funcion_invitaciones = funcion_invitaciones
+        self.eventos = {}
 
         self.configure(fg_color="#C4DF62")
         self.crear_titulo()
         self.crear_boton_evento(self.funcion_invitaciones)
+        self.recuperar_eventos()
         self.crear_treeview()
 
     def crear_titulo(self):
@@ -26,13 +30,27 @@ class MisEventos(ctk.CTkFrame):
         self.boton = ctk.CTkButton(self, text="Crear Evento", command=funcion)
         self.boton.pack(pady=10)    
 
+    def cargar_id_usuario_json(self, ruta="usuario_sesion.json"):
+        if not Path(ruta).exists():
+            return None
+        with open(ruta, "r") as f:
+            data = json.load(f)
+            return data.get("id_usuario")
+    
     def recuperar_eventos(self):
         engine = create_engine("sqlite:///db/app.db")  # Usa la ruta correcta de tu base
         Session = sessionmaker(bind=engine)
         session = Session()
+        anfitrion_id = self.cargar_id_usuario_json()
 
-        user = session.query(Evento).filter_by(nom_usuario=Sesion.usuario_actual).first()
-
+        for evento in session.query(Evento).filter_by(anfitrion_id=anfitrion_id).all():
+            self.eventos[evento.id_evento] = (
+                evento.tipo_evento,
+                evento.fecha,
+                evento.hora,
+                evento.num_invitados
+                )
+            
 
     def crear_treeview(self):
         style = Style()
@@ -60,10 +78,10 @@ class MisEventos(ctk.CTkFrame):
             tv.delete(item)
 
         contador = 0
-        for item in resultado:
+        for datos in self.eventos.values():
             contador += 1
             if contador % 2 == 0:
-                tv.insert("", "end", text=contador, values=(item[0], item[1], item[2], item[3]), tags=("par",))
+                tv.insert("", "end", text=contador, values=datos, tags=("par",))
             else:
-                tv.insert("", "end", text=contador, values=(item[0], item[1], item[2], item[3]), tags=("impar",))
-        
+                tv.insert("", "end", text=contador, values=datos, tags=("impar",))
+                
