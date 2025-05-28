@@ -71,7 +71,6 @@ class Main(ctk.CTk):
         self.create_menu_lateral()
         self.create_principal()
         self.create_user()
-        #self.create_frame_superpuesto()
 
     def cargar_iconos(self):
         self.iconos = {}  
@@ -90,7 +89,6 @@ class Main(ctk.CTk):
         self.lupa.grid(row=0, column=1, sticky="nsew", padx=(2.5,0))
 
         self.barra.bind("<Return>", lambda event: self.realizar_busqueda())
-
 
     def create_menu_lateral(self):
         self.frame_barra = ctk.CTkFrame(self, width=60, fg_color=THEME["background"], corner_radius=6)
@@ -252,46 +250,6 @@ class Main(ctk.CTk):
                     label = ctk.CTkLabel(fila_widget, image=imagen, text="", width=evento_width, height=evento_height)
                     label.pack(side="left", padx=5, pady=5)
 
-    def ajustar_frame_superpuesto(self, event=None):
-        # Obtén el tamaño actual de la ventana principal
-        ancho = self.winfo_width()
-        alto = self.winfo_height()
-        # Define el tamaño mínimo y máximo del frame superpuesto
-        relwidth = min(0.4, max(0.25, 350 / max(ancho, 1)))
-        # Ajusta relheight según el estado minimizado
-        if getattr(self, "frame_superpuesto_minimizado", False):
-            relheight = 0.028  # Altura minimizada
-        else:
-            relheight = min(0.35, max(0.15, 250 / max(alto, 1)))
-        # Reposiciona el frame superpuesto
-        self.frame_superpuesto.place_configure(
-            relwidth=relwidth,
-            relheight=relheight,
-            relx=1.0,
-            rely=1.0,
-            anchor="se",
-            x=-10,
-            y=-10
-        )
-
-    def create_frame_superpuesto(self):
-        self.frame_superpuesto = ctk.CTkFrame(self, fg_color="white", bg_color="white")
-        self.frame_superpuesto.place(relx=1.0, rely=1.0, anchor="se", x=-10, y=-10, relwidth=0.4, relheight=0.35)
-
-        self.frame_superpuesto.columnconfigure(0, weight=1)
-        self.frame_superpuesto.rowconfigure(0, weight=0, minsize=28)
-        self.frame_superpuesto.rowconfigure(1, weight=1)
-
-        self.horarios_titulo = ctk.CTkButton(self.frame_superpuesto, text="HORARIOS", text_color="black", fg_color="yellow", border_width=3, border_color="black", corner_radius=0, command=self.minimizar, height=28)
-        self.horarios_titulo.grid(row=0, column=0, sticky="nsew")
-        self.horarios = ctk.CTkScrollableFrame(self.frame_superpuesto, fg_color="yellow", corner_radius=0)
-        self.horarios.grid(row=1, column=0, sticky="nsew")
-        self.horarios._scrollbar.grid_forget()
-
-        self.frame_superpuesto_minimizado = False
-        self.bind("<Configure>", self.ajustar_frame_superpuesto)
-        self.minimizar() 
-
     def verificar_sesion(self):
         if Sesion.usuario_actual:
             print("Sesión activa con:", Sesion.usuario_actual)
@@ -451,18 +409,6 @@ class Main(ctk.CTk):
         self.radio3.pack(pady=10, anchor='w', padx=20)
         self.radio4.pack(pady=10, anchor='w', padx=20)
         self.radio5.pack(pady=10, anchor='w', padx=20)
-
-    def minimizar(self):
-        if not self.frame_superpuesto_minimizado:
-            # Minimizar: ocultar horarios y reducir tamaño
-            self.horarios.grid_forget()
-            self.horarios_titulo.configure(text="MOSTRAR HORARIOS")
-            self.frame_superpuesto_minimizado = True
-        else:
-            # Maximizar: mostrar horarios y restaurar tamaño
-            self.horarios.grid(row=1, column=0, sticky="nsew")
-            self.horarios_titulo.configure(text="HORARIOS")
-            self.frame_superpuesto_minimizado = False
 
     def desordenar_filas(self):
         random.shuffle(self.filas_eventos)
