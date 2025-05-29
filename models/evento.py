@@ -139,5 +139,6 @@ class Boda(Base):
     cupo_limitado = Column(String)
     vestimenta = Column(String)
     vestimenta_tipo = Column(String)
+    txt_mesa_regalos_boda = Column(String)
 
     anfitrion = relationship("Usuario")
