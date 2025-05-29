@@ -1,4 +1,4 @@
-import random, threading, concurrent.futures, sys
+import random, threading, concurrent.futures, sys, io
 sys.dont_write_bytecode = True
 from PIL import Image
 import customtkinter as ctk
@@ -14,6 +14,11 @@ from utils.orm_utils import crear_base_de_datos
 from utils.carga_imagenes import cargar_imagenes_desde_carpeta
 from config import ASSETS, ICONOS, THEME, CATEGORIAS_EVENTOS, TEXTOS, ANIMACION
 import Sesion
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models.evento import Evento, Fiesta, Cumpleaños, Graduacion, XVAnos, Boda
+from models.usuario import Usuario
+from utils.orm_utils import engine
 
 class SplashScreen(ctk.CTkToplevel):
     def __init__(self, parent):
@@ -44,6 +49,8 @@ class Main(ctk.CTk):
         ctk.set_appearance_mode("dark")
         self.configure(fg_color=color_fondo)
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=30)
+        self.eventos = {}
+
 
         crear_base_de_datos()
 
@@ -326,7 +333,9 @@ class Main(ctk.CTk):
         
         # Vuelve a crear el contenido principal
         self.create_principal()
-        if not Sesion.usuario_actual:
+        if Sesion.usuario_actual:
+            self.cargar_eventos()  # Cargar de BD
+        else:
             self.cargar_imagenes_en_filas()
 
     def abrir_VentanaInicioSesion(self):
@@ -752,6 +761,73 @@ class Main(ctk.CTk):
             # Agregar el nombre/ID del evento (opcional)
             nombre_evento = resultado["clave"]
             ctk.CTkLabel(evento_frame, text=nombre_evento, text_color="white").pack()
+
+    def cargar_eventos(self):
+        """Carga eventos desde la base de datos y los muestra"""
+        if not Sesion.usuario_actual:
+            return
+            
+        from sqlalchemy.orm import sessionmaker
+        import io
+        
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        try:
+            eventos = session.query(Evento).all()
+            
+            # Limpiar filas actuales
+            for widget in self.fila_cumple.winfo_children():
+                widget.destroy()
+            for widget in self.fila_fiestas.winfo_children():
+                widget.destroy()
+            for widget in self.fila_bodas.winfo_children():
+                widget.destroy()
+            for widget in self.fila_xvs.winfo_children():
+                widget.destroy()
+            for widget in self.fila_graduaciones.winfo_children():
+                widget.destroy()
+            
+            # Mostrar eventos
+            for evento in eventos:
+                if evento.imagen_bytes:
+                    try:
+                        imagen_pil = Image.open(io.BytesIO(evento.imagen_bytes))
+                        imagen_pil = imagen_pil.resize((400, 300))
+                        imagen_ctk = ctk.CTkImage(imagen_pil, size=(400, 300))
+                        
+                        # Decidir en qué fila va según el tipo
+                        fila = None
+                        if evento.tipo_evento == 'Cumpleaños':
+                            fila = self.fila_cumple
+                        elif evento.tipo_evento == 'Fiesta':
+                            fila = self.fila_fiestas
+                        elif evento.tipo_evento == 'Boda':
+                            fila = self.fila_bodas
+                        elif evento.tipo_evento == 'XVAnos':
+                            fila = self.fila_xvs
+                        elif evento.tipo_evento == 'Graduacion':
+                            fila = self.fila_graduaciones
+                        
+                        if fila:
+                            label = ctk.CTkLabel(fila, image=imagen_ctk, text="", width=400, height=300)
+                            label.evento_id = evento.id_evento
+                            label.evento_fecha = evento.fecha
+                            label.evento_hora = evento.hora
+                            label.pack(side="left", padx=5, pady=5)
+                            label.bind("<Button-1>", lambda e, eid=evento.id_evento: self.on_evento_click(eid))
+
+                    except Exception as e:
+                        print(f"Error procesando evento ID {evento.id_evento}: {e}")
+                        continue
+
+        except Exception as e:
+            print(f"Error: {e}")
+        finally:
+            session.close()
+
+    def on_evento_click(self, evento_id):
+        """Maneja el click en un evento"""
+        print(f"Evento clickeado con ID: {evento_id}")
 
 if __name__ == "__main__":
     carga_event = threading.Event()
