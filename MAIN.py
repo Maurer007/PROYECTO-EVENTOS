@@ -297,10 +297,22 @@ class Main(ctk.CTk):
             print("Sesión activa con:", Sesion.usuario_actual)
             self.user.configure(image=self.iconos["user2"])
             self.limpiar_filas_eventos()
+
+            # Asegura que frame_principal sea del tipo esperado
+            self.frame_principal.destroy()
+            self.frame_principal = ctk.CTkScrollableFrame(self)
+            self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 5), pady=(0, 5))
+            self.frame_principal._scrollbar.grid_forget()
+            for i in range(6):
+                self.frame_principal.rowconfigure(i, weight=1)
+            for i in range(3):
+                self.frame_principal.columnconfigure(i, weight=1)
+
             self.abrir_VentanaInicioSesion()
         else:
             print("No hay sesión activa.")
             self.abrir_login()
+
 
     def abrir_alerta_login(self):
         if Sesion.usuario_actual:
