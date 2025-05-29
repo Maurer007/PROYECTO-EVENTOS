@@ -95,15 +95,15 @@ class InicioSesion(ctk.CTkFrame):
 
     def crear_label_usuario(self):
         self.usuario = ctk.CTkLabel(self, text=f"Usuario: {self.user.nom_usuario}", font=("Arial", 40), text_color="black")
-        self.usuario.pack(pady=10)
+        self.usuario.pack(pady=10, anchor='w', padx=20)
 
     def crear_label_nombre(self):
         self.nombre_label = ctk.CTkLabel(self, text=f"Nombre completo: {self.nombre} {self.apellido_p} {self.apellido_m}", font=("Arial", 30), text_color="black")
-        self.nombre_label.pack(pady=10)
+        self.nombre_label.pack(pady=10, anchor='w', padx=20)
 
     def crear_label(self, texto):
         label = ctk.CTkLabel(self, text=texto, font=("Arial", 30), text_color="black")
-        label.pack(pady=10)
+        label.pack(pady=10, anchor='w', padx=20)
 
     def crear_boton_cerrar_sesion(self):
         self.boton_cerrar_sesion = ctk.CTkButton(self, text="Cerrar Sesión", command=self.cerrar_sesion, font=("Arial", 20), fg_color="#FF0000")
@@ -112,7 +112,15 @@ class InicioSesion(ctk.CTkFrame):
     def cerrar_sesion(self):
         Sesion.usuario_actual = None
         root = self.winfo_toplevel()
-        if hasattr(root, "abrir_main"):
+        
+        # Restaurar el icono de usuario a su estado original
+        if hasattr(root, "user") and hasattr(root, "iconos"):
+            root.user.configure(image=root.iconos["user"])
+        
+        # Restaurar la vista anterior en lugar de ir siempre al main
+        if hasattr(root, "restaurar_vista_anterior"):
+            root.restaurar_vista_anterior()
+        elif hasattr(root, "abrir_main"):
             root.abrir_main()
-        self.destroy()
+        
         print("Sesión cerrada.")

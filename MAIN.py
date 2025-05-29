@@ -1,4 +1,4 @@
-import random, threading, concurrent.futures, sys
+import random, threading, concurrent.futures, sys, io
 sys.dont_write_bytecode = True
 from PIL import Image
 import customtkinter as ctk
@@ -9,11 +9,17 @@ from Alerta_login import AlertaLogin
 from VentanaLogin import VentanaUsuario
 from FrameSinSesión import SinSesión
 from Calendario import Calendario
+from InfoEventos import DatosEventos
 from VentanaInicioSesion import InicioSesion
 from utils.orm_utils import crear_base_de_datos
 from utils.carga_imagenes import cargar_imagenes_desde_carpeta
 from config import ASSETS, ICONOS, THEME, CATEGORIAS_EVENTOS, TEXTOS, ANIMACION
 import Sesion
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models.evento import Evento, Fiesta, Cumpleaños, Graduacion, XVAnos, Boda
+from models.usuario import Usuario
+from utils.orm_utils import engine
 
 class SplashScreen(ctk.CTkToplevel):
     def __init__(self, parent):
@@ -37,12 +43,15 @@ class SplashScreen(ctk.CTkToplevel):
 class Main(ctk.CTk):
     def __init__(self, color_fondo="#2b2b2b", color_texto="black", color_placeholder="gray", color_texto_botones="white", carga_event=None):
         super().__init__()
+        from config import cargar_config
+        cargar_config()
         self.title("JoinUp")
         self.minsize(900, 750)
         ctk.set_appearance_mode("dark")
-        #ctk.set_default_color_theme("green")
         self.configure(fg_color=color_fondo)
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=30)
+        self.eventos = {}
+
 
         crear_base_de_datos()
 
@@ -56,6 +65,9 @@ class Main(ctk.CTk):
         self.color_texto_botones = color_texto_botones
         self.carga_event=carga_event
         self.filas_eventos = []
+
+        self.vista_anterior = None
+        self.estado_anterior = None
 
         self.calendario = Calendario(self)
         self.cargar_iconos()
@@ -82,7 +94,7 @@ class Main(ctk.CTk):
         self.frame_superior = ctk.CTkFrame(self)
         self.frame_superior.columnconfigure(0, weight=1)
         self.frame_superior.columnconfigure(1, weight=0)
-        self.frame_superior.grid(row=0, column=1, sticky="nsew", padx=(0, 10), pady=(10, 5))
+        self.frame_superior.grid(row=0, column=1, sticky="nsew", padx=(0, 5), pady=(10, 5))
         self.lupa = ctk.CTkButton(self.frame_superior, text="", image=self.iconos["lupa"], fg_color=THEME["button_fg"], corner_radius=8, width=60, height=60)
         self.barra = ctk.CTkEntry(self.frame_superior, placeholder_text="Barra de búsqueda", fg_color=THEME["background"], font=THEME["font_title"], corner_radius=8, height=60)
         self.barra.grid(row=0, column=0, sticky="nsew", padx=(0,2.5))
@@ -253,13 +265,11 @@ class Main(ctk.CTk):
     def verificar_sesion(self):
         if Sesion.usuario_actual:
             print("Sesión activa con:", Sesion.usuario_actual)
-            self.user.configure(image=self.iconos["user2"])
-            self.limpiar_filas_eventos()
             self.abrir_VentanaInicioSesion()
         else:
             print("No hay sesión activa.")
             self.abrir_login()
-
+            
     def abrir_alerta_login(self):
         if Sesion.usuario_actual:
             print("Sesión activa con:", Sesion.usuario_actual)
@@ -273,18 +283,37 @@ class Main(ctk.CTk):
             print("Ya hay una ventana de usuario abierta.")
             return
         try:
+            # Guardar la vista actual antes de abrir el login
+            vista_actual = self.detectar_vista_actual()
+            
             ventana = VentanaUsuario(self)
             # Esperar a que se cierre la ventana y luego reverificar
             self.wait_window(ventana)
+            
             # Después de que se cierra, verificar sesión nuevamente
             if Sesion.usuario_actual:
-                # Solo actualizar la UI si se inició sesión
+                # Actualizar el icono del usuario
                 self.user.configure(image=self.iconos["user2"])
-                self.limpiar_filas_eventos()
-                self.abrir_VentanaInicioSesion()
+                
+                # Actualizar la vista actual según el contexto
+                if vista_actual == "main":
+                    self.abrir_main()
+                elif vista_actual == "calendario" or vista_actual == "sin_sesion_calendario":
+                    self.abrir_calendario()
+                elif vista_actual == "mis_eventos" or vista_actual == "sin_sesion_mis_eventos":
+                    self.abrir_mis_eventos()
+                elif vista_actual == "ajustes":
+                    self.abrir_ajustes()
+                elif vista_actual == "invitacion":
+                    self.abrir_invitacion()
+                else:
+                    # Por defecto ir a main
+                    self.abrir_main()
             else:
-                # Si no se inició sesión, simplemente mantener la UI actual
-                self.cargar_imagenes_en_filas()
+                # Si no se inició sesión y estamos en main, cargar las imágenes
+                if vista_actual == "main":
+                    self.cargar_imagenes_en_filas()
+                    
         except Exception as e:
             print("ERROR al crear VentanaUsuario:", e)
 
@@ -294,7 +323,7 @@ class Main(ctk.CTk):
         
         # Recrear frame_principal como scrolleable
         self.frame_principal = ctk.CTkScrollableFrame(self)
-        self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 10), pady=(0, 4))
+        self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 5), pady=(0, 4))
         self.frame_principal._scrollbar.grid_forget()
         
         # Configurar grid
@@ -305,15 +334,28 @@ class Main(ctk.CTk):
         
         # Vuelve a crear el contenido principal
         self.create_principal()
-        if not Sesion.usuario_actual:
+        if Sesion.usuario_actual:
+            self.cargar_eventos()  # Cargar de BD
+        else:
             self.cargar_imagenes_en_filas()
 
     def abrir_VentanaInicioSesion(self):
-        # Limpia el frame_principal
-        for widget in self.frame_principal.winfo_children():
-            widget.destroy()
-        # Inserta la Ventana de mis eventos dentro de frame_principal
         try:
+            # Guardar información sobre la vista actual antes de cambiarla
+            self.guardar_estado_actual()
+            
+            # Destruir el frame principal actual
+            self.frame_principal.destroy()
+            
+            # Crear nuevo frame_principal (normal)
+            self.frame_principal = ctk.CTkFrame(self)
+            self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 5), pady=(0, 4))
+            
+            # Configurar grid del nuevo frame
+            self.frame_principal.grid_columnconfigure(0, weight=1)
+            self.frame_principal.grid_rowconfigure(0, weight=1)
+            
+            # Crear la ventana de inicio de sesión
             ventana_usuario = InicioSesion(self.frame_principal)
             ventana_usuario.pack(fill="both", expand=True)
         except Exception as e:
@@ -321,13 +363,37 @@ class Main(ctk.CTk):
             import traceback
             traceback.print_exc()
 
+    def abrir_info_eventos(self, evento_id):
+        try:
+            # Guardar información sobre la vista actual antes de cambiarla
+            self.guardar_estado_actual()
+            
+            # Destruir el frame principal actual
+            self.frame_principal.destroy()
+            
+            # Crear nuevo frame_principal (normal)
+            self.frame_principal = ctk.CTkFrame(self)
+            self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 5), pady=(0, 4))
+            
+            # Configurar grid del nuevo frame
+            self.frame_principal.grid_columnconfigure(0, weight=1)
+            self.frame_principal.grid_rowconfigure(0, weight=1)
+            
+            # Crear la ventana de inicio de sesión
+            info_eventos = DatosEventos(self.frame_principal, evento_id)
+            info_eventos.pack(fill="both", expand=True)
+        except Exception as e:
+            print("ERROR al crear ventana de datos de eventos:", e)
+            import traceback
+            traceback.print_exc()        
+
     def abrir_calendario(self):
         # Limpia el frame_principal
         self.frame_principal.destroy()
         
         # Crear nuevo frame_principal (normal)
         self.frame_principal = ctk.CTkFrame(self)
-        self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 10), pady=(0, 4))
+        self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 5), pady=(0, 4))
         
         # Configurar grid del nuevo frame
         self.frame_principal.grid_columnconfigure(0, weight=1)
@@ -343,6 +409,89 @@ class Main(ctk.CTk):
 
         except Exception as e:
             print("ERROR al crear Ventana de Calendario:", e)
+
+    def guardar_estado_actual(self):
+        """Guarda el estado de la vista actual para poder restaurarla después"""
+        self.vista_anterior = self.detectar_vista_actual()
+        print(f"Guardando estado actual: {self.vista_anterior}")
+
+    def detectar_vista_actual(self):
+        """Detecta qué vista está actualmente activa"""
+        if not hasattr(self, 'frame_principal') or not self.frame_principal.winfo_exists():
+            return "main"
+        
+        # Verificar por widgets específicos o clases
+        for widget in self.frame_principal.winfo_children():
+            # Importar las clases para poder hacer isinstance
+            try:
+                if widget.__class__.__name__ == "MisEventos":
+                    return "mis_eventos"
+                elif widget.__class__.__name__ == "Calendario":
+                    return "calendario"
+                elif widget.__class__.__name__ == "SinSesión":
+                    titulo = getattr(widget, 'titulo', '')
+                    if "Calendario" in titulo:
+                        return "sin_sesion_calendario"
+                    elif "Mis Eventos" in titulo:
+                        return "sin_sesion_mis_eventos"
+                    return "sin_sesion"
+                elif hasattr(widget, 'cget'):
+                    try:
+                        if widget.cget("text") == "Cambiar tema":
+                            return "ajustes"
+                    except:
+                        pass
+                elif widget.__class__.__name__ == "Ventana":  # Invitaciones
+                    return "invitacion"
+            except:
+                continue
+        
+        # Verificar si es la vista principal buscando el carrusel o filas de eventos
+        if hasattr(self, 'evento_grande'):
+            try:
+                if self.evento_grande.winfo_exists():
+                    return "main"
+            except:
+                pass
+        
+        # Si hay filas de eventos visibles, probablemente es main
+        try:
+            for fila in self.filas_eventos:
+                if fila.winfo_exists():
+                    return "main"
+        except:
+            pass
+        
+        return "main"  # Por defecto
+
+    def restaurar_vista_anterior(self):
+        """Restaura la vista que estaba activa antes de abrir InicioSesion"""
+        if not self.vista_anterior:
+            self.abrir_main()
+            return
+            
+        print(f"Restaurando vista anterior: {self.vista_anterior}")
+        
+        if self.vista_anterior == "main":
+            self.abrir_main()
+        elif self.vista_anterior == "calendario":
+            self.abrir_calendario()
+        elif self.vista_anterior == "mis_eventos":
+            self.abrir_mis_eventos()
+        elif self.vista_anterior == "ajustes":
+            self.abrir_ajustes()
+        elif self.vista_anterior == "invitacion":
+            self.abrir_invitacion()
+        elif self.vista_anterior == "sin_sesion_calendario":
+            self.abrir_calendario()  # Esto mostrará SinSesión automáticamente si no hay sesión
+        elif self.vista_anterior == "sin_sesion_mis_eventos":
+            self.abrir_mis_eventos()  # Esto mostrará SinSesión automáticamente si no hay sesión
+        else:
+            # Por defecto, ir al main
+            self.abrir_main()
+        
+        # Limpiar el estado guardado
+        self.vista_anterior = None
 
     def abrir_mis_eventos(self):
         # Limpia el frame_principal
@@ -387,7 +536,7 @@ class Main(ctk.CTk):
         
         # Crear nuevo frame_principal (normal)
         self.frame_principal = ctk.CTkFrame(self, fg_color="#C4DF62")
-        self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 10), pady=(0, 4))
+        self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 5), pady=(0, 4))
         
         # Configurar grid del nuevo frame
         self.frame_principal.grid_columnconfigure(0, weight=1)
@@ -397,11 +546,25 @@ class Main(ctk.CTk):
         self.titulo.pack(pady=10)
 
         opcion = ctk.StringVar(value="")
-        self.radio1 = ctk.CTkRadioButton(self.frame_principal, text="Default", variable=opcion, value="opcion1", font=("Arial", 40), command=lambda: self.actualizar_tema("background", "#053d57"))
-        self.radio2 = ctk.CTkRadioButton(self.frame_principal, text="NARANJA", variable=opcion, value="opcion2", font=("Arial", 40), command=lambda: self.actualizar_tema("background", "#E4BE42"))
-        self.radio3 = ctk.CTkRadioButton(self.frame_principal, text="CELESTE", variable=opcion, value="opcion3", font=("Arial", 40), command=lambda: self.actualizar_tema("background", "#42A9E4"))
-        self.radio4 = ctk.CTkRadioButton(self.frame_principal, text="VERDE", variable=opcion, value="opcion4", font=("Arial", 40), command=lambda: self.actualizar_tema("background", "#C4DF62"))
-        self.radio5 = ctk.CTkRadioButton(self.frame_principal, text="ROJO", variable=opcion, value="opcion5", font=("Arial", 40), command=lambda: self.actualizar_tema("background", "#E44242"))
+        tema_actual = THEME["background"]
+        valor_actual = ""
+        if tema_actual == "#053d57":
+            valor_actual = "opcion1"
+        elif tema_actual == "#E4BE42":
+            valor_actual = "opcion2"
+        elif tema_actual == "#42A9E4":
+            valor_actual = "opcion3"
+        elif tema_actual == "#C4DF62":
+            valor_actual = "opcion4"
+        elif tema_actual == "#E44242":
+            valor_actual = "opcion5"
+        
+        opcion.set(valor_actual)
+        self.radio1 = ctk.CTkRadioButton(self.frame_principal, text="Default", variable=opcion, value="opcion1", font=("Arial", 40), text_color="#2b2b2b", command=lambda: self.actualizar_tema("background", "#053d57"))
+        self.radio2 = ctk.CTkRadioButton(self.frame_principal, text="NARANJA", variable=opcion, value="opcion2", font=("Arial", 40), text_color="#2b2b2b", command=lambda: self.actualizar_tema("background", "#E4BE42"))
+        self.radio3 = ctk.CTkRadioButton(self.frame_principal, text="CELESTE", variable=opcion, value="opcion3", font=("Arial", 40), text_color="#2b2b2b", command=lambda: self.actualizar_tema("background", "#42A9E4"))
+        self.radio4 = ctk.CTkRadioButton(self.frame_principal, text="VERDE", variable=opcion, value="opcion4", font=("Arial", 40), text_color="#2b2b2b", command=lambda: self.actualizar_tema("background", "#C4DF62"))
+        self.radio5 = ctk.CTkRadioButton(self.frame_principal, text="ROJO", variable=opcion, value="opcion5", font=("Arial", 40), text_color="#2b2b2b", command=lambda: self.actualizar_tema("background", "#E44242"))
 
         # Posicionarlos
         self.radio1.pack(pady=10, anchor='w', padx=20)
@@ -434,6 +597,11 @@ class Main(ctk.CTk):
         if clave in THEME:
             THEME[clave] = nuevo_valor
             print(f"Tema actualizado: {clave} = {nuevo_valor}")
+            
+            # AGREGAR ESTAS LÍNEAS:
+            from config import guardar_config
+            guardar_config()  # Guardar la configuración
+            
             # Aplicar los cambios a la interfaz
             self.aplicar_cambios_tema()
         else:
@@ -618,6 +786,74 @@ class Main(ctk.CTk):
             # Agregar el nombre/ID del evento (opcional)
             nombre_evento = resultado["clave"]
             ctk.CTkLabel(evento_frame, text=nombre_evento, text_color="white").pack()
+
+    def cargar_eventos(self):
+        """Carga eventos desde la base de datos y los muestra"""
+        if not Sesion.usuario_actual:
+            return
+            
+        from sqlalchemy.orm import sessionmaker
+        import io
+        
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        try:
+            eventos = session.query(Evento).all()
+            
+            # Limpiar filas actuales
+            for widget in self.fila_cumple.winfo_children():
+                widget.destroy()
+            for widget in self.fila_fiestas.winfo_children():
+                widget.destroy()
+            for widget in self.fila_bodas.winfo_children():
+                widget.destroy()
+            for widget in self.fila_xvs.winfo_children():
+                widget.destroy()
+            for widget in self.fila_graduaciones.winfo_children():
+                widget.destroy()
+            
+            # Mostrar eventos
+            for evento in eventos:
+                if evento.imagen_bytes:
+                    try:
+                        imagen_pil = Image.open(io.BytesIO(evento.imagen_bytes))
+                        imagen_pil = imagen_pil.resize((400, 300))
+                        imagen_ctk = ctk.CTkImage(imagen_pil, size=(400, 300))
+                        
+                        # Decidir en qué fila va según el tipo
+                        fila = None
+                        if evento.tipo_evento == 'Cumpleaños':
+                            fila = self.fila_cumple
+                        elif evento.tipo_evento == 'Fiesta':
+                            fila = self.fila_fiestas
+                        elif evento.tipo_evento == 'Boda':
+                            fila = self.fila_bodas
+                        elif evento.tipo_evento == 'XVAnos':
+                            fila = self.fila_xvs
+                        elif evento.tipo_evento == 'Graduacion':
+                            fila = self.fila_graduaciones
+                        
+                        if fila:
+                            label = ctk.CTkLabel(fila, image=imagen_ctk, text="", width=400, height=300)
+                            label.evento_id = evento.id_evento
+                            label.evento_fecha = evento.fecha
+                            label.evento_hora = evento.hora
+                            label.pack(side="left", padx=5, pady=5)
+                            label.bind("<Button-1>", lambda e, eid=evento.id_evento: self.on_evento_click(eid))
+
+                    except Exception as e:
+                        print(f"Error procesando evento ID {evento.id_evento}: {e}")
+                        continue
+
+        except Exception as e:
+            print(f"Error: {e}")
+        finally:
+            session.close()
+
+    def on_evento_click(self, evento_id):
+        """Maneja el click en un evento"""
+        print(f"Evento clickeado con ID: {evento_id}")
+        self.abrir_info_eventos(evento_id)
 
 if __name__ == "__main__":
     carga_event = threading.Event()

@@ -254,7 +254,7 @@ class EventosManager:
             session.close()
         
     @staticmethod
-    def insertar_boda(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo):
+    def insertar_boda(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo, txt_mesa_regalos_boda):
         anfitrion_id = cargar_id_usuario_json()
         if anfitrion_id is None:
             print("No hay usuario logueado")
@@ -299,7 +299,8 @@ class EventosManager:
                 privacidad_codigo=privacidad_codigo,
                 cupo_limitado=cupo_limitado,
                 vestimenta=vestimenta,
-                vestimenta_tipo=vestimenta_tipo
+                vestimenta_tipo=vestimenta_tipo,
+                txt_mesa_regalos_boda=txt_mesa_regalos_boda
             )
             session.add(boda)
             session.commit()
@@ -2569,7 +2570,6 @@ class Ventana(CTk.CTkFrame):
         novio = self.entry_novio1.get() if hasattr(self, "entry_novio1") else ""
         padrino_boda = self.entry_boda_padrino1.get() if hasattr(self, "entry_boda_padrino1") else ""
         madrina_boda = self.entry_boda_padrino2.get() if hasattr(self, "entry_boda_padrino2") else ""
-        mesa_regalos_boda = getattr(self, "checkbox_boda_mesa_var", tk.IntVar()).get()
         misa_valor = getattr(self, "checkbox_boda_misa_var", tk.IntVar()).get()
         misa = True if misa_valor == 1 else False
         iglesia = self.entry_boda_misa.get() if misa else ""
@@ -2595,52 +2595,51 @@ class Ventana(CTk.CTkFrame):
             except Exception as e:
                 print(f"⚠️ No se pudo obtener nivel educativo: {e}")
                 vestimenta_tipo = ""
+
+        mesa_regalos_boda_valor = getattr(self, "checkbox_boda_mesa_var", tk.IntVar()).get()
+        mesa_regalos_boda = True if mesa_regalos_boda_valor == 1 else False
+        txt_mesa_regalos_boda = self.entry_boda_mesa.get() if mesa_regalos_boda and hasattr(self, "entry_boda_mesa") else ""
         
         # Inserciones
         if tipo_evento == "Evento":
-            EventosManager.insertar_evento(
+            exito = EventosManager.insertar_evento(
                 anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo
             )
+            if exito:
+                self.reiniciar_formulario()
         elif tipo_evento == "Fiesta":
-            EventosManager.insertar_fiesta(
+            exito = EventosManager.insertar_fiesta(
                 anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, descripcion, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo
             )
+            if exito:
+                self.reiniciar_formulario()
         elif tipo_evento == "Cumpleaños":
-            EventosManager.insertar_cumpleaños(
+            exito = EventosManager.insertar_cumpleaños(
                 anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, cumpleañero, edad, mesa_regalos, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo, txt_mesa_regalos
             )
+            if exito:
+                self.reiniciar_formulario()
         elif tipo_evento == "Graduación":
-            EventosManager.insertar_graduacion(
+            exito = EventosManager.insertar_graduacion(
                 anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, escuela, nivel_educativo, generacion, invitados_por_alumno, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo
             )
         elif tipo_evento == "XV Años":
-            EventosManager.insertar_xv(
+            exito = EventosManager.insertar_xv(
                 anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, cumpleañero_xv, padre, madre, padrino, madrina, mesa_regalos_xv, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo, txt_mesa_regalos_xv, misa_xv, iglesia_xv
             )
+            if exito:
+                self.reiniciar_formulario()
         elif tipo_evento == "Boda":
-            EventosManager.insertar_boda(
-                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo
+            exito = EventosManager.insertar_boda(
+                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo, txt_mesa_regalos_boda
             )
+            if exito:
+                self.reiniciar_formulario()
         else:
             print("⚠️ Tipo de evento no reconocido")
 
     
-    def limpiar_campos_dinamicos(self):
-        for widget in self.frame_campos_dinamicos.winfo_children():
-            widget.destroy()
-
-    # Limpieza segura de atributos dinámicos
-        atributos = [
-            "entry_quinceanero", "entry_xv_padre1", "entry_xv_padre2",
-            "entry_xv_padrino1", "entry_xv_padrino2", "checkbox_xv_mesa_var",
-            "entry_cumpleanero", "valor_edad", "checkbox_estilo_var",
-            "entry_instituto", "combobox_nivel_edu", "valor_generacion", "valor_inv_grad",
-            "entry_novio1", "entry_novio2", "entry_boda_padrino1", "entry_boda_padrino2",
-            "checkbox_boda_mesa_var", "checkbox_boda_misa_var", "entry_boda_misa"
-        ]
-        for attr in atributos:
-            if hasattr(self, attr):
-                delattr(self, attr)
+    
 """if __name__ == "__main__":
     app = Ventana()
     app.mainloop()"""
