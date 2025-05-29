@@ -9,6 +9,7 @@ from Alerta_login import AlertaLogin
 from VentanaLogin import VentanaUsuario
 from FrameSinSesión import SinSesión
 from Calendario import Calendario
+from InfoEventos import DatosEventos
 from VentanaInicioSesion import InicioSesion
 from utils.orm_utils import crear_base_de_datos
 from utils.carga_imagenes import cargar_imagenes_desde_carpeta
@@ -361,6 +362,30 @@ class Main(ctk.CTk):
             print("ERROR al crear ventana inicio sesion:", e)
             import traceback
             traceback.print_exc()
+
+    def abrir_info_eventos(self, evento_id):
+        try:
+            # Guardar información sobre la vista actual antes de cambiarla
+            self.guardar_estado_actual()
+            
+            # Destruir el frame principal actual
+            self.frame_principal.destroy()
+            
+            # Crear nuevo frame_principal (normal)
+            self.frame_principal = ctk.CTkFrame(self)
+            self.frame_principal.grid(row=1, column=1, sticky="nsew", padx=(0, 5), pady=(0, 4))
+            
+            # Configurar grid del nuevo frame
+            self.frame_principal.grid_columnconfigure(0, weight=1)
+            self.frame_principal.grid_rowconfigure(0, weight=1)
+            
+            # Crear la ventana de inicio de sesión
+            info_eventos = DatosEventos(self.frame_principal, evento_id)
+            info_eventos.pack(fill="both", expand=True)
+        except Exception as e:
+            print("ERROR al crear ventana de datos de eventos:", e)
+            import traceback
+            traceback.print_exc()        
 
     def abrir_calendario(self):
         # Limpia el frame_principal
@@ -828,6 +853,7 @@ class Main(ctk.CTk):
     def on_evento_click(self, evento_id):
         """Maneja el click en un evento"""
         print(f"Evento clickeado con ID: {evento_id}")
+        self.abrir_info_eventos(evento_id)
 
 if __name__ == "__main__":
     carga_event = threading.Event()

@@ -4,10 +4,34 @@ from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 import bcrypt
 from models.evento import Evento
 import Sesion
+import io
+from models.asistencia import Asiste
+from PIL import Image
+
+def registrar_asistencia(id_usuario, id_evento):
+        session = Session()
+        try:
+
+            nueva_asistencia = Asiste(
+                id_usuario=id_usuario,
+                id_evento=id_evento
+            )
+
+            session.add(nueva_asistencia)
+            session.commit()
+            return True
+        except SQLAlchemyError as e:
+            session.rollback()
+            print(f"Error al registrar usuario: {e}")
+        finally:
+            session.close()
 
 class DatosEventos(ctk.CTkFrame):
-    def __init__(self, parent, colorFondo="#1256E8"):
+    def __init__(self, parent, evento_seleccionado, colorFondo="#1256E8"):
         super().__init__(parent)
+        self.parent = parent
+        self.evento_seleccionado = evento_seleccionado
+
         self.anfitrion = None
         self.imagen = None
         self.tipo = None
@@ -52,15 +76,14 @@ class DatosEventos(ctk.CTkFrame):
         self.iglesia = None
         self.menores_permitidos = None
 
-        self.configure(fg_color=colorFondo)
-        self.obtener_credenciales()        
+        self.configure(fg_color=colorFondo)     
 
         self.crear_titulo()
         self.obtener_datos_eventos()
         self.crear_frame_datos()
         self.crear_frame_imagen()
 
-        self.crear_boton_cerrar_sesion()
+        self.crear_boton_registrar_asistencia()
         
 
     def crear_titulo(self):
@@ -76,10 +99,10 @@ class DatosEventos(ctk.CTkFrame):
         session = Session()
 
         try:
-            self.evento = session.query(Evento).filter_by(id_evento=evento_seleccionado).first()
+            self.evento = session.query(Evento).filter_by(id_evento=self.evento_seleccionado).first()
 
             if self.evento is None:
-                raise ValueError(f"No se encontró el eventi '{evento_seleccionado}' en la base de datos.")
+                raise ValueError(f"No se encontró el eventi '{self.evento_seleccionado}' en la base de datos.")
 
             self.anfitrion = self.evento.anfitrion
             self.imagen = self.evento.imagen_bytes
@@ -95,25 +118,25 @@ class DatosEventos(ctk.CTkFrame):
 
             if self.tipo == "Fiesta":
                 from models.evento import Fiesta
-                self.fiesta = session.query(Fiesta).filter_by(id_evento=evento_seleccionado).first()
+                self.fiesta = session.query(Fiesta).filter_by(id_evento=self.evento_seleccionado).first()
                 self.descripcion = self.fiesta.descripcion
             elif self.tipo == "Cumpleaños":
                 from models.evento import Cumpleaños
-                self.cumpleaños = session.query(Cumpleaños).filter_by(id_evento=evento_seleccionado).first()
+                self.cumpleaños = session.query(Cumpleaños).filter_by(id_evento=self.evento_seleccionado).first()
                 self.cumpleañero = self.cumpleaños.cumpleañero
                 self.edad = self.cumpleaños.edad
                 self.mesa_regalos = self.cumpleaños.mesa_regalos
                 self.txt_mesa_regalos = self.cumpleaños.txt_mesa_regalos
             elif self.tipo == "Graduación":
                 from models.evento import Graduación
-                self.graduacion = session.query(Graduación).filter_by(id_evento=evento_seleccionado).first()
+                self.graduacion = session.query(Graduación).filter_by(id_evento=self.evento_seleccionado).first()
                 self.escuela = self.graduacion.escuela
                 self.nivel_educativo = self.nivel_educativo
                 self.generacion = self.graduacion.generacion
                 self.invitados_por_alumno = self.graduacion.invitados_por_alumno
             elif self.tipo == "XV_años":
                 from models.evento import XV_años
-                self.xv_años = session.query(XV_años).filter_by(id_evento=evento_seleccionado).first()
+                self.xv_años = session.query(XV_años).filter_by(id_evento=self.evento_seleccionado).first()
                 self.cumpleañero_xv = self.xv_años.cumpleañero_xv
                 self.padre = self.xv_años.padre
                 self.madre = self.xv_años.madre
@@ -125,7 +148,7 @@ class DatosEventos(ctk.CTkFrame):
                 self.iglesia_xv = self.xv_años.iglesia_xv
             elif self.tipo == "Boda":
                 from models.evento import Boda
-                self.boda = session.query(Boda).filter_by(id_evento=evento_seleccionado).first()
+                self.boda = session.query(Boda).filter_by(id_evento=self.evento_seleccionado).first()
                 self.novia = self.boda.novia
                 self.novio = self.boda.novio
                 self.padrino_boda = self.boda.padrino_boda
@@ -171,16 +194,12 @@ class DatosEventos(ctk.CTkFrame):
         frame = ctk.CTkFrame(self, fg_color="#FFFFFF")
         frame.pack(padx=10, pady=10, fill='both', expand=True, side="right")
 
-        if self.imagen:
-            from PIL import Image, ImageTk
-            imagen = Image.open(self.imagen)
-            imagen = imagen.resize((300, 300), Image.ANTIALIAS)
-            self.imagen_tk = ImageTk.PhotoImage(imagen)
-            label_imagen = ctk.CTkLabel(frame, image=self.imagen_tk)
-            label_imagen.pack(pady=20)
-        else:
-            label_imagen = ctk.CTkLabel(frame, text="No hay imagen disponible", font=("Arial", 20), text_color="black")
-            label_imagen.pack(pady=20)
+        imagen_pil = Image.open(io.BytesIO(self.imagen))
+        imagen_pil = imagen_pil.resize((400, 300))
+        imagen_ctk = ctk.CTkImage(imagen_pil, size=(400, 300))
+
+        label = ctk.CTkLabel(frame, image=imagen_ctk, text="", width=400, height=300)
+        label.pack(anchor="center", padx=5, pady=5)
 
     def crear_label(self, container, texto):
         label = ctk.CTkLabel(self, text=texto, font=("Arial", 30), text_color="black")
@@ -192,26 +211,15 @@ class DatosEventos(ctk.CTkFrame):
         else:
             texto = f"{texto}: ❌"
         label = ctk.CTkLabel(container, text=texto, font=("Arial", 30), text_color="black")
-        label.pack(pady=10, anchor='w', padx=20)
+        label.pack(pady=10, padx=20)
 
-    def crear_boton_cerrar_sesion(self):
-        self.boton_cerrar_sesion = ctk.CTkButton(self, text="Cerrar Sesión", command=self.cerrar_sesion, font=("Arial", 20), fg_color="#FF0000")
-        self.boton_cerrar_sesion.pack(pady=20)
+    def crear_boton_registrar_asistencia(self):
+        self.boton = ctk.CTkButton(self, text="Registrar asistencia", command=self.registrar_asistencia(self.cargar_id_usuario_json, self.evento.id_evento), font=("Arial", 20), fg_color="#FF0000")
+        self.boton.pack(pady=20)
 
-    
-
-    def cerrar_sesion(self):
-        Sesion.usuario_actual = None
-        root = self.winfo_toplevel()
-        
-        # Restaurar el icono de usuario a su estado original
-        if hasattr(root, "user") and hasattr(root, "iconos"):
-            root.user.configure(image=root.iconos["user"])
-        
-        # Restaurar la vista anterior en lugar de ir siempre al main
-        if hasattr(root, "restaurar_vista_anterior"):
-            root.restaurar_vista_anterior()
-        elif hasattr(root, "abrir_main"):
-            root.abrir_main()
-        
-        print("Sesión cerrada.")
+    def cargar_id_usuario_json(ruta="usuario_sesion.json"):
+        if not Path(ruta).exists():
+            return None
+        with open(ruta, "r") as f:
+            data = json.load(f)
+            return data.get("id_usuario")
