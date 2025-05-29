@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from PIL import Image, ImageTk
+from PIL import Image
 import itertools
 from utils.carga_imagenes import cargar_imagenes_desde_carpeta
 
@@ -7,7 +7,7 @@ class CarruselDeslizante(ctk.CTkFrame):
     def __init__(
         self, master, content, width=None, height=300,
         bg_color="#FFFFFF", text_font=("Eras Bold ITC", 100),
-        text_fg="#FFFFFF", text_bg="#518D65",
+        text_fg="#FFFFFF", text_bg="#0A1A43",
         duracion=3000, velocidad=5, **kwargs
     ):
         super().__init__(master, **kwargs)
