@@ -206,6 +206,9 @@ class VentanaRegistro(ct.CTkToplevel):
         self.labelError_usuario = self.crear_label_error(frame_datos, 0, 4)
 
         self.contrasena=self.crear_entry_derecha(frame_datos, 1, 0, "Contraseña")
+        self.contrasenia_var = tk.StringVar()
+        self.contrasena.configure(textvariable=self.contrasenia_var)
+        self.contrasenia_var.trace_add("write", self.verificar_contrasenia_en_tiempo_real)
         self.conf_contraseña = self.crear_entry_derecha(frame_datos, 2, 0, "Confirmar contraseña")
         self.labelError_contraseña = self.crear_label_error(frame_datos, 2, 4)
         self.telefono=self.crear_entry_derecha(frame_datos, 3, 0, "Teléfono")
@@ -240,6 +243,15 @@ class VentanaRegistro(ct.CTkToplevel):
             self.labelError_usuario.configure(text="")
 
         session.close()
+
+    def verificar_contrasenia_en_tiempo_real(self, *args):
+        contrasenia = self.contrasena.get().strip()
+        conf_contrasenia = self.conf_contraseña.get().strip()
+
+        if contrasenia != conf_contrasenia:
+            self.labelError_contraseña.configure(text="Las contraseñas no coinciden")
+        else:
+            self.labelError_contraseña.configure(text="")
 
     # Creación de botones
     def crear_frame_botones(self, scrollable_frame):
