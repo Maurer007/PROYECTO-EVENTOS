@@ -247,7 +247,7 @@ class EventosManager:
             session.close()
         
     @staticmethod
-    def insertar_boda(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo):
+    def insertar_boda(anfitrion_id,imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo, txt_mesa_regalos_boda):
         anfitrion_id = cargar_id_usuario_json()
         if anfitrion_id is None:
             print("No hay usuario logueado")
@@ -292,7 +292,8 @@ class EventosManager:
                 privacidad_codigo=privacidad_codigo,
                 cupo_limitado=cupo_limitado,
                 vestimenta=vestimenta,
-                vestimenta_tipo=vestimenta_tipo
+                vestimenta_tipo=vestimenta_tipo,
+                txt_mesa_regalos_boda=txt_mesa_regalos_boda
             )
             session.add(boda)
             session.commit()
@@ -2348,7 +2349,6 @@ class Ventana(CTk.CTkFrame):
         novio = self.entry_novio1.get() if hasattr(self, "entry_novio1") else ""
         padrino_boda = self.entry_boda_padrino1.get() if hasattr(self, "entry_boda_padrino1") else ""
         madrina_boda = self.entry_boda_padrino2.get() if hasattr(self, "entry_boda_padrino2") else ""
-        mesa_regalos_boda = getattr(self, "checkbox_boda_mesa_var", tk.IntVar()).get()
         misa_valor = getattr(self, "checkbox_boda_misa_var", tk.IntVar()).get()
         misa = True if misa_valor == 1 else False
         iglesia = self.entry_boda_misa.get() if misa else ""
@@ -2374,6 +2374,10 @@ class Ventana(CTk.CTkFrame):
             except Exception as e:
                 print(f"⚠️ No se pudo obtener nivel educativo: {e}")
                 vestimenta_tipo = ""
+
+        mesa_regalos_boda_valor = getattr(self, "checkbox_boda_mesa_var", tk.IntVar()).get()
+        mesa_regalos_boda = True if mesa_regalos_boda_valor == 1 else False
+        txt_mesa_regalos_boda = self.entry_boda_mesa.get() if mesa_regalos_boda and hasattr(self, "entry_boda_mesa") else ""
         
         # Inserciones
         if tipo_evento == "Evento":
@@ -2398,7 +2402,7 @@ class Ventana(CTk.CTkFrame):
             )
         elif tipo_evento == "Boda":
             EventosManager.insertar_boda(
-                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo
+                anfitrion_id, imagen_bytes, fecha, hora, direccion, num_invitados, privacidad, novia, novio, padrino_boda, madrina_boda, mesa_regalos_boda, misa, iglesia, menores_permitidos, privacidad_codigo, cupo_limitado, vestimenta, vestimenta_tipo, txt_mesa_regalos_boda
             )
         else:
             print("⚠️ Tipo de evento no reconocido")
