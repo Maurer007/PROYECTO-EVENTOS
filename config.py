@@ -1,3 +1,31 @@
+import json
+import os
+
+# Archivo para guardar configuraciones
+CONFIG_FILE = "user_config.json"
+
+def guardar_config():
+    """Guarda la configuración actual en un archivo JSON"""
+    try:
+        config_data = {
+            "theme_background": THEME["background"]
+        }
+        with open(CONFIG_FILE, 'w') as f:
+            json.dump(config_data, f)
+    except Exception as e:
+        print(f"Error al guardar configuración: {e}")
+
+def cargar_config():
+    """Carga la configuración desde el archivo JSON"""
+    try:
+        if os.path.exists(CONFIG_FILE):
+            with open(CONFIG_FILE, 'r') as f:
+                config_data = json.load(f)
+                if "theme_background" in config_data:
+                    THEME["background"] = config_data["theme_background"]
+    except Exception as e:
+        print(f"Error al cargar configuración: {e}")
+
 # Rutas de assets
 ASSETS = {
     "iconos": "assets/iconos/",
@@ -53,7 +81,7 @@ CATEGORIAS_EVENTOS = [
 # Textos
 TEXTOS = {
     "bienvenida": "¡Bienvenido a JoinUp!",
-    "organiza": "¡Organiza tus eventos con nosotros!",
+    "organiza": "¡Así podrías anunciar tu fiesta!",
     "inolvidable": "¡Haz tu evento inolvidable!",
     "celebra": "¡Celebra con nosotros!",
     "barra_busqueda": "Barra de búsqueda",
